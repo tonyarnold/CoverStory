@@ -1,0 +1,24 @@
+{
+    IBClasses = (
+        {
+            CLASS = CoverStoryApplicationDelegate; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {openSource = id; }; 
+            CLASS = CoverStoryDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"codeView_" = NSTableView; "statistics_" = NSTextField; }; 
+            SUPERCLASS = NSDocument; 
+        }, 
+        {
+            ACTIONS = {openSource = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = GCoverApplicationDelegate; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
