@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
 //  Copyright 2006-2007 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -12,15 +13,45 @@
 //  License for the specific language governing permissions and limitations under
 //  the License.
 -->
-
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>gcno</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>CoverStoryGcov</string>
+			<key>CFBundleTypeName</key>
+			<string>gcov Compiled Data File</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>????</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSDocumentClass</key>
+			<string>CoverStoryCollectionDoc</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Folder</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>fold</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>NSDocumentClass</key>
+			<string>CoverStoryCollectionDoc</string>
+		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
@@ -43,42 +74,6 @@
 			<key>NSPersistentStoreTypeKey</key>
 			<string>Binary</string>
 		</dict>
-    <dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-        <string>gcno</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>CoverStoryGcov</string>
-			<key>CFBundleTypeName</key>
-			<string>gcov Compiled Data File</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>????</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>None</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-    <dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>gcda</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>CoverStoryGcov</string>
-			<key>CFBundleTypeName</key>
-			<string>gcov Run Time Data File</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>????</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>None</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
@@ -99,7 +94,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

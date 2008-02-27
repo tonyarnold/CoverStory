@@ -3,7 +3,7 @@
 //  CoverStory
 //
 //  Created by dmaclach on 12/24/06.
-//  Copyright 2006-2007 Google Inc.
+//  Copyright 2006-2008 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
@@ -19,18 +19,53 @@
 
 #import <Cocoa/Cocoa.h>
 
+// Keeps track of the data for a whole source file.
+
+@interface CoverStoryCoverageFileData : NSObject<NSCopying> {
+ @private
+  NSMutableArray *lines_; // of CoverStoryCoverageLineData
+  SInt32 hitLines_;
+  SInt32 codeLines_;
+  NSString *sourcePath_;
+}
+
++ (id)coverageFileDataFromData:(NSData *)data;
+- (id)initWithData:(NSData *)data;
+- (NSArray *)lines;
+- (SInt32)numberTotalLines;
+- (SInt32)numberCodeLines;
+- (SInt32)numberHitCodeLines;
+- (float)coverage;
+- (NSString *)sourcePath;
+- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
+@end
+
+
+// Keeps track of a set of source files.
+
+@interface CoverStoryCoverageSet : NSObject {
+@private
+  NSMutableDictionary *fileDatas_;
+}
+- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
+- (NSArray *)sourcePaths;
+- (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path;
+@end
+                    
+                     
 // Keeps track of the number of times a line of code has been hit. There is
-// one CoverStoryCoverageData object per line of code in the file. Note that
+// one CoverStoryCoverageLineData object per line of code in the file. Note that
 // a hitcount of -1 means that the line is not executed.
 
-@interface CoverStoryCoverageData : NSObject<NSCopying> {
+@interface CoverStoryCoverageLineData : NSObject<NSCopying> {
  @private
   SInt32 hitCount_;  // how many times this line has been hit
   NSString *line_;  //  the line
 }
 
-+ (id)coverageDataWithLine:(NSString*)line hitCount:(UInt32)hitCount;
++ (id)coverageLineDataWithLine:(NSString*)line hitCount:(UInt32)hitCount;
 - (id)initWithLine:(NSString*)line hitCount:(UInt32)hitCount;
 - (NSString*)line;
 - (SInt32)hitCount;
+- (void)addHits:(SInt32)newHits;
 @end

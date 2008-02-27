@@ -1,9 +1,9 @@
 //
-//  CoverStoryLineCell.m
+//  CoverStoryCoverageCell.m
 //  CoverStory
 //
-//  Created by dmaclach on 12/24/06.
-//  Copyright 2006-2007 Google Inc.
+//  Created by thomasvl on 2/26/08.
+//  Copyright 2008 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
@@ -17,21 +17,19 @@
 //  the License.
 //
 
-#import "CoverStoryLineCell.h"
+#import "CoverStoryCoverageCell.h"
 #import "CoverStoryCoverageData.h"
 
-@implementation CoverStoryLineCell
+@implementation CoverStoryCoverageCell
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
-  CoverStoryCoverageLineData *data = [self objectValue];
-  NSString *line = [data line];
-  SInt32 hitCount = [data hitCount];
+  CoverStoryCoverageFileData *data = [self objectValue];
+  float coverage = [data coverage];
+  NSString *coverageString = [NSString stringWithFormat:@"%.2f%%", coverage];
   NSColor *textColor;
-  if (hitCount == 0) {
-    [[NSColor colorWithDeviceRed:1.0 green:0.0 blue:0.0 alpha:1.0] set];
-    NSRectFill(cellFrame);
-    textColor = [NSColor whiteColor];
-  } else if (hitCount == -1) {
-    textColor = [NSColor grayColor];
+  if (coverage < 40.0f) {
+    textColor = [NSColor redColor];
+  } else if (coverage < 65.0f) {
+    textColor = [NSColor brownColor];
   } else {
     textColor = [NSColor blackColor];
   }
@@ -41,6 +39,6 @@
     nil];
   cellFrame.origin.x += 5;
   cellFrame.size.width -= 5;
-  [line drawInRect:cellFrame withAttributes:attributes];
+  [coverageString drawInRect:cellFrame withAttributes:attributes];
 }
 @end

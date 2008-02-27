@@ -1,9 +1,9 @@
 //
-//  CoverStoryLineCell.m
+//  CoverStorySourcePathCell.m
 //  CoverStory
 //
-//  Created by dmaclach on 12/24/06.
-//  Copyright 2006-2007 Google Inc.
+//  Created by thomasvl on 2/26/08.
+//  Copyright 2008 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
@@ -17,30 +17,20 @@
 //  the License.
 //
 
-#import "CoverStoryLineCell.h"
+#import "CoverStorySourcePathCell.h"
 #import "CoverStoryCoverageData.h"
 
-@implementation CoverStoryLineCell
+@implementation CoverStorySourcePathCell
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
-  CoverStoryCoverageLineData *data = [self objectValue];
-  NSString *line = [data line];
-  SInt32 hitCount = [data hitCount];
-  NSColor *textColor;
-  if (hitCount == 0) {
-    [[NSColor colorWithDeviceRed:1.0 green:0.0 blue:0.0 alpha:1.0] set];
-    NSRectFill(cellFrame);
-    textColor = [NSColor whiteColor];
-  } else if (hitCount == -1) {
-    textColor = [NSColor grayColor];
-  } else {
-    textColor = [NSColor blackColor];
-  }
+  CoverStoryCoverageFileData *data = [self objectValue];
+  NSString *sourcePath = [data sourcePath];
+  sourcePath = [sourcePath stringByAbbreviatingWithTildeInPath];
   NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-    textColor, NSForegroundColorAttributeName, 
+    [NSColor blackColor], NSForegroundColorAttributeName, 
     [self font], NSFontAttributeName,
     nil];
   cellFrame.origin.x += 5;
   cellFrame.size.width -= 5;
-  [line drawInRect:cellFrame withAttributes:attributes];
+  [sourcePath drawInRect:cellFrame withAttributes:attributes];
 }
 @end

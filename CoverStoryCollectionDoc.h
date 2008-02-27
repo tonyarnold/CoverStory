@@ -1,9 +1,9 @@
 //
-//  CoverStoryDocument.h
+//  CoverStoryCollectionDoc.h
 //  CoverStory
 //
-//  Created by dmaclach on 12/20/06.
-//  Copyright 2006-2007 Google Inc.
+//  Created by thomasvl on 2/26/08.
+//  Copyright 2008 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
@@ -20,22 +20,16 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class CoverStoryCoverageFileData;
+@class CoverStoryCoverageSet;
 
 
-@interface CoverStoryDocument : NSDocument {
+@interface CoverStoryCollectionDoc : NSDocument {
  @private
-  IBOutlet NSTableView *codeView_;  // the table that shows the code
-  IBOutlet NSTextField *statistics_;  // lines we display stats in
-  CoverStoryCoverageFileData *fileData_;
+  IBOutlet NSTableView *codeList_;  // the table that shows list of files
+  CoverStoryCoverageSet *dataSet_;
+  NSArray *sourceList_;
 }
 
-// Opens up the source code file that corresponds to the gcov file we are
-// examining.
-- (IBAction)openSource:(id)sender;
-
-- (NSString *)sourcePath;
-
-- (void)setFileData:(CoverStoryCoverageFileData *)fileData;
+- (IBAction)doubleClickRow:(id)sender;
 
 @end

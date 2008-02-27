@@ -25,6 +25,11 @@
 		8D15AC310486D014006FF6A4 /* CoverStoryDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* CoverStoryDocument.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
+		F47A79A60D747379002302AB /* CoverStoryCollectionDoc.nib in Resources */ = {isa = PBXBuildFile; fileRef = F47A79A40D747379002302AB /* CoverStoryCollectionDoc.nib */; };
+		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; };
+		F47A7A5D0D749614002302AB /* CoverStoryCollectionDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A79AF0D74752A002302AB /* CoverStoryCollectionDoc.m */; };
+		F47A7B030D74A51A002302AB /* CoverStoryCoverageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7B000D74A51A002302AB /* CoverStoryCoverageCell.m */; };
+		F47A7B040D74A51A002302AB /* CoverStorySourcePathCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7B020D74A51A002302AB /* CoverStorySourcePathCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +64,17 @@
 		8BFE723C0B46FE3400A3C7DD /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* CoverStory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoverStory.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugTigerOrLater.xcconfig; sourceTree = "<group>"; };
+		F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ReleaseTigerOrLater.xcconfig; sourceTree = "<group>"; };
+		F47A79A50D747379002302AB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CoverStoryCollectionDoc.nib; sourceTree = "<group>"; };
+		F47A79AE0D74752A002302AB /* CoverStoryCollectionDoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCollectionDoc.h; sourceTree = "<group>"; };
+		F47A79AF0D74752A002302AB /* CoverStoryCollectionDoc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCollectionDoc.m; sourceTree = "<group>"; };
+		F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMScriptRunner.h; sourceTree = "<group>"; };
+		F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMScriptRunner.m; sourceTree = "<group>"; };
+		F47A7AFF0D74A51A002302AB /* CoverStoryCoverageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCoverageCell.h; sourceTree = "<group>"; };
+		F47A7B000D74A51A002302AB /* CoverStoryCoverageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCoverageCell.m; sourceTree = "<group>"; };
+		F47A7B010D74A51A002302AB /* CoverStorySourcePathCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStorySourcePathCell.h; sourceTree = "<group>"; };
+		F47A7B020D74A51A002302AB /* CoverStorySourcePathCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStorySourcePathCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +122,7 @@
 			children = (
 				8B198D2F0C7DF72D002E4E3F /* COPYING */,
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
+				F47A7A3D0D748DAC002302AB /* google-toolbox-for-mac */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
@@ -118,6 +135,12 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				F47A7AFF0D74A51A002302AB /* CoverStoryCoverageCell.h */,
+				F47A7B000D74A51A002302AB /* CoverStoryCoverageCell.m */,
+				F47A7B010D74A51A002302AB /* CoverStorySourcePathCell.h */,
+				F47A7B020D74A51A002302AB /* CoverStorySourcePathCell.m */,
+				F47A79AE0D74752A002302AB /* CoverStoryCollectionDoc.h */,
+				F47A79AF0D74752A002302AB /* CoverStoryCollectionDoc.m */,
 				8BFD5B020B3F126D00AFCDA2 /* CoverStoryScroller.h */,
 				8BFD5B030B3F126D00AFCDA2 /* CoverStoryScroller.m */,
 				8BFD559C0B3F02A000AFCDA2 /* CoverStoryHitCountCell.m */,
@@ -151,6 +174,7 @@
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */,
 				2A37F4B4FDCFA73011CA2CEA /* CoverStoryDocument.nib */,
+				F47A79A40D747379002302AB /* CoverStoryCollectionDoc.nib */,
 				63BC85E90B4D863400CDC9E5 /* logo_large.png */,
 				63BC85EA0B4D863400CDC9E5 /* main.css */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
@@ -167,6 +191,34 @@
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F4138F240D751FCF00F72B31 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */,
+				F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */,
+			);
+			path = Foundation;
+			sourceTree = "<group>";
+		};
+		F4138F270D75200B00F72B31 /* XcodeConfig */ = {
+			isa = PBXGroup;
+			children = (
+				F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */,
+				F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */,
+			);
+			path = XcodeConfig;
+			sourceTree = "<group>";
+		};
+		F47A7A3D0D748DAC002302AB /* google-toolbox-for-mac */ = {
+			isa = PBXGroup;
+			children = (
+				F4138F240D751FCF00F72B31 /* Foundation */,
+				F4138F270D75200B00F72B31 /* XcodeConfig */,
+			);
+			name = "google-toolbox-for-mac";
+			path = "external/google-toolbox-for-mac";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,9 +249,11 @@
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "CoverStory" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Gcover */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8D15AC270486D014006FF6A4 /* CoverStory */,
 			);
@@ -220,6 +274,7 @@
 				63BC85EB0B4D863400CDC9E5 /* logo_large.png in Resources */,
 				63BC85EC0B4D863400CDC9E5 /* main.css in Resources */,
 				63BC85FD0B4D868100CDC9E5 /* CoverStoryHelp in Resources */,
+				F47A79A60D747379002302AB /* CoverStoryCollectionDoc.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,6 +309,10 @@
 				8BFD559E0B3F02A000AFCDA2 /* CoverStoryHitCountCell.m in Sources */,
 				8BFD5B040B3F126D00AFCDA2 /* CoverStoryScroller.m in Sources */,
 				8BFD61400B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.m in Sources */,
+				F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */,
+				F47A7A5D0D749614002302AB /* CoverStoryCollectionDoc.m in Sources */,
+				F47A7B030D74A51A002302AB /* CoverStoryCoverageCell.m in Sources */,
+				F47A7B040D74A51A002302AB /* CoverStorySourcePathCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,36 +359,24 @@
 			name = CoverStoryHelp;
 			sourceTree = "<group>";
 		};
+		F47A79A40D747379002302AB /* CoverStoryCollectionDoc.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F47A79A50D747379002302AB /* English */,
+			);
+			name = CoverStoryCollectionDoc.nib;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CoverStory.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					_GLIBCXX_DEBUG_PEDANTIC,
-					_GLIBCXX_DEBUG,
-					_GLIBCPP_CONCEPT_CHECKS,
-				);
 				INFOPLIST_FILE = Info.plist;
-				PREBINDING = NO;
 				PRODUCT_NAME = CoverStory;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Werror",
-					"-Wendif-labels",
-					"-Wnewline-eof",
-				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -337,41 +384,25 @@
 		C05733C908A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				DEAD_CODE_STRIPPING = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CoverStory.pch;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Info.plist;
-				PREBINDING = NO;
 				PRODUCT_NAME = CoverStory;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Werror",
-					"-Wendif-labels",
-					"-Wnewline-eof",
-				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
 		C05733CC08A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Debug;
 		};
 		C05733CD08A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};

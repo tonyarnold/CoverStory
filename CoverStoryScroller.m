@@ -77,7 +77,7 @@
     // side by side.
     [NSBezierPath setDefaultLineWidth:NSHeight(slot) / count];
     for (int i = 0; i < count; ++i) {
-      CoverStoryCoverageData *data = [coverageData_ objectAtIndex:i];
+      CoverStoryCoverageLineData *data = [coverageData_ objectAtIndex:i];
       SInt32 hitCount = [data hitCount];
       if (hitCount == 0) {
         float y = NSMinY(slot) + NSHeight(slot) * ((float)i / (float)count);

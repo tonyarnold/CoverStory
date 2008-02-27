@@ -23,7 +23,7 @@
 @implementation CoverStoryHitCountCell
 
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
-  CoverStoryCoverageData *data = [self objectValue];
+  CoverStoryCoverageLineData *data = [self objectValue];
   
   // draw background
   [[NSColor colorWithDeviceWhite:0.95 alpha:1.0] set];
