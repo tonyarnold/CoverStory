@@ -37,10 +37,16 @@
     
     // Scan in our data and create up out CoverStoryCoverageLineData objects.
     // TODO(dmaclach): make this routine a little more "error tolerant"
+
+    // Most Mac source is UTF8 or Western(MacRoman), so we'll try those and then
+    // punt.
     NSString *string = [[[NSString alloc] initWithData:data 
                                               encoding:NSUTF8StringEncoding] autorelease];
     if (string == nil) {
-      NSLog(@"failed to process data as UTF8, currently don't try other encodings");
+      string = [[[NSString alloc] initWithData:data 
+                                      encoding:NSMacOSRomanStringEncoding] autorelease];    }
+    if (string == nil) {
+      NSLog(@"failed to process data as UTF8 or MacOSRoman, currently don't try other encodings");
       [self release];
       self = nil;
     } else {
