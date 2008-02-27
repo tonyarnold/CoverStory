@@ -39,45 +39,52 @@
     // TODO(dmaclach): make this routine a little more "error tolerant"
     NSString *string = [[[NSString alloc] initWithData:data 
                                               encoding:NSUTF8StringEncoding] autorelease];
-    NSCharacterSet *linefeeds = [NSCharacterSet characterSetWithCharactersInString:@"\n\r"];
-    NSScanner *scanner = [NSScanner scannerWithString:string];
-    [scanner setCharactersToBeSkipped:nil];
-    while (![scanner isAtEnd]) {
-      NSString *segment;
-      BOOL goodScan = [scanner scanUpToString:@":" intoString:&segment];
-      [scanner setScanLocation:[scanner scanLocation] + 1];
-      SInt32 hitCount = 0;
-      if (goodScan) {
-        hitCount = [segment intValue];
-        if (hitCount == 0) {
-          if ([segment characterAtIndex:[segment length] - 1] != '#') {
-            hitCount = -1;
-          }
-        }
-      }
-      goodScan = [scanner scanUpToString:@":" intoString:&segment];
-      [scanner setScanLocation:[scanner scanLocation] + 1];
-      goodScan = [scanner scanUpToCharactersFromSet:linefeeds
-                                         intoString:&segment];
-      if (!goodScan) {
-        segment = @"";
-      }
-      [scanner setScanLocation:[scanner scanLocation] + 1];
-      [lines_ addObject:[CoverStoryCoverageLineData coverageLineDataWithLine:segment 
-                                                                    hitCount:hitCount]];
-    }
-    
-    // The first five lines are not data we want to show to the user
-    if ([lines_ count] > 5) {
-      // The first line contains the path to our source.
-      sourcePath_ = [[[[lines_ objectAtIndex:0] line] substringFromIndex:7] retain];
-      [lines_ removeObjectsInRange:NSMakeRange(0,5)];
-      // get out counts
-      [self updateCounts];
-    } else {
-      // something bad
+    if (string == nil) {
+      NSLog(@"failed to process data as UTF8, currently don't try other encodings");
       [self release];
       self = nil;
+    } else {
+      
+      NSCharacterSet *linefeeds = [NSCharacterSet characterSetWithCharactersInString:@"\n\r"];
+      NSScanner *scanner = [NSScanner scannerWithString:string];
+      [scanner setCharactersToBeSkipped:nil];
+      while (![scanner isAtEnd]) {
+        NSString *segment;
+        BOOL goodScan = [scanner scanUpToString:@":" intoString:&segment];
+        [scanner setScanLocation:[scanner scanLocation] + 1];
+        SInt32 hitCount = 0;
+        if (goodScan) {
+          hitCount = [segment intValue];
+          if (hitCount == 0) {
+            if ([segment characterAtIndex:[segment length] - 1] != '#') {
+              hitCount = -1;
+            }
+          }
+        }
+        goodScan = [scanner scanUpToString:@":" intoString:&segment];
+        [scanner setScanLocation:[scanner scanLocation] + 1];
+        goodScan = [scanner scanUpToCharactersFromSet:linefeeds
+                                           intoString:&segment];
+        if (!goodScan) {
+          segment = @"";
+        }
+        [scanner setScanLocation:[scanner scanLocation] + 1];
+        [lines_ addObject:[CoverStoryCoverageLineData coverageLineDataWithLine:segment 
+                                                                      hitCount:hitCount]];
+      }
+      
+      // The first five lines are not data we want to show to the user
+      if ([lines_ count] > 5) {
+        // The first line contains the path to our source.
+        sourcePath_ = [[[[lines_ objectAtIndex:0] line] substringFromIndex:7] retain];
+        [lines_ removeObjectsInRange:NSMakeRange(0,5)];
+        // get out counts
+        [self updateCounts];
+      } else {
+        // something bad
+        [self release];
+        self = nil;
+      }
     }
   }
   

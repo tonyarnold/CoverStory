@@ -174,8 +174,13 @@
         // load it and add it to out set
         CoverStoryCoverageFileData *fileData =
           [CoverStoryCoverageFileData coverageFileDataFromData:data];
-        [dataSet_ addFileData:fileData];
-        result = YES;
+        if (fileData) {
+          [dataSet_ addFileData:fileData];
+          result = YES;
+        } else {
+          NSLog(@"failed to pull data from gcov file, usually means source wasn't UTF8 (%@)",
+                [fullPath lastPathComponent]);
+        }
       } else {
         // TODO: report this out
         NSLog(@"failed to load data from gcov file: %@", fullPath);
