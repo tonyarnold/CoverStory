@@ -25,6 +25,8 @@
 		8D15AC310486D014006FF6A4 /* CoverStoryDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* CoverStoryDocument.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
+		F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */; };
+		F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; };
 		F47A79A60D747379002302AB /* CoverStoryCollectionDoc.nib in Resources */ = {isa = PBXBuildFile; fileRef = F47A79A40D747379002302AB /* CoverStoryCollectionDoc.nib */; };
 		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; };
 		F47A7A5D0D749614002302AB /* CoverStoryCollectionDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A79AF0D74752A002302AB /* CoverStoryCollectionDoc.m */; };
@@ -66,6 +68,10 @@
 		8D15AC370486D014006FF6A4 /* CoverStory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoverStory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugTigerOrLater.xcconfig; sourceTree = "<group>"; };
 		F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ReleaseTigerOrLater.xcconfig; sourceTree = "<group>"; };
+		F41390DB0D77103C00F72B31 /* GTMNSFileManager+Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSFileManager+Path.h"; sourceTree = "<group>"; };
+		F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSFileManager+Path.m"; sourceTree = "<group>"; };
+		F41390F30D771A5400F72B31 /* GTMNSEnumerator+Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSEnumerator+Filter.h"; sourceTree = "<group>"; };
+		F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSEnumerator+Filter.m"; sourceTree = "<group>"; };
 		F47A79A50D747379002302AB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CoverStoryCollectionDoc.nib; sourceTree = "<group>"; };
 		F47A79AE0D74752A002302AB /* CoverStoryCollectionDoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCollectionDoc.h; sourceTree = "<group>"; };
 		F47A79AF0D74752A002302AB /* CoverStoryCollectionDoc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCollectionDoc.m; sourceTree = "<group>"; };
@@ -196,6 +202,10 @@
 		F4138F240D751FCF00F72B31 /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
+				F41390F30D771A5400F72B31 /* GTMNSEnumerator+Filter.h */,
+				F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */,
+				F41390DB0D77103C00F72B31 /* GTMNSFileManager+Path.h */,
+				F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */,
 				F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */,
 				F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */,
 			);
@@ -313,6 +323,8 @@
 				F47A7A5D0D749614002302AB /* CoverStoryCollectionDoc.m in Sources */,
 				F47A7B030D74A51A002302AB /* CoverStoryCoverageCell.m in Sources */,
 				F47A7B040D74A51A002302AB /* CoverStorySourcePathCell.m in Sources */,
+				F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */,
+				F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

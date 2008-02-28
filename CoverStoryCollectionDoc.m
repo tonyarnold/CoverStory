@@ -20,6 +20,8 @@
 #import "CoverStoryCollectionDoc.h"
 #import "CoverStoryCoverageData.h"
 #import "GTMScriptRunner.h"
+#import "GTMNSFileManager+Path.h"
+#import "GTMNSEnumerator+Filter.h"
 #import "CoverStoryDocument.h"
 
 @interface CoverStoryCollectionDoc (PrivateMethods)
@@ -124,14 +126,15 @@
   // cycle through the directory finding the .gcno files
   NSFileManager *fm = [NSFileManager defaultManager];
   NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
+  NSEnumerator *enumerator2 =
+    [enumerator gtm_filteredEnumeratorByMakingEachObjectPerformSelector:@selector(hasSuffix:)
+                                                             withObject:@".gcno"];
   NSString *subPath = nil;
-  while ((subPath = [enumerator nextObject]) != nil) {
-    if ([subPath hasSuffix:@".gcno"]) {
-      NSString *fullPath = [path stringByAppendingPathComponent:subPath];
-      if (![self processCoverageForPath:fullPath]) {
-        // TODO: better error handling
-        NSLog(@"failed to process file: %@", fullPath);
-      }
+  while ((subPath = [enumerator2 nextObject]) != nil) {
+    NSString *fullPath = [path stringByAppendingPathComponent:subPath];
+    if (![self processCoverageForPath:fullPath]) {
+      // TODO: better error handling
+      NSLog(@"failed to process file: %@", fullPath);
     }
   }
   return YES;
@@ -148,49 +151,54 @@
   GTMScriptRunner *runner = [GTMScriptRunner runnerWithBash];
   if (!runner) return NO;
 
-  // run gcov
-  NSString *script =
-    [NSString stringWithFormat:
-     @"/bin/mkdir -p \"%@\" && cd \"%@\" && /usr/bin/gcov -o \"%@\" \"%@\"\n",
-     tempDir, tempDir, pathDir, path];
-
-  NSString *stdErr = nil;
-  NSString *stdOut = [runner run:script standardError:&stdErr];
-  if (([stdOut length] == 0) || ([stdErr length] > 0)) {
-    // TODO - provide a real way to get this to the users
-    NSLog(@"failed to run gcov, stderr: %@", stdErr);
-    goto bail_out;
-  }
-
-  // collect the gcov files
+  // make a scratch directory
   NSFileManager *fm = [NSFileManager defaultManager];
-  NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:tempDir];
-  NSString *subPath = nil;
-  while ((subPath = [enumerator nextObject]) != nil) {
-    if ([subPath hasSuffix:@".gcov"]) {
-      NSString *fullPath = [tempDir stringByAppendingPathComponent:subPath];
-      NSData *data = [NSData dataWithContentsOfFile:fullPath];
-      if (data) {
-        // load it and add it to out set
-        CoverStoryCoverageFileData *fileData =
-          [CoverStoryCoverageFileData coverageFileDataFromData:data];
-        if (fileData) {
-          [dataSet_ addFileData:fileData];
-          result = YES;
+  if ([fm gtm_createFullPathToDirectory:tempDir attributes:nil]) {
+  
+    // run gcov (it writes to current directory, so we cd into our dir first)
+    NSString *script =
+      [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/gcov -l -o \"%@\" \"%@\"",
+        tempDir, pathDir, path];
+    
+    NSString *stdErr = nil;
+    NSString *stdOut = [runner run:script standardError:&stdErr];
+    if (([stdOut length] == 0) || ([stdErr length] > 0)) {
+      // TODO - provide a real way to get this to the users
+      NSLog(@"Failed to run gcov for %@", path);
+      NSLog(@">>> stdout: %@", stdOut);
+      NSLog(@">>> stderr: %@", stdErr);
+    } else {
+      
+      // collect the gcov files
+      NSArray *resultPaths = [fm gtm_filePathsWithExtension:@"gcov"
+                                                inDirectory:tempDir];
+      for (int x = 0 ; x < [resultPaths count] ; ++x) {
+        NSString *fullPath = [resultPaths objectAtIndex:x];
+        NSData *data = [NSData dataWithContentsOfFile:fullPath];
+        if (data) {
+          // load it and add it to out set
+          CoverStoryCoverageFileData *fileData =
+            [CoverStoryCoverageFileData coverageFileDataFromData:data];
+          if (fileData) {
+            [dataSet_ addFileData:fileData];
+            result = YES;
+          } else {
+            NSLog(@"failed to pull data from gcov file (%@), usually means source isn't a currently handled encoding",
+                  [fullPath lastPathComponent]);
+          }
         } else {
-          NSLog(@"failed to pull data from gcov file, usually means source wasn't UTF8 (%@)",
-                [fullPath lastPathComponent]);
+          // TODO: report this out
+          NSLog(@"failed to load data from gcov file: %@", fullPath);
         }
-      } else {
-        // TODO: report this out
-        NSLog(@"failed to load data from gcov file: %@", fullPath);
       }
     }
-  }
 
-bail_out:
-  // just run an rm as part of the cleanup
-  [runner run:[NSString stringWithFormat:@"/bin/rm -rf \"%@\"\n", tempDir]];
+    // nuke our temp dir tree
+    if (![fm removeFileAtPath:tempDir handler:nil]) {
+      // TODO - provide a real way to get this to the users
+      NSLog(@"failed to remove our tempdir (%@)", tempDir);
+    }
+  }
 
   return result;
 }
