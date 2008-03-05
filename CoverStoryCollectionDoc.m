@@ -26,7 +26,8 @@
 
 @interface CoverStoryCollectionDoc (PrivateMethods)
 - (BOOL)processCoverageForFolder:(NSString *)path;
-- (BOOL)processCoverageForPath:(NSString *)path;
+- (BOOL)processCoverageForFiles:(NSArray *)filenames
+                       inFolder:(NSString *)folderPath;
 @end
 
 @implementation CoverStoryCollectionDoc
@@ -74,8 +75,11 @@
 
   // the wrapper doesn't have the full path, but it's already set on us, so use
   // that instead.
-  NSString *path = [self fileName];
-  return [self processCoverageForPath:path];
+  NSString *fullPath = [self fileName];
+  NSString *folderPath = [fullPath stringByDeletingLastPathComponent];
+  NSString *filename = [fullPath lastPathComponent];
+  return [self processCoverageForFiles:[NSArray arrayWithObject:filename]
+                              inFolder:folderPath];
 }
 
 - (int)numberOfRowsInTableView:(NSTableView *)tableView {
@@ -123,52 +127,136 @@
 @implementation CoverStoryCollectionDoc (PrivateMethods)
 
 - (BOOL)processCoverageForFolder:(NSString *)path {
-  // cycle through the directory finding the .gcno files
+  // cycle through the directory...
   NSFileManager *fm = [NSFileManager defaultManager];
   NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
+  // ...filter to .gcno files...
   NSEnumerator *enumerator2 =
     [enumerator gtm_filteredEnumeratorByMakingEachObjectPerformSelector:@selector(hasSuffix:)
                                                              withObject:@".gcno"];
-  NSString *subPath = nil;
-  while ((subPath = [enumerator2 nextObject]) != nil) {
-    NSString *fullPath = [path stringByAppendingPathComponent:subPath];
-    if (![self processCoverageForPath:fullPath]) {
+  // ...turn them all into full paths...
+  NSEnumerator *enumerator3 =
+    [enumerator2 gtm_enumeratorByTarget:path
+                  performOnEachSelector:@selector(stringByAppendingPathComponent:)];
+  // .. and collect them all.
+  NSArray *allFilePaths = [enumerator3 allObjects];
+
+  // we want to back process them by chunks w/in a given directory.  so sort
+  // and then break them off into chunks.
+  allFilePaths = [allFilePaths sortedArrayUsingSelector:@selector(compare:)];
+  if ([allFilePaths count] >= 0) {
+
+    // see our collecting w/ the first item
+    NSString *filename = [allFilePaths objectAtIndex:0];
+    NSString *currentFolder = [filename stringByDeletingLastPathComponent];
+    NSMutableArray *currentFileList =
+      [NSMutableArray arrayWithObject:[filename lastPathComponent]];
+
+    // now spin the loop
+    for (int x = 1 ; x < [allFilePaths count] ; ++x) {
+      NSString *filename = [allFilePaths objectAtIndex:x];
+      // see if it has the same parent folder
+      if ([[filename stringByDeletingLastPathComponent] isEqualTo:currentFolder]) {
+        // add it
+        NSAssert([currentFileList count] > 0, @"file list should NOT be empty");
+        [currentFileList addObject:[filename lastPathComponent]];
+      } else {
+        // process what's in the list
+        if (![self processCoverageForFiles:currentFileList
+                                  inFolder:currentFolder]) {
+          // TODO: better error handling
+          NSLog(@"from folder '%@' failed to process files: %@",
+                currentFolder, currentFileList);
+        }
+        // restart the collecting w/ this filename
+        currentFolder = [filename stringByDeletingLastPathComponent];
+        [currentFileList removeAllObjects];
+        [currentFileList addObject:[filename lastPathComponent]];
+      }
+    }
+    // process whatever what we were collecting when we hit the end
+    if (![self processCoverageForFiles:currentFileList
+                              inFolder:currentFolder]) {
       // TODO: better error handling
-      NSLog(@"failed to process file: %@", fullPath);
+      NSLog(@"from folder '%@' failed to process files: %@",
+            currentFolder, currentFileList);
     }
   }
   return YES;
 }
 
-- (BOOL)processCoverageForPath:(NSString *)path {
+- (BOOL)processCoverageForFiles:(NSArray *)filenames
+                       inFolder:(NSString *)folderPath {
+  
+  if (([filenames count] == 0) || ([folderPath length] == 0)) {
+    return NO;
+  }
   
   NSString *tempDir = NSTemporaryDirectory();
-  tempDir = [tempDir stringByAppendingPathComponent:[path lastPathComponent]];
-  NSString *pathDir = [path stringByDeletingLastPathComponent];
-  if (!tempDir || !pathDir) return NO;
+  tempDir = [tempDir stringByAppendingPathComponent:[folderPath lastPathComponent]];
 
+  // make sure all the filenames are just leaves
+  for (int x = 0 ; x < [filenames count] ; ++x) {
+    NSString *filename = [filenames objectAtIndex:x];
+    NSRange range = [filename rangeOfString:@"/"];
+    if (range.location != NSNotFound) {
+      // TODO - report this out better
+      NSLog(@"filename '%@' had a slash", filename);
+      return NO;
+    }
+  }
+  
+  // make sure it ends in a slash
+  if (![folderPath hasSuffix:@"/"]) {
+    folderPath = [folderPath stringByAppendingString:@"/"];
+  }
+
+  // we write all the full file paths into a file w/ null chars after each
+  // so we can feed it into xargs -0
+  NSMutableData *fileList = [NSMutableData data];
+  NSData *folderPathUTF8 = [folderPath dataUsingEncoding:NSUTF8StringEncoding];
+  if (!folderPathUTF8 || !fileList) return NO;
+  char nullByte = 0;
+  for (int x = 0 ; x < [filenames count] ; ++x) {
+    NSString *filename = [filenames objectAtIndex:x];
+    NSData *filenameUTF8 = [filename dataUsingEncoding:NSUTF8StringEncoding];
+    if (!filenameUTF8) return NO;
+    [fileList appendData:folderPathUTF8];
+    [fileList appendData:filenameUTF8];
+    [fileList appendBytes:&nullByte length:1];
+  }
+  
   BOOL result = NO;
   GTMScriptRunner *runner = [GTMScriptRunner runnerWithBash];
   if (!runner) return NO;
-
+  
   // make a scratch directory
   NSFileManager *fm = [NSFileManager defaultManager];
   if ([fm gtm_createFullPathToDirectory:tempDir attributes:nil]) {
-  
-    // run gcov (it writes to current directory, so we cd into our dir first)
-    NSString *script =
-      [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/gcov -l -o \"%@\" \"%@\"",
-        tempDir, pathDir, path];
-    
-    NSString *stdErr = nil;
-    NSString *stdOut = [runner run:script standardError:&stdErr];
-    if (([stdOut length] == 0) || ([stdErr length] > 0)) {
-      // TODO - provide a real way to get this to the users
-      NSLog(@"Failed to run gcov for %@", path);
-      NSLog(@">>> stdout: %@", stdOut);
-      NSLog(@">>> stderr: %@", stdErr);
-    } else {
+
+    // now write out our file
+    NSString *fileListPath = [tempDir stringByAppendingPathComponent:@"filelists.txt"];
+    if (fileListPath && [fileList writeToFile:fileListPath atomically:YES]) {
+      // run gcov (it writes to current directory, so we cd into our dir first)
+      // we use xargs to batch up the files into as few of runs of gcov as
+      // possible.  (we could use -P [num_cpus] to do things in parallell)
+      NSString *script =
+      [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/xargs -0 /usr/bin/gcov -lp -o \"%@\" < \"%@\"",
+       tempDir, folderPath, fileListPath];
       
+      NSString *stdErr = nil;
+      NSString *stdOut = [runner run:script standardError:&stdErr];
+      if (([stdOut length] == 0) || ([stdErr length] > 0)) {
+        // TODO - provide a real way to get this to the users
+        NSLog(@"gcov failed from folder '%@' failed to process files: %@",
+              folderPath, filenames);
+        NSLog(@">>> stdout: %@", stdOut);
+        NSLog(@">>> stderr: %@", stdErr);
+      } 
+    
+      // swince we batch process, we might have gotten some data even w/ an error
+      // so we check anyways for data
+        
       // collect the gcov files
       NSArray *resultPaths = [fm gtm_filePathsWithExtension:@"gcov"
                                                 inDirectory:tempDir];
@@ -178,7 +266,7 @@
         if (data) {
           // load it and add it to out set
           CoverStoryCoverageFileData *fileData =
-            [CoverStoryCoverageFileData coverageFileDataFromData:data];
+          [CoverStoryCoverageFileData coverageFileDataFromData:data];
           if (fileData) {
             [dataSet_ addFileData:fileData];
             result = YES;
@@ -191,15 +279,18 @@
           NSLog(@"failed to load data from gcov file: %@", fullPath);
         }
       }
+    } else {
+      // TODO: report this out
+      NSLog(@"failed to write out the file lists (%@)", fileListPath);
     }
-
+    
     // nuke our temp dir tree
     if (![fm removeFileAtPath:tempDir handler:nil]) {
       // TODO - provide a real way to get this to the users
       NSLog(@"failed to remove our tempdir (%@)", tempDir);
     }
   }
-
+  
   return result;
 }
 

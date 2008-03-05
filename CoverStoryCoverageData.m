@@ -178,14 +178,14 @@
     CoverStoryCoverageLineData *lineMe = [lines_ objectAtIndex:x];
 
     // string match, if either says -1, they both have to say -1
-    if (![[lineNew line] isEqual:[lineMe line]])
+    if (![[lineNew line] isEqual:[lineMe line]]) {
+      NSLog(@"failed to merge lines, code doesn't match, index %d - '%@' vs '%@'",
+            x, [lineNew line], [lineMe line]);
       return NO;
-    SInt32 hitNew = [lineNew hitCount];
-    SInt32 hitMe = [lineMe hitCount];
-    if ((hitNew == -1) && (hitMe != -1))
-      return NO;
-    if ((hitMe == -1) && (hitNew != -1))
-      return NO;
+    }
+    // we don't check if the lines weren't hit between the two because we could
+    // be processing big and little endian runs, and w/ ifdefs one set of lines
+    // would be ignored in one run, but not in the other.
   }
   
   // spin though once more summing the counts
@@ -291,8 +291,15 @@
 }
 
 - (void)addHits:(SInt32)newHits {
-  if (newHits > 0)
+  // we could be processing big and little endian runs, and w/ ifdefs one set of
+  // lines would be ignored in one run, but not in the other. so...  if we were
+  // a not hit line, we just take the new hits, otherwise we add any real hits
+  // to our count.
+  if (hitCount_ == -1) {
+    hitCount_ = newHits;
+  } else if (newHits > 0) {
     hitCount_ += newHits;
+  }
 }
 
 - (NSString*)description {
