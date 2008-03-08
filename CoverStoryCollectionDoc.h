@@ -26,6 +26,7 @@
 @interface CoverStoryCollectionDoc : NSDocument {
  @private
   IBOutlet NSTableView *codeList_;  // the table that shows list of files
+  IBOutlet NSTextField *statistics_;
   CoverStoryCoverageSet *dataSet_;
   NSArray *sourceList_;
 }

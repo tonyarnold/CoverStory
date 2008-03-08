@@ -58,9 +58,17 @@
   SInt32 totalLines = [fileData_ numberTotalLines];
   SInt32 hitLines   = [fileData_ numberHitCodeLines];
   SInt32 codeLines  = [fileData_ numberCodeLines];
-  NSString *statString = [NSString stringWithFormat:
-    @"Executed %.2f%% of %d lines (%d executed, %d executable, %d total lines)", 
-    [fileData_ coverage], codeLines, hitLines, codeLines, totalLines];
+  SInt32 nonfeasible  = [fileData_ numberNonFeasibleLines];
+  NSString *statString = nil;
+  if (nonfeasible) {
+    statString = [NSString stringWithFormat:
+      @"Executed %.2f%% of %d lines (%d executed, %d executable, %d non-feasible, %d total lines)", 
+         [fileData_ coverage], codeLines, hitLines, codeLines, nonfeasible, totalLines];
+  } else {
+    statString = [NSString stringWithFormat:
+      @"Executed %.2f%% of %d lines (%d executed, %d executable, %d total lines)", 
+         [fileData_ coverage], codeLines, hitLines, codeLines, totalLines];
+  }
   [statistics_ setStringValue:statString];
   
   // We want no cell spacing to make it look normal

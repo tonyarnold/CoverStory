@@ -32,6 +32,7 @@
 		F47A7A5D0D749614002302AB /* CoverStoryCollectionDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A79AF0D74752A002302AB /* CoverStoryCollectionDoc.m */; };
 		F47A7B030D74A51A002302AB /* CoverStoryCoverageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7B000D74A51A002302AB /* CoverStoryCoverageCell.m */; };
 		F47A7B040D74A51A002302AB /* CoverStorySourcePathCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7B020D74A51A002302AB /* CoverStorySourcePathCell.m */; };
+		F4E280D40D81F38700DD304F /* GTMRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E280D30D81F38700DD304F /* GTMRegex.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +82,8 @@
 		F47A7B000D74A51A002302AB /* CoverStoryCoverageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCoverageCell.m; sourceTree = "<group>"; };
 		F47A7B010D74A51A002302AB /* CoverStorySourcePathCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStorySourcePathCell.h; sourceTree = "<group>"; };
 		F47A7B020D74A51A002302AB /* CoverStorySourcePathCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStorySourcePathCell.m; sourceTree = "<group>"; };
+		F4E280D20D81F38700DD304F /* GTMRegex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMRegex.h; sourceTree = "<group>"; };
+		F4E280D30D81F38700DD304F /* GTMRegex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMRegex.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,6 +205,8 @@
 		F4138F240D751FCF00F72B31 /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
+				F4E280D20D81F38700DD304F /* GTMRegex.h */,
+				F4E280D30D81F38700DD304F /* GTMRegex.m */,
 				F41390F30D771A5400F72B31 /* GTMNSEnumerator+Filter.h */,
 				F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */,
 				F41390DB0D77103C00F72B31 /* GTMNSFileManager+Path.h */,
@@ -325,6 +330,7 @@
 				F47A7B040D74A51A002302AB /* CoverStorySourcePathCell.m in Sources */,
 				F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */,
 				F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */,
+				F4E280D40D81F38700DD304F /* GTMRegex.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,7 +30,7 @@
     [[NSColor colorWithDeviceRed:1.0 green:0.0 blue:0.0 alpha:1.0] set];
     NSRectFill(cellFrame);
     textColor = [NSColor whiteColor];
-  } else if (hitCount == -1) {
+  } else if (hitCount < 0) {
     textColor = [NSColor grayColor];
   } else {
     textColor = [NSColor blackColor];

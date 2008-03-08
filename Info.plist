@@ -55,6 +55,28 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>gcda</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>CoverStoryGcov</string>
+			<key>CFBundleTypeName</key>
+			<string>gcov Compiled Data</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>???</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSDocumentClass</key>
+			<string>CoverStoryCollectionDoc</string>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>gcov</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>

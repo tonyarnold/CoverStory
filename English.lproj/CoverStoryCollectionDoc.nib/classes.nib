@@ -18,6 +18,8 @@
 			<dict>
 				<key>codeList_</key>
 				<string>NSTableView</string>
+				<key>statistics_</key>
+				<string>NSTextField</string>
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSDocument</string>

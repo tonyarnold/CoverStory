@@ -48,8 +48,13 @@
       [self font], NSFontAttributeName, 
       nil];
     cellFrame.size.width -= 2;
-    [[NSString stringWithFormat:@"%d", hitCount] drawInRect:cellFrame 
-                                             withAttributes:attributes];
+    NSString *displayString = nil;
+    if (hitCount == -2) {
+      displayString = @"--"; // for non-feasible lines
+    } else {
+      displayString = [NSString stringWithFormat:@"%d", hitCount];
+    }
+    [displayString drawInRect:cellFrame withAttributes:attributes];
   }
 }
 @end

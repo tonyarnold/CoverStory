@@ -26,6 +26,7 @@
   NSMutableArray *lines_; // of CoverStoryCoverageLineData
   SInt32 hitLines_;
   SInt32 codeLines_;
+  SInt32 nonfeasible_;
   NSString *sourcePath_;
 }
 
@@ -33,8 +34,9 @@
 - (id)initWithData:(NSData *)data;
 - (NSArray *)lines;
 - (SInt32)numberTotalLines;
-- (SInt32)numberCodeLines;
+- (SInt32)numberCodeLines; // doesn't include non-feasible
 - (SInt32)numberHitCodeLines;
+- (SInt32)numberNonFeasibleLines;
 - (float)coverage;
 - (NSString *)sourcePath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
@@ -50,12 +52,18 @@
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
 - (NSArray *)sourcePaths;
 - (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path;
+- (SInt32)numberTotalLines;
+- (SInt32)numberCodeLines; // doesn't include non-feasible
+- (SInt32)numberHitCodeLines;
+- (SInt32)numberNonFeasibleLines;
+- (float)coverage;
 @end
                     
                      
 // Keeps track of the number of times a line of code has been hit. There is
 // one CoverStoryCoverageLineData object per line of code in the file. Note that
-// a hitcount of -1 means that the line is not executed.
+// a hitcount of -1 means that the line is not executed, and -2 means the source
+// had non-feasible markers.
 
 @interface CoverStoryCoverageLineData : NSObject<NSCopying> {
  @private

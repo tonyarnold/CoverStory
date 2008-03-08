@@ -18,7 +18,7 @@
 //
 
 #import "CoverStoryCoverageData.h"
-
+#import "GTMRegex.h"
 
 @interface CoverStoryCoverageFileData (PrivateMethods)
 - (void)updateCounts;
@@ -52,6 +52,10 @@
     } else {
       
       NSCharacterSet *linefeeds = [NSCharacterSet characterSetWithCharactersInString:@"\n\r"];
+      GTMRegex *nfLineRegex = [GTMRegex regexWithPattern:@".*//[[:blank:]]*COV_NF_LINE.*"];
+      GTMRegex *nfRangeStartRegex = [GTMRegex regexWithPattern:@".*//[[:blank:]]*COV_NF_START.*"];
+      GTMRegex *nfRangeEndRegex  = [GTMRegex regexWithPattern:@".*//[[:blank:]]*COV_NF_END.*"];
+      BOOL inNonFeasibleRange = NO;
       NSScanner *scanner = [NSScanner scannerWithString:string];
       [scanner setCharactersToBeSkipped:nil];
       while (![scanner isAtEnd]) {
@@ -75,6 +79,25 @@
           segment = @"";
         }
         [scanner setScanLocation:[scanner scanLocation] + 1];
+        // handle the non feasible markers
+        if (inNonFeasibleRange) {
+          // line doesn't count
+          hitCount = -2;
+          // if it has the end marker, clear our state
+          if ([nfRangeEndRegex matchesString:segment]) {
+            inNonFeasibleRange = NO;
+          }
+        } else {
+          // if it matches the line marker, don't count it
+          if ([nfLineRegex matchesString:segment]) {
+            hitCount = -2;
+          }
+          // if it matches the start marker, don't count it and set state
+          else if ([nfRangeStartRegex matchesString:segment]) {
+            hitCount = -2;
+            inNonFeasibleRange = YES;
+          }
+        }
         [lines_ addObject:[CoverStoryCoverageLineData coverageLineDataWithLine:segment 
                                                                       hitCount:hitCount]];
       }
@@ -112,6 +135,9 @@
   while ((dataPoint = [dataEnum nextObject]) != nil) {
     int hitCount = [dataPoint hitCount];
     switch (hitCount) {
+      case -2:
+        ++nonfeasible_;
+        break;
       case -1:
         // doesn't count;
         break;
@@ -159,6 +185,10 @@
   return hitLines_;
 }
 
+- (SInt32)numberNonFeasibleLines {
+  return nonfeasible_;
+}
+
 - (float)coverage {
   float result = (float)hitLines_/(float)codeLines_ * 100.0f;
   return result;
@@ -202,9 +232,9 @@
 
 - (NSString *)description {
   return [NSString stringWithFormat:
-            @"%@: %d total lines, %d lines of code, %d lines hit",
-            sourcePath_, [self numberTotalLines], [self numberCodeLines],
-            [self numberHitCodeLines]];
+            @"%@: %d total lines, %d lines non-feasible, %d lines of code, %d lines hit",
+            sourcePath_, [self numberTotalLines], [self numberNonFeasibleLines],
+            [self numberCodeLines], [self numberHitCodeLines]];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -253,6 +283,52 @@
 
 - (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path {
   return [fileDatas_ objectForKey:path];
+}
+
+- (SInt32)numberTotalLines {
+  SInt32 total = 0;
+  NSEnumerator *enumerator = [fileDatas_ objectEnumerator];
+  CoverStoryCoverageFileData *fileData = nil;
+  while ((fileData = [enumerator nextObject]) != nil) {
+    total += [fileData numberTotalLines];
+  }
+  return total;
+}
+
+- (SInt32)numberCodeLines {
+  SInt32 total = 0;
+  NSEnumerator *enumerator = [fileDatas_ objectEnumerator];
+  CoverStoryCoverageFileData *fileData = nil;
+  while ((fileData = [enumerator nextObject]) != nil) {
+    total += [fileData numberCodeLines];
+  }
+  return total;
+}
+
+- (SInt32)numberHitCodeLines {
+  SInt32 total = 0;
+  NSEnumerator *enumerator = [fileDatas_ objectEnumerator];
+  CoverStoryCoverageFileData *fileData = nil;
+  while ((fileData = [enumerator nextObject]) != nil) {
+    total += [fileData numberHitCodeLines];
+  }
+  return total;
+}
+
+- (SInt32)numberNonFeasibleLines {
+  SInt32 total = 0;
+  NSEnumerator *enumerator = [fileDatas_ objectEnumerator];
+  CoverStoryCoverageFileData *fileData = nil;
+  while ((fileData = [enumerator nextObject]) != nil) {
+    total += [fileData numberNonFeasibleLines];
+  }
+  return total;
+}
+
+- (float)coverage {
+  float result =
+    (float)[self numberHitCodeLines]/(float)[self numberCodeLines] * 100.0f;
+  return result;
 }
 
 - (NSString *)description {

@@ -60,6 +60,23 @@
   // wire up double click
   [codeList_ setTarget:self];
   [codeList_ setDoubleAction:@selector(doubleClickRow:)];
+  
+  // fill in the states
+  SInt32 totalLines = [dataSet_ numberTotalLines];
+  SInt32 hitLines   = [dataSet_ numberHitCodeLines];
+  SInt32 codeLines  = [dataSet_ numberCodeLines];
+  SInt32 nonfeasible  = [dataSet_ numberNonFeasibleLines];
+  NSString *statString = nil;
+  if (nonfeasible) {
+    statString = [NSString stringWithFormat:
+      @"Executed %.2f%% of %d lines (%d executed, %d executable, %d non-feasible, %d total lines)", 
+        [dataSet_ coverage], codeLines, hitLines, codeLines, nonfeasible, totalLines];
+  } else {
+    statString = [NSString stringWithFormat:
+      @"Executed %.2f%% of %d lines (%d executed, %d executable, %d total lines)", 
+        [dataSet_ coverage], codeLines, hitLines, codeLines, totalLines];
+  }
+  [statistics_ setStringValue:statString];
 }
 
 - (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper
@@ -130,10 +147,10 @@
   // cycle through the directory...
   NSFileManager *fm = [NSFileManager defaultManager];
   NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
-  // ...filter to .gcno files...
+  // ...filter to .gcda files...
   NSEnumerator *enumerator2 =
     [enumerator gtm_filteredEnumeratorByMakingEachObjectPerformSelector:@selector(hasSuffix:)
-                                                             withObject:@".gcno"];
+                                                             withObject:@".gcda"];
   // ...turn them all into full paths...
   NSEnumerator *enumerator3 =
     [enumerator2 gtm_enumeratorByTarget:path
@@ -241,7 +258,7 @@
       // we use xargs to batch up the files into as few of runs of gcov as
       // possible.  (we could use -P [num_cpus] to do things in parallell)
       NSString *script =
-      [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/xargs -0 /usr/bin/gcov -lp -o \"%@\" < \"%@\"",
+      [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/xargs -0 /usr/bin/gcov -l -o \"%@\" < \"%@\"",
        tempDir, folderPath, fileListPath];
       
       NSString *stdErr = nil;
