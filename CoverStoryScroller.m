@@ -96,5 +96,6 @@
 - (void)setCoverageData:(NSArray*)coverageData {
   [coverageData_ release];
   coverageData_ = [coverageData retain];
+  [self setNeedsDisplay:YES];
 }
 @end

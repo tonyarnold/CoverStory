@@ -20,7 +20,25 @@
 #import "CoverStoryApplicationDelegate.h"
 
 @implementation CoverStoryApplicationDelegate
-- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender {
-  return NO;
+- (void)applicationWillFinishLaunching:(NSNotification *)notification {
+  // Transformers need to be registered on Tiger
+  id transformerNames[] = {
+    @"CoverageLineDataToHitCountTransformer",
+    @"CoverageLineDataToSourceLineTransformer",
+    @"CoverageFileDataToSourcePathTransformer",
+    @"CoverageFileDataToCoveragePercentageTransformer",
+    @"LineCoverageToCoverageSummaryTransformer",
+    @"LineCoverageToCoverageShortSummaryTransformer"
+  };
+  for (size_t i = 0; i < sizeof(transformerNames) / sizeof(id); ++i) {
+    Class class = NSClassFromString(transformerNames[i]);
+    [NSValueTransformer setValueTransformer:[[class alloc] init]
+                                    forName:transformerNames[i]];
+  }
+}
+
+- (BOOL)applicationOpenUntitledFile:(NSApplication *)theApplication {
+  [[NSDocumentController sharedDocumentController] openDocument:theApplication];
+  return YES;
 }
 @end

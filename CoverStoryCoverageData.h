@@ -19,9 +19,17 @@
 
 #import <Cocoa/Cocoa.h>
 
+@protocol CoverStoryLineCoverageProtocol
+- (SInt32)numberTotalLines;
+- (SInt32)numberCodeLines; // doesn't include non-feasible
+- (SInt32)numberHitCodeLines;
+- (SInt32)numberNonFeasibleLines;
+- (NSNumber *)coverage;
+@end
+
 // Keeps track of the data for a whole source file.
 
-@interface CoverStoryCoverageFileData : NSObject<NSCopying> {
+@interface CoverStoryCoverageFileData : NSObject<NSCopying, CoverStoryLineCoverageProtocol> {
  @private
   NSMutableArray *lines_; // of CoverStoryCoverageLineData
   SInt32 hitLines_;
@@ -33,11 +41,6 @@
 + (id)coverageFileDataFromData:(NSData *)data;
 - (id)initWithData:(NSData *)data;
 - (NSArray *)lines;
-- (SInt32)numberTotalLines;
-- (SInt32)numberCodeLines; // doesn't include non-feasible
-- (SInt32)numberHitCodeLines;
-- (SInt32)numberNonFeasibleLines;
-- (float)coverage;
 - (NSString *)sourcePath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
 @end
@@ -45,18 +48,14 @@
 
 // Keeps track of a set of source files.
 
-@interface CoverStoryCoverageSet : NSObject {
+@interface CoverStoryCoverageSet : NSObject<CoverStoryLineCoverageProtocol> {
 @private
   NSMutableDictionary *fileDatas_;
 }
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
+- (NSArray *)fileDatas;
 - (NSArray *)sourcePaths;
 - (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path;
-- (SInt32)numberTotalLines;
-- (SInt32)numberCodeLines; // doesn't include non-feasible
-- (SInt32)numberHitCodeLines;
-- (SInt32)numberNonFeasibleLines;
-- (float)coverage;
 @end
                     
                      

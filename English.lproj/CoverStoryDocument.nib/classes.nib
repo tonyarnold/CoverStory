@@ -14,39 +14,20 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>CoverStoryLineCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTextFieldCell</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>openSource</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
 			<string>CoverStoryDocument</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>OUTLETS</key>
 			<dict>
-				<key>codeView_</key>
+				<key>codeTableView_</key>
 				<string>NSTableView</string>
-				<key>statistics_</key>
-				<string>NSTextField</string>
+				<key>sourceFilesController_</key>
+				<string>NSArrayController</string>
+				<key>spinner_</key>
+				<string>NSProgressIndicator</string>
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSDocument</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>CoverStoryHitCountCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTextFieldCell</string>
 		</dict>
 	</array>
 	<key>IBVersion</key>

@@ -189,9 +189,12 @@
   return nonfeasible_;
 }
 
-- (float)coverage {
-  float result = (float)hitLines_/(float)codeLines_ * 100.0f;
-  return result;
+- (NSNumber *)coverage {
+  float result = 0.0;
+  if (codeLines_ > 0.0) {
+    result = (float)hitLines_/(float)codeLines_ * 100.0f;
+  }
+  return [NSNumber numberWithFloat:result];
 }
 
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData {
@@ -277,6 +280,10 @@
   return YES;
 }
 
+- (NSArray *)fileDatas {
+  return [fileDatas_ allValues];
+}
+
 - (NSArray *)sourcePaths {
   return [fileDatas_ allKeys];
 }
@@ -325,10 +332,13 @@
   return total;
 }
 
-- (float)coverage {
-  float result =
-    (float)[self numberHitCodeLines]/(float)[self numberCodeLines] * 100.0f;
-  return result;
+- (NSNumber *)coverage {
+  float numberCodeLines = [self numberCodeLines];
+  float result = 0.0f;
+  if (numberCodeLines > 0.0) {
+    result = (float)[self numberHitCodeLines]/numberCodeLines * 100.0f;
+  }
+  return [NSNumber numberWithFloat:result];
 }
 
 - (NSString *)description {

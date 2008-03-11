@@ -20,22 +20,17 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class CoverStoryCoverageFileData;
-
+@class CoverStoryCoverageSet;
 
 @interface CoverStoryDocument : NSDocument {
  @private
-  IBOutlet NSTableView *codeView_;  // the table that shows the code
-  IBOutlet NSTextField *statistics_;  // lines we display stats in
-  CoverStoryCoverageFileData *fileData_;
+  IBOutlet NSTableView *codeTableView_;  // the table that shows the code
+  IBOutlet NSArrayController *sourceFilesController_;
+  IBOutlet NSProgressIndicator *spinner_;
+  volatile BOOL openingInThread_;  // Are we opening our files in a thread
+  CoverStoryCoverageSet *dataSet_;
 }
 
-// Opens up the source code file that corresponds to the gcov file we are
-// examining.
-- (IBAction)openSource:(id)sender;
-
-- (NSString *)sourcePath;
-
-- (void)setFileData:(CoverStoryCoverageFileData *)fileData;
-
+// Opens up the source code file that corresponds to path
+- (void)openSource:(NSString*)path;
 @end
