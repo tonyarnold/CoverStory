@@ -364,6 +364,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CoverStory.pch;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_PREPROCESS = YES;
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
