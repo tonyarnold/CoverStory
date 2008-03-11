@@ -67,6 +67,11 @@
                       ofObject:sourceFilesController_
                         change:nil
                        context:nil];
+  
+  NSSortDescriptor *ascending = [[[NSSortDescriptor alloc] initWithKey:@"coverage"
+                                                             ascending:YES] autorelease];
+  [sourceFilesController_ setSortDescriptors:[NSArray arrayWithObject:ascending]];
+  
   if (openingInThread_) {
     [spinner_ startAnimation:self];
   }

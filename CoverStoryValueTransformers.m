@@ -35,16 +35,23 @@
   if (hitCount != -1) {
     NSMutableParagraphStyle *pStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
     [pStyle setAlignment:NSRightTextAlignment];
+    NSColor *color = nil;
+    if (hitCount == 0.0) {
+      color = [NSColor redColor];
+    } else {
+      color = [NSColor colorWithDeviceWhite:0.4 alpha:1.0];
+    }
+    
     attributes = [NSDictionary dictionaryWithObjectsAndKeys:
                     pStyle, NSParagraphStyleAttributeName, 
-                    [NSColor colorWithDeviceWhite:0.4 alpha:1.0], NSForegroundColorAttributeName, 
+                    color, NSForegroundColorAttributeName, 
                     nil];
     if (hitCount == -2) {
       displayString = @"--"; // for non-feasible lines
     } else if (hitCount < 999) {
       displayString = [NSString stringWithFormat:@"%d", hitCount];
     } else {
-      displayString = @"...";
+      displayString = @"99+";
     }
   }
   return [[[NSAttributedString alloc] initWithString:displayString

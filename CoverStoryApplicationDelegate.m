@@ -37,8 +37,7 @@
   }
 }
 
-- (BOOL)applicationOpenUntitledFile:(NSApplication *)theApplication {
-  [[NSDocumentController sharedDocumentController] openDocument:theApplication];
-  return YES;
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)theApplication {
+  return NO;
 }
 @end
