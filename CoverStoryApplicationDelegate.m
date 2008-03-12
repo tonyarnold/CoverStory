@@ -18,6 +18,7 @@
 //
 
 #import "CoverStoryApplicationDelegate.h"
+#import "CoverStoryDocumentController.h"
 
 @implementation CoverStoryApplicationDelegate
 - (void)applicationWillFinishLaunching:(NSNotification *)notification {
@@ -35,6 +36,10 @@
     [NSValueTransformer setValueTransformer:[[class alloc] init]
                                     forName:transformerNames[i]];
   }
+  
+  // Set our document controller up as the shared document controller
+  // so we don't ge NSDocumentController instead.
+  [[[CoverStoryDocumentController alloc] init] autorelease];
 }
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)theApplication {

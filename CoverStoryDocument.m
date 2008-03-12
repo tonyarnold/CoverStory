@@ -140,6 +140,8 @@
   openingInThread_ = NO;
   [spinner_ performSelectorOnMainThread:@selector(stopAnimation:)
                              withObject:self waitUntilDone:NO];
+  // Clean up NSTask Zombies.
+  [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
   [pool release];
 }
 
@@ -154,6 +156,9 @@
   openingInThread_ = NO;
   [spinner_ performSelectorOnMainThread:@selector(stopAnimation:)
                              withObject:self waitUntilDone:NO];
+  
+  // Clean up NSTask Zombies.
+  [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
   [pool release];
 }
 
@@ -176,7 +181,7 @@
   // we want to back process them by chunks w/in a given directory.  so sort
   // and then break them off into chunks.
   allFilePaths = [allFilePaths sortedArrayUsingSelector:@selector(compare:)];
-  if ([allFilePaths count] >= 0) {
+  if ([allFilePaths count] > 0) {
     
     // see our collecting w/ the first item
     NSString *filename = [allFilePaths objectAtIndex:0];
