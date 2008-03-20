@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CoverStoryCoverageData.h"
+#import "CoverStoryPreferenceKeys.h"
 
 // Transformer for changing Line Data to Hit Counts.
 // Used for first column of source code table.
@@ -67,6 +68,22 @@
 
 @implementation CoverageLineDataToSourceLineTransformer
 
++ (void)initialize {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSDictionary *appDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
+                               [NSArchiver archivedDataWithRootObject:[NSColor redColor]], 
+                               kCoverStoryMissedLineColorKey,
+                               [NSArchiver archivedDataWithRootObject:[NSColor grayColor]],
+                               kCoverStoryUnexecutableLineColorKey,
+                               [NSArchiver archivedDataWithRootObject:[NSColor grayColor]],
+                               kCoverStoryNonFeasibleLineColorKey,
+                               [NSArchiver archivedDataWithRootObject:[NSColor blackColor]],
+                               kCoverStoryExecutedLineColorKey,
+                               nil];
+  
+  [defaults registerDefaults:appDefaults];
+}
+
 + (Class)transformedValueClass {
   return [NSAttributedString class];
 }
@@ -75,20 +92,38 @@
   return NO;
 }
 
+- (NSColor *)defaultColorNamed:(NSString*)name {
+  NSColor *color = nil;
+  if (name) {
+    NSUserDefaultsController *defaults
+      = [NSUserDefaultsController sharedUserDefaultsController];
+    id values = [defaults values];
+    NSData *colorData = [values valueForKey:name];
+    if (colorData) {
+      color = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
+    }
+  }
+  return color;
+}
+
 - (id)transformedValue:(id)value {
   NSAssert([value isKindOfClass:[CoverStoryCoverageLineData class]], 
            @"Only handle CoverStoryCoverageLineData");
   CoverStoryCoverageLineData *data = (CoverStoryCoverageLineData*)value;
   NSString *line = [data line];
   SInt32 hitCount = [data hitCount];
-  NSColor *textColor;
+  NSString *colorName = nil;
   if (hitCount == 0) {
-    textColor = [NSColor redColor];
-  } else if (hitCount < 0) {
-    textColor = [NSColor grayColor];
-  } else {
-    textColor = [NSColor blackColor];
+    colorName = kCoverStoryMissedLineColorKey;
+  } else if (hitCount == -1) {
+    colorName = kCoverStoryUnexecutableLineColorKey;
+  } else if (hitCount == -2) {
+    colorName = kCoverStoryNonFeasibleLineColorKey;
   }
+  else {
+    colorName = kCoverStoryExecutedLineColorKey;
+  }
+  NSColor *textColor = [self defaultColorNamed:colorName];
   NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
                               textColor, NSForegroundColorAttributeName, 
                               nil];
@@ -173,11 +208,11 @@ const float kGoodCoverage = 75.0f;
 @end
 
 // Transformer for changing line coverage to summaries.
-// Used for tooltips and top of window summaries.
-@interface LineCoverageToCoverageSummaryTransformer : NSValueTransformer
+// Used for top of code window summaries.
+@interface FileLineCoverageToCoverageSummaryTransformer : NSValueTransformer
 @end
 
-@implementation LineCoverageToCoverageSummaryTransformer
+@implementation FileLineCoverageToCoverageSummaryTransformer
 
 + (Class)transformedValueClass {
   return [NSString class];
@@ -196,6 +231,60 @@ const float kGoodCoverage = 75.0f;
   SInt32 codeLines  = [data numberCodeLines];
   SInt32 nonfeasible  = [data numberNonFeasibleLines];
   float coverage = [[data coverage] floatValue];
+  
+  NSString *statString = nil;
+  if (nonfeasible) {
+    statString = [NSString stringWithFormat:
+                  @"Executed %.2f%% of %d lines (%d executed, %d executable, "
+                  "%d non-feasible, %d total lines)", coverage, codeLines, 
+                  hitLines, codeLines, nonfeasible, totalLines];
+  } else {
+    statString = [NSString stringWithFormat:
+                  @"Executed %.2f%% of %d lines (%d executed, %d executable, "
+                  "%d total lines)", coverage, codeLines, hitLines, 
+                  codeLines, totalLines];
+  }
+  return statString;
+}
+
+@end
+  
+// Transformer for changing line coverage to summaries.
+// Used for tooltip
+@interface LineCoverageToCoverageSummaryTransformer : NSValueTransformer
+@end
+
+@implementation LineCoverageToCoverageSummaryTransformer
+
++ (Class)transformedValueClass {
+  return [NSString class];
+}
+
++ (BOOL)allowsReverseTransformation {
+  return NO;
+}
+
+- (id)transformedValue:(id)value {
+  if (!value) return @"";
+  NSAssert1([value respondsToSelector:@selector(objectEnumerator)],
+           @"Only handle collections : %@", value);
+  NSEnumerator *arrayEnum = [value objectEnumerator];
+  SInt32 totalLines = 0;
+  SInt32 hitLines   = 0;
+  SInt32 codeLines  = 0;
+  SInt32 nonfeasible  = 0;
+  
+  id<CoverStoryLineCoverageProtocol> data;
+  while ((data = [arrayEnum nextObject])) {
+    totalLines += [data numberTotalLines];
+    hitLines += [data numberHitCodeLines];
+    codeLines += [data numberCodeLines];
+    nonfeasible += [data numberNonFeasibleLines];
+  }
+  float coverage = 0.0;
+  if (codeLines > 0) {
+    coverage = (float)hitLines / (float)codeLines * 100.0;
+  }
   NSString *statString = nil;
   if (nonfeasible) {
     statString = [NSString stringWithFormat:
@@ -229,11 +318,23 @@ const float kGoodCoverage = 75.0f;
 }
 
 - (id)transformedValue:(id)value {
-  NSAssert([value conformsToProtocol:@protocol(CoverStoryLineCoverageProtocol)], 
-           @"Only handle CoverStoryLineCoverageProtocol");
-  id<CoverStoryLineCoverageProtocol> data = (id<CoverStoryLineCoverageProtocol>)value;
-  SInt32 codeLines  = [data numberCodeLines];
-  float coverage = [[data coverage] floatValue];
+  if (!value) return @"";
+  NSAssert1([value respondsToSelector:@selector(objectEnumerator)],
+            @"Only handle collections : %@", value);
+  NSEnumerator *arrayEnum = [value objectEnumerator];
+  SInt32 hitLines   = 0;
+  SInt32 codeLines  = 0;
+  
+  id<CoverStoryLineCoverageProtocol> data;
+  while ((data = [arrayEnum nextObject])) {
+    hitLines += [data numberHitCodeLines];
+    codeLines += [data numberCodeLines];
+  }
+  float coverage = 0.0;
+  if (codeLines > 0) {
+    coverage = (float)hitLines / (float)codeLines * 100.0;
+  }
+  
   return [NSString stringWithFormat:@"%.2f%% of %d lines", coverage, codeLines];
 }
 

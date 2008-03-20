@@ -19,6 +19,7 @@
 
 #import "CoverStoryApplicationDelegate.h"
 #import "CoverStoryDocumentController.h"
+#import "CoverStoryPreferenceKeys.h"
 
 @implementation CoverStoryApplicationDelegate
 - (void)applicationWillFinishLaunching:(NSNotification *)notification {
@@ -29,7 +30,8 @@
     @"CoverageFileDataToSourcePathTransformer",
     @"CoverageFileDataToCoveragePercentageTransformer",
     @"LineCoverageToCoverageSummaryTransformer",
-    @"LineCoverageToCoverageShortSummaryTransformer"
+    @"LineCoverageToCoverageShortSummaryTransformer",
+    @"FileLineCoverageToCoverageSummaryTransformer"
   };
   for (size_t i = 0; i < sizeof(transformerNames) / sizeof(id); ++i) {
     Class class = NSClassFromString(transformerNames[i]);
@@ -44,5 +46,10 @@
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)theApplication {
   return NO;
+}
+
+- (IBAction)hideSDKSources:(id)sender {
+  // Doesn't do anything, just exists so that prefs will toggle via bindings.
+  // Seems weird to need it, but hey.
 }
 @end

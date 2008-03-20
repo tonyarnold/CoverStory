@@ -27,10 +27,13 @@
   IBOutlet NSTableView *codeTableView_;  // the table that shows the code
   IBOutlet NSArrayController *sourceFilesController_;
   IBOutlet NSProgressIndicator *spinner_;
+  NSString *filterString_;
   volatile BOOL openingInThread_;  // Are we opening our files in a thread
   CoverStoryCoverageSet *dataSet_;
 }
 
 // Opens up the source code file that corresponds to path
 - (void)openSource:(NSString*)path;
+- (NSString *)filterString;
+- (void)setFilterString:(NSString *)string;
 @end

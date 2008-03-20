@@ -1,9 +1,9 @@
 //
-//  CoverStoryApplicationDelegate.h
+//  CoverStoryPreferenceKeys.h
 //  CoverStory
 //
-//  Created by dmaclach on 12/20/06.
-//  Copyright 2006-2007 Google Inc.
+//  Created by dmaclach on 03/20/08.
+//  Copyright 2008 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
@@ -16,9 +16,12 @@
 //  License for the specific language governing permissions and limitations under
 //  the License.
 //
+ 
+// Should we filter out system sources
+#define kCoverStoryHideSystemSourcesKey @"hideSystemSources"
 
-#import <Cocoa/Cocoa.h>
-
-@interface CoverStoryApplicationDelegate : NSObject
-- (IBAction)hideSDKSources:(id)sender;
-@end
+// Colors to display thins in our views
+#define kCoverStoryMissedLineColorKey @"missedLineColor"
+#define kCoverStoryUnexecutableLineColorKey @"unexecutableLineColor"
+#define kCoverStoryNonFeasibleLineColorKey @"nonFeasibleLineColor"
+#define kCoverStoryExecutedLineColorKey @"executedLineColor"

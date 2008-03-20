@@ -21,6 +21,7 @@
 #import "CoverStoryCoverageData.h"
 #import "CoverStoryScroller.h"
 #import "CoverStoryDocumentTypes.h"
+#import "CoverStoryPreferenceKeys.h"
 #import "GTMScriptRunner.h"
 #import "GTMNSFileManager+Path.h"
 #import "GTMNSEnumerator+Filter.h"
@@ -35,8 +36,19 @@
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
 @end
 
+static NSString *const kPrefsToWatch[] = { 
+  kCoverStoryHideSystemSourcesKey,
+  kCoverStoryMissedLineColorKey,
+  kCoverStoryUnexecutableLineColorKey,
+  kCoverStoryNonFeasibleLineColorKey,
+  kCoverStoryExecutedLineColorKey
+};
 
 @implementation CoverStoryDocument
+- (NSString*)valuesKey:(NSString*)key {
+  return [NSString stringWithFormat:@"values.%@", key];
+}
+
 - (id)init {
   self = [super init];
   if (self) {
@@ -46,9 +58,16 @@
 }
 
 - (void)dealloc {
+  NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
+  for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
+    [defaults removeObserver:self 
+                  forKeyPath:[self valuesKey:kPrefsToWatch[i]]];
+  }  
   [dataSet_ release];
+  [filterString_ release];
   [super dealloc];
 }
+
 
 - (void)awakeFromNib {
   // We want no cell spacing to make it look normal
@@ -63,6 +82,16 @@
                            forKeyPath:@"selectedObjects" 
                               options:NSKeyValueObservingOptionNew
                               context:nil];
+
+  
+  NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
+  for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
+    [defaults addObserver:self 
+               forKeyPath:[self valuesKey:kPrefsToWatch[i]]
+                  options:NSKeyValueObservingOptionNew
+                  context:nil];
+  }
+  
   [self observeValueForKeyPath:@"selectedObjects"
                       ofObject:sourceFilesController_
                         change:nil
@@ -345,6 +374,22 @@
       data = (CoverStoryCoverageFileData*)[selectedObjects objectAtIndex:0];
     }
     [self updateScrollBar:data];
+  } else if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
+    if ([keyPath isEqualToString:[self valuesKey:kCoverStoryHideSystemSourcesKey]]) {
+      [sourceFilesController_ rearrangeObjects];
+    } else {
+      NSString *const kColorsToWatch[] = { 
+        kCoverStoryMissedLineColorKey,
+        kCoverStoryUnexecutableLineColorKey,
+        kCoverStoryNonFeasibleLineColorKey,
+        kCoverStoryExecutedLineColorKey
+      };
+      for (size_t i = 0; i < sizeof(kColorsToWatch) / sizeof(NSString*); ++i) {
+        if ([keyPath isEqualToString:[self valuesKey:kColorsToWatch[i]]]) {
+          [codeTableView_ reloadData];
+        }
+      }
+    }
   }
 }
 
@@ -381,5 +426,18 @@
     }
   }
 }
+
+- (NSString *)filterString {
+  return filterString_;
+}
+
+- (void)setFilterString:(NSString *)string {
+  if (filterString_ != string) {
+    [filterString_ release];
+    filterString_ = [string copy];
+    [sourceFilesController_ rearrangeObjects];
+  }
+}
+
 
 @end
