@@ -16,7 +16,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>gcno</string>
 			<key>CFBundleTypeName</key>
-			<string>kGCNOTypeName</string>
+			<string>kGCNOTypeNameRaw</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -44,7 +44,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>gcda</string>
 			<key>CFBundleTypeName</key>
-			<string>kGCDATypeName</string>
+			<string>kGCDATypeNameRaw</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -60,7 +60,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>gcov</string>
 			<key>CFBundleTypeName</key>
-			<string>kGCOVTypeName</string>
+			<string>kGCOVTypeNameRaw</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
