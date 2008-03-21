@@ -19,6 +19,7 @@
 #import "CoverStoryFilePredicate.h"
 #import "CoverStoryPreferenceKeys.h"
 #import "GTMRegex.h"
+#import <fnmatch.h>
 
 @interface NSString (CoverStoryStringMatching)
 - (BOOL)cs_isRegularExpressionEqual:(NSString*)string;
@@ -64,26 +65,9 @@
 }
 
 - (BOOL)cs_isWildcardPatternEqual:(NSString*)string {
-  NSArray *portionArray = [string componentsSeparatedByString:@"*"];
-  NSEnumerator *portionEnum = [portionArray objectEnumerator];
-  NSString *portion;
-  BOOL isGood = YES;
-  unsigned int length = [self length];
-  NSRange oldLocation = NSMakeRange(0,length);
-  while (isGood && (portion = [portionEnum nextObject])) {
-    if ([portion length] == 0) continue;
-    NSRange newRange = [self rangeOfString:portion 
-                                   options:NSCaseInsensitiveSearch 
-                                     range:oldLocation];
-    if (newRange.location != NSNotFound && 
-        (newRange.location > oldLocation.location || 
-         (newRange.location == 0 && oldLocation.location == 0))) {
-      unsigned int maxRange = NSMaxRange(newRange); 
-      oldLocation = NSMakeRange(maxRange, length - maxRange);
-    } else {
-      isGood = NO;
-    }
-  }
+  NSString *pattern = [NSString stringWithFormat:@"*%@*", string];
+  int flags = FNM_CASEFOLD;
+  BOOL isGood = fnmatch([pattern UTF8String], [self UTF8String], flags) == 0;
   return isGood;
 }
 @end
