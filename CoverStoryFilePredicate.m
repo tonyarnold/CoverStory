@@ -18,28 +18,72 @@
 //
 #import "CoverStoryFilePredicate.h"
 #import "CoverStoryPreferenceKeys.h"
+#import "GTMRegex.h"
+
+@interface NSString (CoverStoryStringMatching)
+- (BOOL)cs_isRegularExpressionEqual:(NSString*)string;
+- (BOOL)cs_isWildcardPatternEqual:(NSString*)string;
+@end
 
 @implementation CoverStoryFilePredicate
-
 - (BOOL)evaluateWithObject:(id)object {
-  NSString *text = [searchField_ stringValue];
+  BOOL isGood = YES;
   NSString *path = [object valueForKey:@"sourcePath"];
-  BOOL isGood = NO;
-  if ([text length] == 0) {
-    isGood = YES;
-  } else {
-    isGood = [path rangeOfString:text 
-                         options:NSCaseInsensitiveSearch].location != NSNotFound;
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  BOOL hideSDKFiles = [defaults boolForKey:kCoverStoryHideSystemSourcesKey];
+  if (hideSDKFiles) {
+    isGood = !([path hasPrefix:@"/Developer"] || [path hasPrefix:@"/usr"]);
   }
   if (isGood) {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    BOOL hideSDKFiles = [defaults boolForKey:kCoverStoryHideSystemSourcesKey];
-    if (hideSDKFiles) {
-      isGood = ![path hasPrefix:@"/Developer"] && 
-               ![path hasPrefix:@"/usr"];
+    NSString *text = [searchField_ stringValue];
+    if ([text length] == 0) {
+      isGood = YES;
+    } else {
+      CoverStoryFilterStringType type 
+        = [defaults integerForKey:kCoverStoryFilterStringTypeKey];
+      switch (type) {
+        default:
+        case kCoverStoryFilterStringTypeWildcardPattern:
+          isGood = [path cs_isWildcardPatternEqual:text];
+          break;
+          
+        case kCoverStoryFilterStringTypeRegularExpression:
+          isGood = [path cs_isRegularExpressionEqual:text];
+          break;
+      }
     }
   }
   return isGood;
 }
 
+@end
+
+@implementation NSString (CoverStoryStringMatching)
+- (BOOL)cs_isRegularExpressionEqual:(NSString*)string {
+  return [self gtm_firstSubStringMatchedByPattern:string] != nil;
+}
+
+- (BOOL)cs_isWildcardPatternEqual:(NSString*)string {
+  NSArray *portionArray = [string componentsSeparatedByString:@"*"];
+  NSEnumerator *portionEnum = [portionArray objectEnumerator];
+  NSString *portion;
+  BOOL isGood = YES;
+  unsigned int length = [self length];
+  NSRange oldLocation = NSMakeRange(0,length);
+  while (isGood && (portion = [portionEnum nextObject])) {
+    if ([portion length] == 0) continue;
+    NSRange newRange = [self rangeOfString:portion 
+                                   options:NSCaseInsensitiveSearch 
+                                     range:oldLocation];
+    if (newRange.location != NSNotFound && 
+        (newRange.location > oldLocation.location || 
+         (newRange.location == 0 && oldLocation.location == 0))) {
+      unsigned int maxRange = NSMaxRange(newRange); 
+      oldLocation = NSMakeRange(maxRange, length - maxRange);
+    } else {
+      isGood = NO;
+    }
+  }
+  return isGood;
+}
 @end

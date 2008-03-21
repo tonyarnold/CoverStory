@@ -18,10 +18,17 @@
 //
  
 // Should we filter out system sources
-#define kCoverStoryHideSystemSourcesKey @"hideSystemSources"
+#define kCoverStoryHideSystemSourcesKey @"hideSystemSources"  // Boolean
 
-// Colors to display thins in our views
-#define kCoverStoryMissedLineColorKey @"missedLineColor"
-#define kCoverStoryUnexecutableLineColorKey @"unexecutableLineColor"
-#define kCoverStoryNonFeasibleLineColorKey @"nonFeasibleLineColor"
-#define kCoverStoryExecutedLineColorKey @"executedLineColor"
+// Colors to display things in our views
+#define kCoverStoryMissedLineColorKey @"missedLineColor"  // NSColor
+#define kCoverStoryUnexecutableLineColorKey @"unexecutableLineColor"  // NSColor
+#define kCoverStoryNonFeasibleLineColorKey @"nonFeasibleLineColor"  // NSColor
+#define kCoverStoryExecutedLineColorKey @"executedLineColor"  // NSColor
+
+#define kCoverStoryFilterStringTypeKey @"filterStringType" // CoverStoryFilterStringType
+
+typedef enum {
+  kCoverStoryFilterStringTypeWildcardPattern = 0,
+  kCoverStoryFilterStringTypeRegularExpression
+} CoverStoryFilterStringType;

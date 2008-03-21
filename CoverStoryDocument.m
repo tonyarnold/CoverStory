@@ -154,7 +154,24 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 - (void)openSource:(NSString*)path {
-  [[NSWorkspace sharedWorkspace] openFile:path];
+  BOOL didOpen = NO;
+  NSIndexSet *selectedRows = [codeTableView_ selectedRowIndexes];
+  if ([selectedRows count]) {
+    NSString *scriptPath = [[NSBundle mainBundle] pathForResource:@"openscript"
+                                                           ofType:@"scpt"];
+    if (scriptPath) {
+      GTMScriptRunner *runner = [GTMScriptRunner runnerWithInterpreter:@"/usr/bin/osascript"];
+      [runner runScript:scriptPath
+               withArgs:[NSArray arrayWithObjects:
+                         path,
+                         [NSString stringWithFormat:@"%d", [selectedRows firstIndex] + 1],
+                         [NSString stringWithFormat:@"%d", [selectedRows lastIndex] + 1],
+                         nil]];
+    }                         
+  }
+  if (!didOpen) {
+    [[NSWorkspace sharedWorkspace] openFile:path];
+  }
 }
 
 - (BOOL)isDocumentEdited {
@@ -439,5 +456,45 @@ static NSString *const kPrefsToWatch[] = {
   }
 }
 
+- (void)setFilterStringType:(CoverStoryFilterStringType)type {
+  [[NSUserDefaults standardUserDefaults] setInteger:type 
+                                             forKey:kCoverStoryFilterStringTypeKey];
+  [sourceFilesController_ rearrangeObjects];
+}
+
+- (IBAction)setUseWildcardPattern:(id)sender {
+  [self setFilterStringType:kCoverStoryFilterStringTypeWildcardPattern];
+}
+
+- (IBAction)setUseRegularExpression:(id)sender {
+  [self setFilterStringType:kCoverStoryFilterStringTypeRegularExpression];
+}
+
+- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem {
+  typedef struct {
+    CoverStoryFilterStringType type;
+    SEL selector;
+  } FilterSelectorMap;
+  FilterSelectorMap map[] = {
+    { kCoverStoryFilterStringTypeWildcardPattern, @selector(setUseWildcardPattern:) },
+    { kCoverStoryFilterStringTypeRegularExpression, @selector(setUseRegularExpression:) },
+  };
+  
+  CoverStoryFilterStringType type;
+  type = [[NSUserDefaults standardUserDefaults] integerForKey:kCoverStoryFilterStringTypeKey];
+  BOOL isGood = NO;
+  SEL action = [menuItem action];
+  for (size_t i = 0; i <= sizeof(map) / sizeof(FilterSelectorMap); ++i) {
+    if (action == map[i].selector) {
+      isGood = YES;
+      [menuItem setState:map[i].type == type ? NSOnState : NSOffState];
+      break;
+    }
+  }
+  if (!isGood) {
+    isGood = [super validateMenuItem:menuItem];
+  }
+  return isGood;
+}
 
 @end

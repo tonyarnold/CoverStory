@@ -26,6 +26,13 @@
 			<string>NSPredicate</string>
 		</dict>
 		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>setUseRegularExpression</key>
+				<string>id</string>
+				<key>setUseWildcardPattern</key>
+				<string>id</string>
+			</dict>
 			<key>CLASS</key>
 			<string>CoverStoryDocument</string>
 			<key>LANGUAGE</key>

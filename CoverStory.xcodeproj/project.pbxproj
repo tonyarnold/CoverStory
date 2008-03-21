@@ -13,6 +13,7 @@
 		8B2A9C6E0D84F84600599386 /* gcno.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6B0D84F84600599386 /* gcno.icns */; };
 		8B2A9C6F0D84F84600599386 /* gcda.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6C0D84F84600599386 /* gcda.icns */; };
 		8B41D4BE0D85CAB000E60DA4 /* CoverStoryValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */; };
+		8B63DA640D94078700395A2B /* openscript.scpt in Resources */ = {isa = PBXBuildFile; fileRef = 8B63DA5B0D94070100395A2B /* openscript.scpt */; };
 		8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */; };
 		8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */; };
 		8BFD54F60B3F009300AFCDA2 /* CoverStoryCoverageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */; };
@@ -51,6 +52,7 @@
 		8B2A9C6C0D84F84600599386 /* gcda.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gcda.icns; sourceTree = "<group>"; };
 		8B41D3930D857F1200E60DA4 /* CoverStoryDocumentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryDocumentTypes.h; sourceTree = "<group>"; };
 		8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryValueTransformers.m; sourceTree = "<group>"; };
+		8B63DA5B0D94070100395A2B /* openscript.scpt */ = {isa = PBXFileReference; explicitFileType = compiled; fileEncoding = 4; path = openscript.scpt; sourceTree = "<group>"; };
 		8B726FFF0D92B6EB0090C251 /* CoverStoryFilePredicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryFilePredicate.h; sourceTree = "<group>"; };
 		8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryFilePredicate.m; sourceTree = "<group>"; };
 		8B7271230D92CD920090C251 /* CoverStoryPreferenceKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryPreferenceKeys.h; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				8B2A9C6A0D84F84600599386 /* gcov.icns */,
 				8B2A9C6B0D84F84600599386 /* gcno.icns */,
 				8B2A9C6C0D84F84600599386 /* gcda.icns */,
+				8B63DA5B0D94070100395A2B /* openscript.scpt */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */,
 				2A37F4B4FDCFA73011CA2CEA /* CoverStoryDocument.nib */,
@@ -268,6 +271,7 @@
 				8B2A9C6D0D84F84600599386 /* gcov.icns in Resources */,
 				8B2A9C6E0D84F84600599386 /* gcno.icns in Resources */,
 				8B2A9C6F0D84F84600599386 /* gcda.icns in Resources */,
+				8B63DA640D94078700395A2B /* openscript.scpt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,6 +388,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */;
 			buildSettings = {
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/TigerGcov",
+				);
+				OTHER_LDFLAGS = "-lgcov";
 			};
 			name = Debug;
 		};
@@ -391,6 +402,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */;
 			buildSettings = {
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 			};
 			name = Release;
 		};

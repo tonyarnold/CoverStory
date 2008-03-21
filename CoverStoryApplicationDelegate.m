@@ -52,4 +52,5 @@
   // Doesn't do anything, just exists so that prefs will toggle via bindings.
   // Seems weird to need it, but hey.
 }
+
 @end
