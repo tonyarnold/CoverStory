@@ -19,12 +19,13 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import "CoverStoryCodeViewTableView.h"
 
 @class CoverStoryCoverageSet;
 
-@interface CoverStoryDocument : NSDocument {
+@interface CoverStoryDocument : NSDocument<CoverStoryCodeViewTableViewDelegateProtocol> {
  @private
-  IBOutlet NSTableView *codeTableView_;  // the table that shows the code
+  IBOutlet CoverStoryCodeViewTableView *codeTableView_;  // the code table
   IBOutlet NSArrayController *sourceFilesController_;
   IBOutlet NSProgressIndicator *spinner_;
   NSString *filterString_;
@@ -32,8 +33,8 @@
   CoverStoryCoverageSet *dataSet_;
 }
 
-// Opens up the source code file that corresponds to path
-- (void)openSource:(NSString*)path;
+// Opens up the source code file in Xcode.
+- (void)openSelectedSource;
 - (NSString *)filterString;
 - (void)setFilterString:(NSString *)string;
 - (IBAction)setUseWildcardPattern:(id)sender;

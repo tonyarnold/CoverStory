@@ -19,7 +19,6 @@
 
 #import "CoverStoryDocument.h"
 #import "CoverStoryCoverageData.h"
-#import "CoverStoryScroller.h"
 #import "CoverStoryDocumentTypes.h"
 #import "CoverStoryPreferenceKeys.h"
 #import "GTMScriptRunner.h"
@@ -32,7 +31,6 @@
 - (BOOL)processCoverageForFolder:(NSString *)path;
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath;
-- (void)updateScrollBar:(CoverStoryCoverageFileData*)data;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
 @end
 
@@ -50,8 +48,7 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 - (id)init {
-  self = [super init];
-  if (self) {
+  if ((self = [super init])) {
     dataSet_ = [[CoverStoryCoverageSet alloc] init];
   }
   return self;
@@ -70,20 +67,11 @@ static NSString *const kPrefsToWatch[] = {
 
 
 - (void)awakeFromNib {
-  // We want no cell spacing to make it look normal
-  [codeTableView_ setIntercellSpacing:NSMakeSize(0.0f, 0.0f)];
-  
-  // Create up our scroller, it will be owned by the tableview.
-  CoverStoryScroller *scroller = [[[CoverStoryScroller alloc] init] autorelease];
-  NSScrollView *scrollView = [codeTableView_ enclosingScrollView];
-  [scrollView setVerticalScroller:scroller]; 
-  
   [sourceFilesController_ addObserver:self 
                            forKeyPath:@"selectedObjects" 
                               options:NSKeyValueObservingOptionNew
                               context:nil];
 
-  
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
   for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
     [defaults addObserver:self 
@@ -120,7 +108,6 @@ static NSString *const kPrefsToWatch[] = {
 - (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper
                      ofType:(NSString *)typeName
                       error:(NSError **)outError {
-  
   BOOL isGood = NO;
   
   // the wrapper doesn't have the full path, but it's already set on us, so
@@ -149,12 +136,14 @@ static NSString *const kPrefsToWatch[] = {
                            withObject:path];
     isGood = YES;
   }
-  
   return isGood;
 }
 
-- (void)openSource:(NSString*)path {
+- (void)openSelectedSource {
   BOOL didOpen = NO;
+  NSArray *fileSelection = [sourceFilesController_ selectedObjects];      
+  CoverStoryCoverageFileData *fileData = [fileSelection objectAtIndex:0];
+  NSString *path = [fileData sourcePath];
   NSIndexSet *selectedRows = [codeTableView_ selectedRowIndexes];
   if ([selectedRows count]) {
     NSString *scriptPath = [[NSBundle mainBundle] pathForResource:@"openscript"
@@ -390,7 +379,11 @@ static NSString *const kPrefsToWatch[] = {
     if ([selectedObjects count]) {
       data = (CoverStoryCoverageFileData*)[selectedObjects objectAtIndex:0];
     }
-    [self updateScrollBar:data];
+    // Update our scroll bar
+    [codeTableView_ setCoverageData:[data lines]];
+    
+    // Jump to first missing code block
+    [self tableView:codeTableView_ handleSelectionKey:NSDownArrowFunctionKey];
   } else if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
     if ([keyPath isEqualToString:[self valuesKey:kCoverStoryHideSystemSourcesKey]]) {
       [sourceFilesController_ rearrangeObjects];
@@ -406,40 +399,6 @@ static NSString *const kPrefsToWatch[] = {
           [codeTableView_ reloadData];
         }
       }
-    }
-  }
-}
-
-- (void)updateScrollBar:(CoverStoryCoverageFileData*)data {
-  NSScrollView *scrollView = [codeTableView_ enclosingScrollView];
-  CoverStoryScroller *scroller = (CoverStoryScroller*)[scrollView verticalScroller]; 
-  if (!data) {
-    [scroller setEnabled:NO];
-    [scroller setCoverageData:nil];
-  } else {
-    NSArray *lines = [data lines];
-    int firstMissedLine = -1;
-    int count = 0;
-    NSEnumerator *dataEnum = [lines objectEnumerator];
-    CoverStoryCoverageLineData* dataPoint;
-    while ((dataPoint = [dataEnum nextObject]) && (firstMissedLine == -1)) {
-      int hitCount = [dataPoint hitCount];
-      if (hitCount == 0) {
-        firstMissedLine = count;
-      }
-      ++count;
-    }
-    SInt32 totalLines = [data numberTotalLines];
-    
-    [scroller setCoverageData:[data lines]];
-    [scroller setEnabled:YES];
-    // Scroll to the first missed line if we have one.
-    if (firstMissedLine != -1) {
-      float value = (float)firstMissedLine / (float)totalLines;
-      float middleOffset = (NSHeight([scrollView documentVisibleRect]) * 0.5);
-      float contentHeight = NSHeight([[scrollView documentView] bounds]);
-      value = value * contentHeight - middleOffset;
-      [[scrollView documentView] scrollPoint:NSMakePoint(0, value)];
     }
   }
 }
@@ -497,4 +456,87 @@ static NSString *const kPrefsToWatch[] = {
   return isGood;
 }
 
+// On enter we just want to open the selected lines of source
+- (void)tableViewHandleEnter:(NSTableView *)tableView {
+  NSAssert(tableView == codeTableView_, @"Unexpected tableView");
+  [self openSelectedSource];
+}
+
+// On up or down key we want to select the next block of code that has
+// zero coverage.
+- (void)tableView:(NSTableView *)tableView handleSelectionKey:(unichar)keyCode {
+  NSAssert(tableView == codeTableView_, @"Unexpected key");
+  NSAssert(keyCode == NSUpArrowFunctionKey || keyCode == NSDownArrowFunctionKey,
+           @"Unexpected key");
+  
+  // If no source, bail
+  NSArray *selection = [sourceFilesController_ selectedObjects];
+  if (![selection count]) return;
+  
+  // Start with the current selection
+  CoverStoryCoverageFileData *fileData = [selection objectAtIndex:0];
+  NSArray *lines = [fileData lines];
+  NSIndexSet *currentSel = [tableView selectedRowIndexes];
+  
+  // Choose direction based on key and set offset and stopping conditions
+  // as well as start.
+  int offset = -1;
+  int stoppingCond = 0;
+  NSRange range = NSMakeRange(0, 0);
+  
+  if (keyCode == NSDownArrowFunctionKey) {
+    offset = 1;
+    stoppingCond = [lines count] - 1;
+  }
+  int startLine = 0;
+  if ([currentSel count]) {
+    int first = [currentSel firstIndex];
+    int last = [currentSel lastIndex];
+    range = NSMakeRange(first, last - first);
+    startLine = offset == 1 ? last : first;
+  }
+  
+  // From start, look for first line in our given direction that has
+  // zero hits
+  int i;
+  for(i = startLine + offset; i != stoppingCond && i >= 0; i += offset) {
+    CoverStoryCoverageLineData *lineData = [lines objectAtIndex:i];
+    if ([lineData hitCount] == 0) {
+      break;
+    }
+  }
+  
+  // Check to see if we hit end of page (or beginning depending which way
+  // we went
+  if (i != stoppingCond) {
+    // Now select "forward" everything that is zero
+    int j;
+    for (j = i; j != stoppingCond; j+= offset) {
+      CoverStoryCoverageLineData *lineData = [lines objectAtIndex:j];
+      if ([lineData hitCount] != 0) {
+        break;
+      }
+    }
+    
+    // Now if we started in a block, select "backwards"
+    int k;
+    stoppingCond = offset == 1 ? 0 : [lines count] - 1;
+    offset *= -1;
+    for (k = i; k != stoppingCond; k+= offset) {
+      CoverStoryCoverageLineData *lineData = [lines objectAtIndex:k];
+      if ([lineData hitCount] != 0) {
+        k -= offset;
+        break;
+      }
+    }
+    
+    // Update our selection
+    range = k > j ? NSMakeRange(j + 1, k - j) : NSMakeRange(k, j - k);
+    
+    [tableView selectRowIndexes:[NSIndexSet indexSetWithIndexesInRange:range]
+           byExtendingSelection:NO];
+  }
+  [tableView scrollRowToVisible:NSMaxRange(range)];
+  [tableView scrollRowToVisible:range.location];
+}
 @end

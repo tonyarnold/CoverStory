@@ -16,6 +16,7 @@
 		8B63DA640D94078700395A2B /* openscript.scpt in Resources */ = {isa = PBXBuildFile; fileRef = 8B63DA5B0D94070100395A2B /* openscript.scpt */; };
 		8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */; };
 		8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */; };
+		8BC4AAB80D94D06100437182 /* CoverStoryCodeViewTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */; };
 		8BFD54F60B3F009300AFCDA2 /* CoverStoryCoverageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */; };
 		8BFD5B040B3F126D00AFCDA2 /* CoverStoryScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD5B030B3F126D00AFCDA2 /* CoverStoryScroller.m */; };
 		8BFD61400B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD613F0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.m */; };
@@ -58,6 +59,8 @@
 		8B7271230D92CD920090C251 /* CoverStoryPreferenceKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryPreferenceKeys.h; sourceTree = "<group>"; };
 		8BA270B60D87C9AE0092884C /* CoverStoryDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryDocumentController.h; sourceTree = "<group>"; };
 		8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryDocumentController.m; sourceTree = "<group>"; };
+		8BC4AAB60D94D06100437182 /* CoverStoryCodeViewTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCodeViewTableView.h; sourceTree = "<group>"; };
+		8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCodeViewTableView.m; sourceTree = "<group>"; };
 		8BFD54F40B3F009300AFCDA2 /* CoverStoryCoverageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCoverageData.h; sourceTree = "<group>"; };
 		8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCoverageData.m; sourceTree = "<group>"; };
 		8BFD5B020B3F126D00AFCDA2 /* CoverStoryScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryScroller.h; sourceTree = "<group>"; };
@@ -136,6 +139,8 @@
 				8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */,
 				2A37F4AEFDCFA73011CA2CEA /* CoverStoryDocument.h */,
 				2A37F4ACFDCFA73011CA2CEA /* CoverStoryDocument.m */,
+				8BC4AAB60D94D06100437182 /* CoverStoryCodeViewTableView.h */,
+				8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */,
 				8BA270B60D87C9AE0092884C /* CoverStoryDocumentController.h */,
 				8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */,
 				8BFD613E0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.h */,
@@ -311,6 +316,7 @@
 				8B41D4BE0D85CAB000E60DA4 /* CoverStoryValueTransformers.m in Sources */,
 				8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */,
 				8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */,
+				8BC4AAB80D94D06100437182 /* CoverStoryCodeViewTableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

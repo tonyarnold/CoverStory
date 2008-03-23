@@ -1,8 +1,8 @@
 //
-//  CoverStoryDocumentController.m
+//  CoverStoryCodeViewTableView.h
 //  CoverStory
 //
-//  Created by Dave MacLachlan on 2008/03/12.
+//  Created by Dave MacLachlan on 2008/03/21.
 //  Copyright 2008 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
@@ -17,15 +17,18 @@
 //  the License.
 //
 
-#import "CoverStoryDocumentController.h"
+#import <Cocoa/Cocoa.h>
 
-@implementation CoverStoryDocumentController
+@protocol CoverStoryCodeViewTableViewDelegateProtocol
 
-// Allow us to open folders
-- (int)runModalOpenPanel:(NSOpenPanel *)openPanel 
-                forTypes:(NSArray *)extensions {
-  [openPanel setCanChooseDirectories:YES];
-  return [openPanel runModalForTypes:extensions];
-}
+// Handle when the user hits return or enter
+- (void)tableViewHandleEnter:(NSTableView *)tableView;
 
+// Handle when the user hits up or down arrow
+- (void)tableView:(NSTableView *)tableView handleSelectionKey:(unichar)keyCode;
+
+@end
+
+@interface CoverStoryCodeViewTableView : NSTableView
+- (void)setCoverageData:(NSArray*)coverageData;
 @end
