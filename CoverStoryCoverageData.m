@@ -130,6 +130,7 @@
 - (void)updateCounts {
   hitLines_ = 0;
   codeLines_ = 0;
+  nonfeasible_ = 0;
   NSEnumerator *dataEnum = [lines_ objectEnumerator];
   CoverStoryCoverageLineData* dataPoint;
   while ((dataPoint = [dataEnum nextObject]) != nil) {
