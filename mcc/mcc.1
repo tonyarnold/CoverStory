@@ -1,0 +1,32 @@
+.Dd 2008/03/22               \" DATE 
+.Dt mcc 1      \" Program name and manual section number 
+.Os Darwin
+.Sh NAME                 \" Section Header - required - don't modify 
+.Nm mcc
+.Nd Cyclomatic complexity analysis for C/C++/ObjC/ObjC++
+.Sh SYNOPSIS             \" Section Header - required - don't modify
+.Nm
+.Op Ar                   \" [file ...]
+.Sh DESCRIPTION          \" Section Header - required - don't modify
+.Nm
+performs a variant of McCabe cyclomatic code complexity analysis on a per 
+function/method basis on the named C, C++, ObjC, and ObjC++ input files 
+(or standard input if no files are named, or the file name - is given). 
+.Pp
+It does not do macro expansion.
+.Pp
+.Em Complexity Measurements
+.Bl -column ".Sy Complexity" ".Sy Risk"
+.It Sy Complexity Ta Sy Risk
+.It Li <= 10 Ta Low 
+.It Li <= 20 Ta Moderate
+.It Li <= 50 Ta High
+.It Li >= 51 Ta Extreme
+.El
+.Pp
+For more information on cyclomatic code complexity, check this link: 
+http://en.wikipedia.org/wiki/Cyclomatic_complexity.
+.Sh AUTHORS
+Dave MacLachlan <dmaclach@google.com>
+.Pp
+(C) 2008 Google Inc.
