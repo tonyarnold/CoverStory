@@ -32,20 +32,27 @@ static void DecrementNesting();
 
 static void HandleComment();    
 static void HandleCase();
+static void EndOpenCase();
+static void HandleOpenScope();
+static void EndOpenScope();
 static void Error(const char *err);
+static const char* ScopeName(int scope);
   
 // States
 // OPENSCOPE - we have encountered a potential scoping keyword 
 //             (namespace, class, enum, struct) but we've not sure if we
 //             are declaring the scope, or defining it. If we hit a '{' before
 //             a ';' we will be defining. Otherwise we are declaring.
+// OPENCASE  - we have encountered a case statement. Not sure yet whether
+//             it is followed by another case or define, so we need to check
+//             before increasing complexity.
 // SCOPE     - we are defining a scoped area (namespace, class, enum, struct)
 // BRACE     - we are in a non "scoped" area surrounded by {}.
 %}
+%array
 %option stack
-%s OPENSCOPE
-%s OPENCASE
-%s CASE
+%x OPENSCOPE
+%x OPENCASE
 %s SCOPE
 %s BRACE
 identifier [a-zA-Z_][0-9a-zA-Z_]*
@@ -78,212 +85,220 @@ blank_line {horizontal_white}|{v_tab}|{c_return}|{form_feed}
 
 %%
 
-"/*"                { /**/ HandleComment(); }
-"//".*              {}
+"/*"                                          { /**/ HandleComment(); }
+"//".*                                        {}
 
-        <OPENCASE>{horizontal_white}+ { printf("OpenCase whitespace\n"); }
-        <OPENCASE>case{horizontal_white}+{identifier}  {printf("OpenCase case\n"); }
-        <OPENCASE>: { printf("OpenCase :\n"); }
-        <OPENCASE>default {printf("OpenCase default\n"); }
-        <OPENCASE>"\n" { printf("OpenCase Newline\n"); IncrementLineCount(); }
-        <OPENCASE>.*        { printf("Exit Case (%s): ", yytext); yy_pop_state(); printf("%d\n", YY_START); REJECT; }
+<OPENCASE,OPENSCOPE>{horizontal_white}+       {}
+<OPENCASE>case{horizontal_white}+{identifier} {}
+<OPENCASE>:                                   {}
+<OPENCASE>default                             {}
+<OPENCASE,OPENSCOPE>"\n"                      { IncrementLineCount(); }
+<OPENCASE>.                                   { EndOpenCase(); }
+<OPENSCOPE>{identifier}                       {}
+<OPENSCOPE>.                                  { EndOpenScope(); }
 
-        {horizontal_white}+ {}
+{horizontal_white}+                           {}
+({v_tab}|{c_return}|{form_feed})+             {}
+{blank_line}*"\n"                             { IncrementLineCount(); }
 
-({v_tab}|{c_return}|{form_feed})+ {}
+asm                                           {}
+auto                                          {}
+break                                         {}
+case{horizontal_white}+{identifier}           { HandleCase(); }
+char                                          {}
+const                                         {}
+continue                                      {}
+default                                       { HandleCase(); }
+define                                        {}
+defined                                       {}
+do                                            {}
+double                                        {}
+elif.*                                        {}
+#else                                         {}
+else                                          {}
+endif                                         {}
+enum                                          { HandleOpenScope(); }
+error                                         {}
+extern                                        {}
+float                                         {}
+for                                           { IncrementComplexityCount(); }
+goto                                          {}
+#if.*                                         {}
+if                                            { IncrementComplexityCount(); }
+ifdef                                         {}
+ifndef                                        {}
+include                                       {}
+import                                        {}
+int                                           {}
+line                                          {}
+long                                          {}
+mutable                                       {}
+pragma                                        {}
+register                                      {}
+return                                        {}
+short                                         {}
+signed                                        {}
+sizeof                                        {}
+static                                        {}
+struct                                        { HandleOpenScope(); }
+switch                                        {}
+typedef                                       {}
+undef                                         {}
+union                                         { HandleOpenScope(); }
+unsigned                                      {}
+void                                          {}
+volatile                                      {}
+warning                                       {}
+wchar_t                                       {}
+while                                         { IncrementComplexityCount(); }
 
-{blank_line}*"\n" { IncrementLineCount(); }
-
-        
-asm                 {}
-auto                {}
-break               {}
-case{horizontal_white}+{identifier} { HandleCase(); }
-char                {}
-const               {}
-continue            {}
-default             { HandleCase(); }
-define              {}
-defined             {}
-do                  {}
-double              {}
-elif.*              {}
-#else               {}
-else                {}
-endif               {}
-enum                { yy_push_state(OPENSCOPE); }
-error               {}
-extern              {}
-float               {}
-for                 { IncrementComplexityCount(); }
-goto                {}
-#if.*               {}
-if                  { IncrementComplexityCount(); }
-ifdef               {}
-ifndef              {}
-include             {}
-import              {}
-int                 {}
-line                {}
-long                {}
-mutable             {}
-pragma              {}
-register            {}
-return              {}
-short               {}
-signed              {}
-sizeof              {}
-static              {}
-struct              { yy_push_state(OPENSCOPE); }
-switch              {}
-typedef             {}
-undef               {}
-union               { yy_push_state(OPENSCOPE); }
-unsigned            {}
-void                {}
-volatile            {}
-warning             {}
-wchar_t             {}
-        while               { printf("while\n"); IncrementComplexityCount(); }
-and                 { IncrementComplexityCount(); }
-and_eq              {}
-bitand              {}
-bitor               {}
-bool                {}
-catch               { IncrementComplexityCount(); }
-class               { yy_push_state(OPENSCOPE); }
-compl               {}
-const_cast          {}
-delete              {}
-dynamic_cast        {}
-explicit            {}
-export              {}
-false               {}
-friend              {}
-inline              {}
-namespace           { yy_push_state(OPENSCOPE); }
-new                 {}
-not                 {}
-or                  { IncrementComplexityCount(); }
-or_eq               {}
-operator            {}
-protected           {}
-private             {}
-public              {}
-reinterpret_cast    {}
-static_cast         {}
-template            {}
-this                {}
-throw               {}
-true                {}
-try                 {}
-typeid              {}
-typename            {}
-using               {}
-virtual             {}
-xor                 {}
-xor_eq              {}
+and                                           { IncrementComplexityCount(); }
+and_eq                                        {}
+bitand                                        {}
+bitor                                         {}
+bool                                          {}
+catch                                         { IncrementComplexityCount(); }
+class                                         { HandleOpenScope(); }
+compl                                         {}
+const_cast                                    {}
+delete                                        {}
+dynamic_cast                                  {}
+explicit                                      {}
+export                                        {}
+false                                         {}
+friend                                        {}
+inline                                        {}
+namespace                                     { HandleOpenScope(); }
+new                                           {}
+not                                           {}
+or                                            { IncrementComplexityCount(); }
+or_eq                                         {}
+operator                                      {}
+protected                                     {}
+private                                       {}
+public                                        {}
+reinterpret_cast                              {}
+static_cast                                   {}
+template                                      {}
+this                                          {}
+throw                                         {}
+true                                          {}
+try                                           {}
+typeid                                        {}
+typename                                      {}
+using                                         {}
+virtual                                       {}
+xor                                           {}
+xor_eq                                        {}
  
-interface           {}
-protocol            {}
-implementation      {}
-synchronized        {}
-selector            {}
-encode              {}
-self                {}
-super               {}
-end                 {}
-package             {}
-id                  {}
-in                  {}
-out                 {}
-inout               {}
-bycopy              {}
-byref               {}
-oneway              {}
-finally             {}
+interface                                     {}
+protocol                                      {}
+implementation                                {}
+synchronized                                  {}
+selector                                      {}
+encode                                        {}
+self                                          {}
+super                                         {}
+end                                           {}
+package                                       {}
+id                                            {}
+in                                            {}
+out                                           {}
+inout                                         {}
+bycopy                                        {}
+byref                                         {}
+oneway                                        {}
+finally                                       {}
 
-{identifier}        {}
+{identifier}                                  {}
 
-{decimal_constant}  {}
-{octal_constant}    {}
-{hex_constant}      {}
-{floating_constant} {}
-
-
-"L"?[']{c_char}+['] {}
+{decimal_constant}                            {}
+{octal_constant}                              {}
+{hex_constant}                                {}
+{floating_constant}                           {}
 
 
-"L"?["]{s_char}*["] {}
+"L"?[']{c_char}+[']                           {}
 
 
-"("                 {}
-")"                 {}
-","                 {}
-"#"                 {}
-"##"                {}
-"@"                 {}
-"{"                 { IncrementNesting(); }
-"}"                 { DecrementNesting(); }
-"["                 {}
-"]"                 {}
-"."                 {}
-"&"                 {}
-"*"                 {}
-"+"                 {}
-"-"                 {}
-"~"                 {}
-"!"                 {}
-"/"                 {}
-"%"                 {}
-"<"                 {}
-">"                 {}
-"^"                 {}
-"|"                 {}
-"?"                 { IncrementComplexityCount(); }
-":"                 {}
- <OPENSCOPE>";"     { yy_pop_state(); }
-";"                 {}
-"="                 {}
-".*"                {}
-"::"                {}
-"->"                {}
-"->*"               {}
-"++"                {}
-"--"                {}
-"<<"                {}
-">>"                {}
-"<="                {}
-">="                {}
-"=="                {}
-"!="                {}
-"&&"                { IncrementComplexityCount(); }
-"||"                { IncrementComplexityCount(); }
-"*="                {}
-"/="                {}
-"%="                {}
-"+="                {}
-"-="                {}
-"<<="               {}
-">>="               {}
-"&="                {}
-"^="                {}
-"|="                {}
-"..."               {}
+"L"?["]{s_char}*["]                           {}
+
+
+"("                                           {}
+")"                                           {}
+","                                           {}
+"#"                                           {}
+"##"                                          {}
+"@"                                           {}
+"{"                                           { IncrementNesting(); }
+"}"                                           { DecrementNesting(); }
+"["                                           {}
+"]"                                           {}
+"."                                           {}
+"&"                                           {}
+"*"                                           {}
+"+"                                           {}
+"-"                                           {}
+"~"                                           {}
+"!"                                           {}
+"/"                                           {}
+"%"                                           {}
+"<"                                           {}
+">"                                           {}
+"^"                                           {}
+"|"                                           {}
+"?"                                           { IncrementComplexityCount(); }
+":"                                           {}
+";"                                           {}
+"="                                           {}
+".*"                                          {}
+"::"                                          {}
+"->"                                          {}
+"->*"                                         {}
+"++"                                          {}
+"--"                                          {}
+"<<"                                          {}
+">>"                                          {}
+"<="                                          {}
+">="                                          {}
+"=="                                          {}
+"!="                                          {}
+"&&"                                          { IncrementComplexityCount(); }
+"||"                                          { IncrementComplexityCount(); }
+"*="                                          {}
+"/="                                          {}
+"%="                                          {}
+"+="                                          {}
+"-="                                          {}
+"<<="                                         {}
+">>="                                         {}
+"&="                                          {}
+"^="                                          {}
+"|="                                          {}
+"..."                                         {}
 
 %%
 
+int gNestingDepth = 0;
+int gTotalNestingDepth = 0;
+int gComplexityCount = 1;
+int gLineNum = 1;
+int gStartLine = 0;
+char gDebug = 0;
+        
 int yywrap() { 
   return 1;
 }
 
 int main (int argc, const char * argv[]) {
   // Skip over program name
+  if (getenv("DEBUG") != NULL) {
+    gDebug = 1;
+  }
   ++argv;
   --argc; 
   if (argc) {
-    int i;
-    for (i = 0; i < argc; ++i) {
+    for (int i = 0; i < argc; ++i) {
       if (strcmp(argv[i], "-") == 0) {
         yyin = stdin;
       } else {
@@ -293,7 +308,6 @@ int main (int argc, const char * argv[]) {
         Error("Unable to open file");
       }
       printf("- %s\n", argv[i]);  
-      yy_push_state(INITIAL);
       yylex();
       printf("\n");
       if (yyin != stdin) {
@@ -306,13 +320,11 @@ int main (int argc, const char * argv[]) {
   }
   return 0;
 }
-
-int gNestingDepth = 0;
-int gComplexityCount = 1;
-int gLineNum = 1;
-int gStartLine = 0;
-  
+        
 void IncrementComplexityCount() {
+  if (gDebug) {
+    printf("\tIncrease Complexity: (%s - %d)\n", yytext, gLineNum);
+  }
   gComplexityCount += 1;
 }
 
@@ -321,7 +333,6 @@ void IncrementLineCount() {
 }
 
 void IncrementNesting() {
-        printf("{\n");
   if (YY_START == OPENSCOPE) {
     yy_pop_state();
     yy_push_state(SCOPE);
@@ -331,6 +342,14 @@ void IncrementNesting() {
     }
     gNestingDepth += 1;
     yy_push_state(BRACE);
+  }
+  if (gDebug) {
+    for (int i = 0; i < gTotalNestingDepth; i++) {
+      printf("\t");
+    }
+    gTotalNestingDepth += 1; 
+    printf("Increase Nesting To %s: (%s - %d)\n", ScopeName(YY_START), 
+           yytext, gLineNum);
   }
 }
 
@@ -354,17 +373,28 @@ void DecrementNesting() {
     }
   }
   yy_pop_state();
+
+  if (gDebug) {
+    gTotalNestingDepth -= 1;
+    for (int i = 0; i < gTotalNestingDepth; i++) {
+      printf("\t");
+    }
+    printf("Decrease Nesting To %s: (%s - %d)\n", ScopeName(YY_START), 
+           yytext, gLineNum);
+  }
+        
 }
 
 void HandleCase() {
  if (YY_START != OPENCASE) { 
-        printf("Counted Case\n");
    IncrementComplexityCount(); 
    yy_push_state(OPENCASE);
-        } else {
-        printf("Ignored Case\n");
-        }
+ }
+}
 
+void EndOpenCase() {
+  yy_pop_state(); 
+  unput(yytext[0]);
 }
 
 void HandleComment() {
@@ -383,8 +413,42 @@ void HandleComment() {
     }
   }
 }
-    
+        
+void HandleOpenScope() {
+  yy_push_state(OPENSCOPE);
+}
+
+void EndOpenScope() {
+  if (strcmp(yytext, "{") == 0) {
+    IncrementNesting();
+  } else {
+    yy_pop_state();
+    unput(yytext[0]);
+  }
+}
+        
 void Error(const char *err) {
   printf(err);
   exit(1);
+}
+
+const char* ScopeName(int scope) {
+  typedef struct {
+    int num;
+    const char *name;
+  } ScopeMap;
+  #define NUMTONAME(x) { x, #x }
+  ScopeMap map[] = {
+    NUMTONAME(INITIAL),
+    NUMTONAME(OPENSCOPE), 
+    NUMTONAME(OPENCASE), 
+    NUMTONAME(SCOPE),
+    NUMTONAME(BRACE) 
+  };
+  for (size_t i = 0; i < sizeof(map) / sizeof(ScopeMap); ++i) {
+    if (scope == map[i].num) {
+      return map[i].name;
+    }
+  }
+  return "Unknown";
 }

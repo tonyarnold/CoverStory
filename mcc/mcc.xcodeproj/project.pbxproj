@@ -8,21 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		8BC4AD7F0D961E3300437182 /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8BC4AD7E0D961E3300437182 /* mcc.l */; };
-		8BC4B3B40D9947D300437182 /* mcctest.c in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8BC4B3B00D99473900437182 /* mcctest.c */; };
 		8DD76FB00486AB0100D96B5E /* mcc.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6A0FF2C0290799A04C91782 /* mcc.1 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8BC4B3BA0D99482500437182 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-				8BC4B3B40D9947D300437182 /* mcctest.c in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DD76FAF0486AB0100D96B5E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
@@ -38,6 +27,7 @@
 /* Begin PBXFileReference section */
 		8BC4AD7E0D961E3300437182 /* mcc.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; path = mcc.l; sourceTree = "<group>"; };
 		8BC4B3B00D99473900437182 /* mcctest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mcctest.c; sourceTree = "<group>"; };
+		8BC4B48D0D99927300437182 /* mcctestmaster.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mcctestmaster.txt; sourceTree = "<group>"; };
 		8DD76FB20486AB0100D96B5E /* mcc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mcc; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6A0FF2C0290799A04C91782 /* mcc.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = mcc.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -68,6 +58,7 @@
 			children = (
 				8BC4B3B00D99473900437182 /* mcctest.c */,
 				8BC4AD7E0D961E3300437182 /* mcc.l */,
+				8BC4B48D0D99927300437182 /* mcctestmaster.txt */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -98,7 +89,7 @@
 				8DD76FAB0486AB0100D96B5E /* Sources */,
 				8DD76FAD0486AB0100D96B5E /* Frameworks */,
 				8DD76FAF0486AB0100D96B5E /* CopyFiles */,
-				8BC4B3BA0D99482500437182 /* CopyFiles */,
+				8BC4B47E0D99907900437182 /* Unittest */,
 			);
 			buildRules = (
 			);
@@ -126,6 +117,25 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8BC4B47E0D99907900437182 /* Unittest */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/mcctestmaster.txt",
+				"$(SRCROOT)/mcctest.c",
+			);
+			name = Unittest;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#\n# Runs a unittest against mcc\n#\n\nif [ -f ${TEMP_FILES_DIR}/mcctest.out ]; then\n\trm ${TEMP_FILES_DIR}/mcctest.out\nfi\n\n\"${TARGET_BUILD_DIR}/${EXECUTABLE_NAME}\" mcctest.c > \"${TEMP_FILES_DIR}/mcctest.out\"\ncmp \"${TEMP_FILES_DIR}/mcctest.out\" \"${SRCROOT}/mcctestmaster.txt\"\nif [ $? -ne 0 ]; then\n\techo ${TEMP_FILES_DIR}/mcctest.out:0: error: Test Failed\n\texit 1\nfi\nexit 0";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8DD76FAB0486AB0100D96B5E /* Sources */ = {
@@ -169,6 +179,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
