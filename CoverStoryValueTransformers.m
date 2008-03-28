@@ -30,30 +30,75 @@
            @"Only handle CoverStoryCoverageLineData");
   CoverStoryCoverageLineData *data = (CoverStoryCoverageLineData*)value;
   // Draw the hitcount
-  SInt32 hitCount = [data hitCount];
+  SInt32 count = [data hitCount];
+
   NSString *displayString = @"";
   NSDictionary *attributes = nil;
-  if (hitCount != -1) {
+  if (count != kCoverStoryNotExecutedMarker) {
     NSMutableParagraphStyle *pStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
     [pStyle setAlignment:NSRightTextAlignment];
+    [pStyle setMinimumLineHeight:13];
     NSColor *color = nil;
-    if (hitCount == 0.0) {
+    
+    if (count == 0) {
       color = [NSColor redColor];
     } else {
       color = [NSColor colorWithDeviceWhite:0.4 alpha:1.0];
     }
     
     attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                    pStyle, NSParagraphStyleAttributeName, 
+                    pStyle, NSParagraphStyleAttributeName,
                     color, NSForegroundColorAttributeName, 
                     nil];
-    if (hitCount == -2) {
+    
+    if (count == kCoverStoryNonFeasibleMarker) {
       displayString = @"--"; // for non-feasible lines
-    } else if (hitCount < 999) {
-      displayString = [NSString stringWithFormat:@"%d", hitCount];
+    } else if (count < 999) {
+      displayString = [NSString stringWithFormat:@"%d", count];
     } else {
       displayString = @"99+";
     }
+  }
+  return [[[NSAttributedString alloc] initWithString:displayString
+                                          attributes:attributes] autorelease];
+}
+
+@end
+
+// Transformer for changing Line Data to Complexity.
+// Used for first column of source code table.
+@interface CoverageLineDataToComplexityTransformer : NSValueTransformer
+@end
+
+@implementation CoverageLineDataToComplexityTransformer
+
++ (Class)transformedValueClass {
+  return [NSAttributedString class];
+}
+
++ (BOOL)allowsReverseTransformation {
+  return NO;
+}
+
+- (id)transformedValue:(id)value {
+  NSAssert([value isKindOfClass:[CoverStoryCoverageLineData class]], 
+           @"Only handle CoverStoryCoverageLineData");
+  CoverStoryCoverageLineData *data = (CoverStoryCoverageLineData*)value;
+  // Draw the hitcount/complexity
+  SInt32 count = [data complexity];
+  
+  NSString *displayString = @"";
+  NSDictionary *attributes = nil;
+  if (count != 0) {
+    NSMutableParagraphStyle *pStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
+    [pStyle setAlignment:NSRightTextAlignment];
+    [pStyle setMinimumLineHeight:13];
+    
+    attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                  pStyle, NSParagraphStyleAttributeName,
+                  nil];
+    
+    displayString = [NSString stringWithFormat:@"%d", count];
   }
   return [[[NSAttributedString alloc] initWithString:displayString
                                           attributes:attributes] autorelease];
@@ -115,9 +160,9 @@
   NSString *colorName = nil;
   if (hitCount == 0) {
     colorName = kCoverStoryMissedLineColorKey;
-  } else if (hitCount == -1) {
+  } else if (hitCount == kCoverStoryNotExecutedMarker) {
     colorName = kCoverStoryUnexecutableLineColorKey;
-  } else if (hitCount == -2) {
+  } else if (hitCount == kCoverStoryNonFeasibleMarker) {
     colorName = kCoverStoryNonFeasibleLineColorKey;
   }
   else {
@@ -191,6 +236,55 @@ const float kGoodCoverage = 75.0f;
     hue = redHue;
   } else if (coverage < kGoodCoverage) {
     hue = redHue + (greenHue * (coverage - kBadCoverage) / (kGoodCoverage - kBadCoverage));
+  } else {
+    hue = greenHue;
+  }
+  NSColor *textColor = [NSColor colorWithCalibratedHue:hue
+                                            saturation:saturation
+                                            brightness:brightness
+                                                 alpha:1.0];
+  NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                              textColor, NSForegroundColorAttributeName, 
+                              nil];
+  return [[[NSAttributedString alloc] initWithString:coverageString
+                                          attributes:attributes] autorelease];
+}
+
+@end
+
+// Transformer for changing file data to complexity.
+// Used for second column of files table.
+@interface CoverageFileDataToComplexityTransformer : NSValueTransformer
+@end
+
+@implementation CoverageFileDataToComplexityTransformer
+
+const float kBadComplexity = 50.0f;
+const float kGoodComplexity = 10.0f;
+
++ (Class)transformedValueClass {
+  return [NSAttributedString class];
+}
+
++ (BOOL)allowsReverseTransformation {
+  return NO;
+}
+
+- (id)transformedValue:(id)value {
+  NSAssert([value isKindOfClass:[CoverStoryCoverageFileData class]], 
+           @"Only handle CoverStoryCoverageFileData");
+  CoverStoryCoverageFileData *data = (CoverStoryCoverageFileData *)value;
+  SInt32 maxComplexity = [data maxComplexity];
+  NSString *coverageString = [NSString stringWithFormat:@"%d", maxComplexity];
+  float redHue = 0;
+  float greenHue = 120.0/360.0;
+  float hue = 0;
+  float saturation = 1.0f;
+  float brightness = 0.75f;
+  if (maxComplexity > kBadComplexity) {
+    hue = redHue;
+  } else if (maxComplexity > kGoodComplexity) {
+    hue = redHue + (greenHue * (maxComplexity - kGoodComplexity) / (kBadComplexity - kGoodComplexity));
   } else {
     hue = greenHue;
   }

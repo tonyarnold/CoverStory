@@ -19,6 +19,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+enum {
+  // Value for hitCount for lines that aren't executed
+  kCoverStoryNotExecutedMarker = -1,
+  // Value for hitCount for lines that are non-feasible
+  kCoverStoryNonFeasibleMarker = -2
+};
+  
 @protocol CoverStoryLineCoverageProtocol
 - (SInt32)numberTotalLines;
 - (SInt32)numberCodeLines; // doesn't include non-feasible
@@ -35,12 +42,14 @@
   SInt32 hitLines_;
   SInt32 codeLines_;
   SInt32 nonfeasible_;
+  SInt32 maxComplexity_;
   NSString *sourcePath_;
 }
 
 + (id)coverageFileDataFromData:(NSData *)data;
 - (id)initWithData:(NSData *)data;
 - (NSArray *)lines;
+- (int)maxComplexity;
 - (NSString *)sourcePath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
 @end
@@ -60,13 +69,12 @@
                     
                      
 // Keeps track of the number of times a line of code has been hit. There is
-// one CoverStoryCoverageLineData object per line of code in the file. Note that
-// a hitcount of -1 means that the line is not executed, and -2 means the source
-// had non-feasible markers.
+// one CoverStoryCoverageLineData object per line of code in the file. 
 
 @interface CoverStoryCoverageLineData : NSObject<NSCopying> {
  @private
   SInt32 hitCount_;  // how many times this line has been hit
+  SInt32 complexity_;
   NSString *line_;  //  the line
 }
 
@@ -75,4 +83,6 @@
 - (NSString*)line;
 - (SInt32)hitCount;
 - (void)addHits:(SInt32)newHits;
+- (void)setComplexity:(SInt32)complexity;
+- (SInt32)complexity;
 @end

@@ -25,6 +25,15 @@
 #import "GTMNSFileManager+Path.h"
 #import "GTMNSEnumerator+Filter.h"
 
+@interface NSTableView (CoverStoryTableView)
+- (void)cs_setSortKeyOfColumn:(NSString *)columnName
+                           to:(NSString *)sortKeyName;
+- (void)cs_setValueTransformerOfColumn:(NSString *)columnName
+                                    to:(NSString *)transformerName;
+- (void)cs_setHeaderOfColumn:(NSString*)columnName
+                          to:(NSString*)name;
+@end
+
 @interface CoverStoryDocument (PrivateMethods)
 - (void)openFolderInThread:(NSString*)path;
 - (void)openFileInThread:(NSString*)path;
@@ -32,10 +41,12 @@
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
+- (void)configureCoverageVsComplexityColumns;
 @end
 
 static NSString *const kPrefsToWatch[] = { 
   kCoverStoryHideSystemSourcesKey,
+  kCoverStoryShowComplexityKey,
   kCoverStoryMissedLineColorKey,
   kCoverStoryUnexecutableLineColorKey,
   kCoverStoryNonFeasibleLineColorKey,
@@ -88,7 +99,7 @@ static NSString *const kPrefsToWatch[] = {
   NSSortDescriptor *ascending = [[[NSSortDescriptor alloc] initWithKey:@"coverage"
                                                              ascending:YES] autorelease];
   [sourceFilesController_ setSortDescriptors:[NSArray arrayWithObject:ascending]];
-  
+  [self configureCoverageVsComplexityColumns];
   if (openingInThread_) {
     [spinner_ startAnimation:self];
   }
@@ -385,8 +396,12 @@ static NSString *const kPrefsToWatch[] = {
     // Jump to first missing code block
     [self tableView:codeTableView_ handleSelectionKey:NSDownArrowFunctionKey];
   } else if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
-    if ([keyPath isEqualToString:[self valuesKey:kCoverStoryHideSystemSourcesKey]]) {
+    if ([keyPath isEqualToString:[self valuesKey:kCoverStoryHideSystemSourcesKey]]){
       [sourceFilesController_ rearrangeObjects];
+    } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryShowComplexityKey]]) {
+      [self configureCoverageVsComplexityColumns];
+      [sourceFilesTableView_ reloadData];
+      [codeTableView_ reloadData];
     } else {
       NSString *const kColorsToWatch[] = { 
         kCoverStoryMissedLineColorKey,
@@ -538,5 +553,101 @@ static NSString *const kPrefsToWatch[] = {
   }
   [tableView scrollRowToVisible:NSMaxRange(range)];
   [tableView scrollRowToVisible:range.location];
+}
+
+
+- (void)setSortKeyOfTableView:(NSTableView *)tableView 
+                       column:(NSString *)columnName
+                           to:(NSString *)sortKeyName {
+  NSTableColumn *column = [tableView tableColumnWithIdentifier:columnName];
+  NSSortDescriptor *oldDesc = [column sortDescriptorPrototype];
+  NSSortDescriptor *descriptor = [[[NSSortDescriptor alloc] initWithKey:sortKeyName 
+                                                              ascending:[oldDesc ascending]]  autorelease];
+  [column setSortDescriptorPrototype:descriptor];
+}
+
+- (void)reloadData:(id)sender {
+  [self willChangeValueForKey:@"dataSet_"];
+  [dataSet_ release];
+  dataSet_ = [[CoverStoryCoverageSet alloc] init];
+  [self didChangeValueForKey:@"dataSet_"];
+  NSError *error = nil;
+  if (![self readFromURL:[NSURL fileURLWithPath:[self fileName]]
+                  ofType:[self fileType]
+                   error:&error]) {
+    NSLog(@"Couldn't reload file %@", error);
+  }
+}
+
+- (void)configureCoverageVsComplexityColumns {
+  NSString *const hitCountTransformerNames[] = { 
+    @"CoverageLineDataToHitCountTransformer",
+    @"CoverageLineDataToComplexityTransformer"
+  };
+  NSString *const coverageTransformerNames[] = {
+    @"CoverageFileDataToCoveragePercentageTransformer",
+    @"CoverageFileDataToComplexityTransformer"
+  };
+  
+  NSString *const coverageSortKeyNames[] = {
+    @"coverage",
+    @"maxComplexity"
+  };
+  
+  NSString *const coverageTitles[] = {
+    @"%",
+    @"Max"
+  };
+  
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  int index = [defaults boolForKey:kCoverStoryShowComplexityKey] ? 1 : 0;
+  
+  [codeTableView_ cs_setValueTransformerOfColumn:@"hitCount"
+                                              to:hitCountTransformerNames[index]];
+  [sourceFilesTableView_ cs_setValueTransformerOfColumn:@"coverage"
+                                                     to:coverageTransformerNames[index]];
+  [sourceFilesTableView_ cs_setSortKeyOfColumn:@"coverage"
+                                            to:coverageSortKeyNames[index]];
+  [sourceFilesTableView_ cs_setHeaderOfColumn:@"coverage"
+                                           to:coverageTitles[index]];
+}
+
+@end
+
+@implementation NSTableView (CoverStoryTableView)
+- (void)cs_setValueTransformerOfColumn:(NSString *)columnName
+                                    to:(NSString *)transformerName {
+  NSTableColumn *column = [self tableColumnWithIdentifier:columnName];
+  NSAssert1(column, @"No %@ column?", columnName);
+  NSDictionary *bindingInfo = [column infoForBinding:NSValueBinding];
+  NSAssert1(bindingInfo, @"No binding Info for column %@", columnName);
+  [column unbind:NSValueBinding];
+  NSMutableDictionary *bindingOptions = [[[bindingInfo objectForKey:NSOptionsKey] mutableCopy] autorelease];
+  [bindingOptions setObject:transformerName 
+                     forKey:NSValueTransformerNameBindingOption];
+  [bindingOptions setObject:[NSValueTransformer valueTransformerForName:transformerName]
+                     forKey:NSValueTransformerBindingOption];
+  [column bind:NSValueBinding 
+      toObject:[bindingInfo objectForKey:NSObservedObjectKey]
+   withKeyPath:[bindingInfo objectForKey:NSObservedKeyPathKey] 
+       options:bindingOptions];
+}
+
+- (void)cs_setSortKeyOfColumn:(NSString *)columnName
+                           to:(NSString *)sortKeyName {
+  NSTableColumn *column = [self tableColumnWithIdentifier:columnName];
+  NSAssert1(column, @"No %@ column?", columnName);
+  NSSortDescriptor *oldDesc = [column sortDescriptorPrototype];
+  BOOL ascending = oldDesc ? [oldDesc ascending] : YES;
+  NSSortDescriptor *descriptor = [[[NSSortDescriptor alloc] initWithKey:sortKeyName 
+                                                              ascending:ascending]  autorelease];
+  [column setSortDescriptorPrototype:descriptor];
+}
+
+- (void)cs_setHeaderOfColumn:(NSString*)columnName
+                          to:(NSString*)name {
+  NSTableColumn *column = [self tableColumnWithIdentifier:columnName];
+  NSAssert1(column, @"No %@ column?", columnName);
+  [[column headerCell] setTitle:name];
 }
 @end

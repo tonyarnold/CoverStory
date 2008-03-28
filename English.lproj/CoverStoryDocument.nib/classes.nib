@@ -51,6 +51,8 @@
 				<string>CoverStoryCodeViewTableView</string>
 				<key>sourceFilesController_</key>
 				<string>NSArrayController</string>
+				<key>sourceFilesTableView_</key>
+				<string>NSTableView</string>
 				<key>spinner_</key>
 				<string>NSProgressIndicator</string>
 			</dict>

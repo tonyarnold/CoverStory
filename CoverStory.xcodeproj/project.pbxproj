@@ -13,6 +13,9 @@
 		8B2A9C6E0D84F84600599386 /* gcno.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6B0D84F84600599386 /* gcno.icns */; };
 		8B2A9C6F0D84F84600599386 /* gcda.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6C0D84F84600599386 /* gcda.icns */; };
 		8B41D4BE0D85CAB000E60DA4 /* CoverStoryValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */; };
+		8B469EF20D99C25A0042D75D /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8B469EF10D99C25A0042D75D /* mcc.l */; };
+		8B469EF70D99C2AD0042D75D /* mcc.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8B469EF50D99C2630042D75D /* mcc.1 */; };
+		8B469F7F0D99F1420042D75D /* mcc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8B469ED60D99C2160042D75D /* mcc */; };
 		8B63DA640D94078700395A2B /* openscript.scpt in Resources */ = {isa = PBXBuildFile; fileRef = 8B63DA5B0D94070100395A2B /* openscript.scpt */; };
 		8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */; };
 		8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */; };
@@ -36,21 +39,37 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8BC4B0120D9828D500437182 /* PBXContainerItemProxy */ = {
+		8B469F240D99C50C0042D75D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8BC4B00E0D9828D500437182 /* mcc.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DD76FB20486AB0100D96B5E;
-			remoteInfo = mcc;
-		};
-		8BC4B0140D9828DF00437182 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8BC4B00E0D9828D500437182 /* mcc.xcodeproj */;
+			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteGlobalIDString = 8B469ED50D99C2160042D75D;
 			remoteInfo = mcc;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8B469EFB0D99C2F70042D75D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				8B469EF70D99C2AD0042D75D /* mcc.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8B469F890D99F14D0042D75D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				8B469F7F0D99F1420042D75D /* mcc in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -70,6 +89,11 @@
 		8B2A9C6C0D84F84600599386 /* gcda.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gcda.icns; sourceTree = "<group>"; };
 		8B41D3930D857F1200E60DA4 /* CoverStoryDocumentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryDocumentTypes.h; sourceTree = "<group>"; };
 		8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryValueTransformers.m; sourceTree = "<group>"; };
+		8B469ED60D99C2160042D75D /* mcc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mcc; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B469EF10D99C25A0042D75D /* mcc.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; path = mcc.l; sourceTree = "<group>"; };
+		8B469EF30D99C2630042D75D /* mcctestmaster.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mcctestmaster.txt; sourceTree = "<group>"; };
+		8B469EF40D99C2630042D75D /* mcctest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mcctest.c; sourceTree = "<group>"; };
+		8B469EF50D99C2630042D75D /* mcc.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = mcc.1; sourceTree = "<group>"; };
 		8B63DA5B0D94070100395A2B /* openscript.scpt */ = {isa = PBXFileReference; explicitFileType = compiled; fileEncoding = 4; path = openscript.scpt; sourceTree = "<group>"; };
 		8B726FFF0D92B6EB0090C251 /* CoverStoryFilePredicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryFilePredicate.h; sourceTree = "<group>"; };
 		8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryFilePredicate.m; sourceTree = "<group>"; };
@@ -78,7 +102,6 @@
 		8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryDocumentController.m; sourceTree = "<group>"; };
 		8BC4AAB60D94D06100437182 /* CoverStoryCodeViewTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCodeViewTableView.h; sourceTree = "<group>"; };
 		8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCodeViewTableView.m; sourceTree = "<group>"; };
-		8BC4B00E0D9828D500437182 /* mcc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mcc.xcodeproj; path = mcc/mcc.xcodeproj; sourceTree = "<group>"; };
 		8BFD54F40B3F009300AFCDA2 /* CoverStoryCoverageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCoverageData.h; sourceTree = "<group>"; };
 		8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCoverageData.m; sourceTree = "<group>"; };
 		8BFD5B020B3F126D00AFCDA2 /* CoverStoryScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryScroller.h; sourceTree = "<group>"; };
@@ -102,6 +125,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8B469ED40D99C2160042D75D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D15AC330486D014006FF6A4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -127,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				8D15AC370486D014006FF6A4 /* CoverStory.app */,
+				8B469ED60D99C2160042D75D /* mcc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,10 +169,10 @@
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				F47A7A3D0D748DAC002302AB /* google-toolbox-for-mac */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
+				8B469EE70D99C2330042D75D /* mcc */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
-				8BC4B00B0D9828C200437182 /* Subprojects */,
 			);
 			comments = "Copyright 2006-2007 Google Inc.\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not\nuse this file except in compliance with the License.  You may obtain a copy\nof the License at\n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT\nWARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the\nLicense for the specific language governing permissions and limitations under\nthe License.\n";
 			name = Gcover;
@@ -207,20 +238,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		8BC4B00B0D9828C200437182 /* Subprojects */ = {
+		8B469EE70D99C2330042D75D /* mcc */ = {
 			isa = PBXGroup;
 			children = (
-				8BC4B00E0D9828D500437182 /* mcc.xcodeproj */,
+				8B469EF10D99C25A0042D75D /* mcc.l */,
+				8B469EF30D99C2630042D75D /* mcctestmaster.txt */,
+				8B469EF40D99C2630042D75D /* mcctest.c */,
+				8B469EF50D99C2630042D75D /* mcc.1 */,
 			);
-			name = Subprojects;
-			sourceTree = "<group>";
-		};
-		8BC4B00F0D9828D500437182 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8BC4B0130D9828D500437182 /* mcc */,
-			);
-			name = Products;
+			path = mcc;
 			sourceTree = "<group>";
 		};
 		F4138F240D751FCF00F72B31 /* Foundation */ = {
@@ -260,6 +286,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		8B469ED50D99C2160042D75D /* mcc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8B469EE20D99C21D0042D75D /* Build configuration list for PBXNativeTarget "mcc" */;
+			buildPhases = (
+				8B469ED30D99C2160042D75D /* Sources */,
+				8B469ED40D99C2160042D75D /* Frameworks */,
+				8B469EFB0D99C2F70042D75D /* CopyFiles */,
+				8B469EF90D99C2BC0042D75D /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mcc;
+			productName = mcc;
+			productReference = 8B469ED60D99C2160042D75D /* mcc */;
+			productType = "com.apple.product-type.tool";
+		};
 		8D15AC270486D014006FF6A4 /* CoverStory */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "CoverStory" */;
@@ -268,11 +312,12 @@
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
 				63BC85FF0B4D86E900CDC9E5 /* Rename Help Files */,
+				8B469F890D99F14D0042D75D /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				8BC4B0150D9828DF00437182 /* PBXTargetDependency */,
+				8B469F250D99C50C0042D75D /* PBXTargetDependency */,
 			);
 			name = CoverStory;
 			productInstallPath = "$(HOME)/Applications";
@@ -290,28 +335,13 @@
 			hasScannedForEncodings = 1;
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Gcover */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 8BC4B00F0D9828D500437182 /* Products */;
-					ProjectRef = 8BC4B00E0D9828D500437182 /* mcc.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8D15AC270486D014006FF6A4 /* CoverStory */,
+				8B469ED50D99C2160042D75D /* mcc */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		8BC4B0130D9828D500437182 /* mcc */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = mcc;
-			remoteRef = 8BC4B0120D9828D500437182 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D15AC2B0486D014006FF6A4 /* Resources */ = {
@@ -349,9 +379,33 @@
 			shellPath = /bin/sh;
 			shellScript = "## Perforce policy is no spaces in filenames, but helpbook needs the spaces. So we put them in after the build.\nif [ $ACTION == \"build\" ] && [ $BUILD_VARIANTS == \"normal\" ]  ; then\ncd \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj\"\nif [ -e CoverStoryHelp/CoverStoryHelp.html ] ; then \n  mv CoverStoryHelp/CoverStoryHelp.html 'CoverStoryHelp/CoverStory Help.html'\nfi\nif [ -e CoverStoryHelp/CoverStoryHelp.helpindex ] ; then\n  mv CoverStoryHelp/CoverStoryHelp.helpindex 'CoverStoryHelp/CoverStory Help.helpindex'\nfi\nif [ -e CoverStoryHelp ] ; then\n  rm -rf 'CoverStory Help'\n  mv CoverStoryHelp 'CoverStory Help'\nfi\nfi\n";
 		};
+		8B469EF90D99C2BC0042D75D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/mcc/mcctestmaster.txt",
+				"$(SRCROOT)/mcc/mcctest.c",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#\n# Runs a unittest against mcc\n#\n\nif [ -f ${TEMP_FILES_DIR}/mcctest.out ]; then\n\trm ${TEMP_FILES_DIR}/mcctest.out\nfi\n\n\"${TARGET_BUILD_DIR}/${EXECUTABLE_NAME}\" mcc/mcctest.c > \"${TEMP_FILES_DIR}/mcctest.out\"\ncmp \"${TEMP_FILES_DIR}/mcctest.out\" \"${SRCROOT}/mcc/mcctestmaster.txt\"\nif [ $? -ne 0 ]; then\n\techo ${TEMP_FILES_DIR}/mcctest.out:0: error: Test Failed\n\texit 1\nfi\nexit 0";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8B469ED30D99C2160042D75D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8B469EF20D99C25A0042D75D /* mcc.l in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D15AC300486D014006FF6A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -375,10 +429,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8BC4B0150D9828DF00437182 /* PBXTargetDependency */ = {
+		8B469F250D99C50C0042D75D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = mcc;
-			targetProxy = 8BC4B0140D9828DF00437182 /* PBXContainerItemProxy */;
+			target = 8B469ED50D99C2160042D75D /* mcc */;
+			targetProxy = 8B469F240D99C50C0042D75D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -426,6 +480,28 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		8B469ED80D99C2170042D75D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = mcc;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-unused-function",
+				);
+			};
+			name = Debug;
+		};
+		8B469ED90D99C2170042D75D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = mcc;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-unused-function",
+				);
+			};
+			name = Release;
+		};
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -475,6 +551,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8B469EE20D99C21D0042D75D /* Build configuration list for PBXNativeTarget "mcc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8B469ED80D99C2170042D75D /* Debug */,
+				8B469ED90D99C2170042D75D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "CoverStory" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

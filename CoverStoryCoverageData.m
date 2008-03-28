@@ -3,7 +3,7 @@
 //  CoverStory
 //
 //  Created by dmaclach on 12/24/06.
-//  Copyright 2006-2009 Google Inc.
+//  Copyright 2006-2008 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
@@ -19,9 +19,17 @@
 
 #import "CoverStoryCoverageData.h"
 #import "GTMRegex.h"
+#import "GTMScriptRunner.h"
 
 @interface CoverStoryCoverageFileData (PrivateMethods)
 - (void)updateCounts;
+- (BOOL)calculateComplexity;
+- (NSString*)generateSource;
+- (NSString*)runMccOnPath:(NSString*)path;
+- (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
+                         start:(int*)start 
+                           end:(int*)end 
+                    complexity:(int*)complexity;
 @end
 
 @implementation CoverStoryCoverageFileData
@@ -42,10 +50,10 @@
     // punt.
     NSString *string = [[[NSString alloc] initWithData:data 
                                               encoding:NSUTF8StringEncoding] autorelease];
-    if (string == nil) {
+    if (!string) {
       string = [[[NSString alloc] initWithData:data 
                                       encoding:NSMacOSRomanStringEncoding] autorelease];    }
-    if (string == nil) {
+    if (!string) {
       NSLog(@"failed to process data as UTF8 or MacOSRoman, currently don't try other encodings");
       [self release];
       self = nil;
@@ -67,7 +75,7 @@
           hitCount = [segment intValue];
           if (hitCount == 0) {
             if ([segment characterAtIndex:[segment length] - 1] != '#') {
-              hitCount = -1;
+              hitCount = kCoverStoryNotExecutedMarker;
             }
           }
         }
@@ -82,7 +90,7 @@
         // handle the non feasible markers
         if (inNonFeasibleRange) {
           // line doesn't count
-          hitCount = -2;
+          hitCount = kCoverStoryNonFeasibleMarker;
           // if it has the end marker, clear our state
           if ([nfRangeEndRegex matchesString:segment]) {
             inNonFeasibleRange = NO;
@@ -90,11 +98,11 @@
         } else {
           // if it matches the line marker, don't count it
           if ([nfLineRegex matchesString:segment]) {
-            hitCount = -2;
+            hitCount = kCoverStoryNonFeasibleMarker;
           }
           // if it matches the start marker, don't count it and set state
           else if ([nfRangeStartRegex matchesString:segment]) {
-            hitCount = -2;
+            hitCount = kCoverStoryNonFeasibleMarker;
             inNonFeasibleRange = YES;
           }
         }
@@ -109,6 +117,9 @@
         [lines_ removeObjectsInRange:NSMakeRange(0,5)];
         // get out counts
         [self updateCounts];
+        if ([self maxComplexity] == 0) {
+          [self calculateComplexity];
+        }
       } else {
         // something bad
         [self release];
@@ -136,10 +147,10 @@
   while ((dataPoint = [dataEnum nextObject]) != nil) {
     int hitCount = [dataPoint hitCount];
     switch (hitCount) {
-      case -2:
+      case kCoverStoryNonFeasibleMarker:
         ++nonfeasible_;
         break;
-      case -1:
+      case kCoverStoryNotExecutedMarker:
         // doesn't count;
         break;
       case 0:
@@ -153,7 +164,74 @@
         break;
     }
   }
+}
+
+- (NSString*)generateSource {
+  NSMutableString *source = [NSMutableString string];
+  NSEnumerator *dataEnum = [lines_ objectEnumerator];
+  CoverStoryCoverageLineData* dataPoint;
+  while ((dataPoint = [dataEnum nextObject]) != nil) {
+    [source appendFormat:@"%@\n", [dataPoint line]];
+  }
+  return source;
+}  
+
+- (NSString*)runMccOnPath:(NSString*)path {
+  GTMScriptRunner *runner = [GTMScriptRunner runnerWithBash];
+  NSString *mccpath = [[NSBundle mainBundle] pathForAuxiliaryExecutable:@"mcc"];
+  if (!mccpath) return nil;
+  return [runner run:[NSString stringWithFormat:@"%@ %@", mccpath, path]];
+}
   
+- (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
+                         start:(int*)start 
+                           end:(int*)end 
+                    complexity:(int*)complexity {
+  if (!start || !end || !complexity || !scanner) return nil;
+  if (![scanner scanString:@"Line:" intoString:NULL]) return NO;
+  if (![scanner scanInt:start]) return NO;
+  if (![scanner scanString:@"To:" intoString:NULL]) return NO;
+  if (![scanner scanInt:end]) return NO;
+  if (![scanner scanString:@"Complexity:" intoString:NULL]) return NO;
+  if (![scanner scanInt:complexity]) return NO;
+  return YES;
+}
+  
+- (BOOL)calculateComplexity {
+  maxComplexity_ = 0;
+  NSString *source = [self generateSource];
+  NSString *tempPath = NSTemporaryDirectory();
+  tempPath = [tempPath stringByAppendingPathComponent:[sourcePath_ lastPathComponent]];
+  tempPath = [tempPath stringByAppendingPathExtension:@"complexity"];
+  NSError *error;
+  BOOL isGood = [source writeToFile:tempPath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+  if (!isGood) {
+    // TODO: better error handling
+    NSLog(@"%@", error);
+    return isGood;
+  }
+  
+  NSString *val = [self runMccOnPath:tempPath];
+  if (!val) return NO;
+  NSScanner *complexityScanner = [NSScanner scannerWithString:val];
+  isGood = [complexityScanner scanString:@"-" intoString:NULL];
+  if (isGood) {
+    while ([complexityScanner scanUpToString:@"Line:" intoString:NULL]) {
+      int startLine;
+      int endLine;
+      int complexity;
+      isGood = [self scanMccLineFromScanner:complexityScanner
+                                      start:&startLine
+                                        end:&endLine
+                                 complexity:&complexity];
+      if (!isGood) break;
+      if (complexity > maxComplexity_) {
+        maxComplexity_ = complexity;
+      }
+      [[lines_ objectAtIndex:(startLine - 1)] setComplexity:complexity];
+    }
+  }
+  return isGood;
 }
 
 - (NSArray *)lines {
@@ -198,6 +276,10 @@
   return [NSNumber numberWithFloat:result];
 }
 
+- (int)maxComplexity {
+  return maxComplexity_;
+}
+
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData {
   // must be for the same paths
   if (![[fileData sourcePath] isEqual:sourcePath_])
@@ -211,7 +293,8 @@
     CoverStoryCoverageLineData *lineNew = [newLines objectAtIndex:x];
     CoverStoryCoverageLineData *lineMe = [lines_ objectAtIndex:x];
 
-    // string match, if either says -1, they both have to say -1
+    // string match, if either says kCoverStoryNotExecutedMarker, 
+    // they both have to say kCoverStoryNotExecutedMarker
     if (![[lineNew line] isEqual:[lineMe line]]) {
       NSLog(@"failed to merge lines, code doesn't match, index %d - '%@' vs '%@'",
             x, [lineNew line], [lineMe line]);
@@ -377,12 +460,20 @@
   return hitCount_;
 }
 
+- (void)setComplexity:(SInt32)complexity {
+  complexity_ = complexity;
+}
+
+- (SInt32)complexity {
+  return complexity_;
+}
+
 - (void)addHits:(SInt32)newHits {
   // we could be processing big and little endian runs, and w/ ifdefs one set of
   // lines would be ignored in one run, but not in the other. so...  if we were
   // a not hit line, we just take the new hits, otherwise we add any real hits
   // to our count.
-  if (hitCount_ == -1) {
+  if (hitCount_ == kCoverStoryNotExecutedMarker) {
     hitCount_ = newHits;
   } else if (newHits > 0) {
     hitCount_ += newHits;

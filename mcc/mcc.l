@@ -191,7 +191,7 @@ virtual                                       {}
 xor                                           {}
 xor_eq                                        {}
  
-interface                                     {}
+interface                                     { HandleOpenScope(); }
 protocol                                      {}
 implementation                                {}
 synchronized                                  {}

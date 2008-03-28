@@ -9,6 +9,8 @@
 			<dict>
 				<key>hideSDKSources</key>
 				<string>id</string>
+				<key>showComplexity</key>
+				<string>id</string>
 			</dict>
 			<key>CLASS</key>
 			<string>CoverStoryApplicationDelegate</string>
@@ -20,7 +22,7 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
-				<key>openSource</key>
+				<key>reloadData</key>
 				<string>id</string>
 			</dict>
 			<key>CLASS</key>

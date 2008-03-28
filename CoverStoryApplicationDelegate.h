@@ -21,4 +21,5 @@
 
 @interface CoverStoryApplicationDelegate : NSObject
 - (IBAction)hideSDKSources:(id)sender;
+- (IBAction)showComplexity:(id)sender;
 @end

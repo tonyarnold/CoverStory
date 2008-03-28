@@ -31,7 +31,10 @@
     @"CoverageFileDataToCoveragePercentageTransformer",
     @"LineCoverageToCoverageSummaryTransformer",
     @"LineCoverageToCoverageShortSummaryTransformer",
-    @"FileLineCoverageToCoverageSummaryTransformer"
+    @"FileLineCoverageToCoverageSummaryTransformer",
+    @"CoverageLineDataToComplexityTransformer",
+    @"CoverageFileDataToComplexityTransformer",
+    @"CoverageTypeToFileCoverageHeaderTransformer"
   };
   for (size_t i = 0; i < sizeof(transformerNames) / sizeof(id); ++i) {
     Class class = NSClassFromString(transformerNames[i]);
@@ -53,4 +56,7 @@
   // Seems weird to need it, but hey.
 }
 
+- (IBAction)showComplexity:(id)sender {
+  // Same comment as hideSDKSources
+}
 @end

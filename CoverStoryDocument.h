@@ -26,6 +26,7 @@
 @interface CoverStoryDocument : NSDocument<CoverStoryCodeViewTableViewDelegateProtocol> {
  @private
   IBOutlet CoverStoryCodeViewTableView *codeTableView_;  // the code table
+  IBOutlet NSTableView *sourceFilesTableView_;
   IBOutlet NSArrayController *sourceFilesController_;
   IBOutlet NSProgressIndicator *spinner_;
   NSString *filterString_;

@@ -20,6 +20,9 @@
 // Should we filter out system sources
 #define kCoverStoryHideSystemSourcesKey @"hideSystemSources"  // Boolean
 
+// Are we showing coverage or complexity
+#define kCoverStoryShowComplexityKey @"showComplexity"  // Boolean
+
 // Colors to display things in our views
 #define kCoverStoryMissedLineColorKey @"missedLineColor"  // NSColor
 #define kCoverStoryUnexecutableLineColorKey @"unexecutableLineColor"  // NSColor
