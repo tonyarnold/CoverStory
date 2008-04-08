@@ -37,6 +37,7 @@
 @interface CoverStoryDocument (PrivateMethods)
 - (void)openFolderInThread:(NSString*)path;
 - (void)openFileInThread:(NSString*)path;
+- (void)setOpenThreadState:(BOOL)threadRunning;
 - (BOOL)processCoverageForFolder:(NSString *)path;
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath;
@@ -183,16 +184,14 @@ static NSString *const kPrefsToWatch[] = {
 
 - (void)openFolderInThread:(NSString*)path {
   NSAutoreleasePool *pool = [NSAutoreleasePool new];
-  openingInThread_ = YES;
-
+  [self setOpenThreadState:YES];
   NSString *message =
     [NSString stringWithFormat:@"Starting to scan '%@'", path];
   [self addMessageFromThread:message isError:NO];
   
   [self processCoverageForFolder:path];
-  openingInThread_ = NO;
-  [spinner_ performSelectorOnMainThread:@selector(stopAnimation:)
-                             withObject:self waitUntilDone:NO];
+  [self setOpenThreadState:NO];
+  
   // Clean up NSTask Zombies.
   [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
   [pool release];
@@ -200,7 +199,7 @@ static NSString *const kPrefsToWatch[] = {
 
 - (void)openFileInThread:(NSString*)path {
   NSAutoreleasePool *pool = [NSAutoreleasePool new];
-  openingInThread_ = YES;
+  [self setOpenThreadState:YES];
 
   NSString *message =
     [NSString stringWithFormat:@"Starting to process '%@'", path];
@@ -211,9 +210,7 @@ static NSString *const kPrefsToWatch[] = {
   [self processCoverageForFiles:[NSArray arrayWithObject:filename]
                        inFolder:folderPath];
   
-  openingInThread_ = NO;
-  [spinner_ performSelectorOnMainThread:@selector(stopAnimation:)
-                             withObject:self waitUntilDone:NO];
+  [self setOpenThreadState:NO];
   
   // Clean up NSTask Zombies.
   [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
@@ -648,6 +645,19 @@ static NSString *const kPrefsToWatch[] = {
                                             to:coverageSortKeyNames[index]];
   [sourceFilesTableView_ cs_setHeaderOfColumn:@"coverage"
                                            to:coverageTitles[index]];
+}
+
+- (void)setOpenThreadState:(BOOL)threadRunning {
+  openingInThread_ = threadRunning;
+  if (spinner_) {
+    if (openingInThread_) {
+      [spinner_ performSelectorOnMainThread:@selector(startAnimation:)
+                                 withObject:self waitUntilDone:NO];
+    } else {
+      [spinner_ performSelectorOnMainThread:@selector(stopAnimation:)
+                                 withObject:self waitUntilDone:NO];
+    }
+  }
 }
 
 - (void)addMessageFromThread:(NSString *)message isError:(BOOL)isError {
