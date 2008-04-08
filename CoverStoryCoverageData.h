@@ -34,6 +34,11 @@ enum {
 - (NSNumber *)coverage;
 @end
 
+// methods to get feedback while the data is processed
+@protocol CoverStoryCoverageProcessingProtocol
+- (void)coverageErrorMessage:(NSString *)message;
+@end
+
 // Keeps track of the data for a whole source file.
 
 @interface CoverStoryCoverageFileData : NSObject<NSCopying, CoverStoryLineCoverageProtocol> {
@@ -46,12 +51,15 @@ enum {
   NSString *sourcePath_;
 }
 
-+ (id)coverageFileDataFromData:(NSData *)data;
-- (id)initWithData:(NSData *)data;
++ (id)coverageFileDataFromData:(NSData *)data
+               messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
+- (id)initWithData:(NSData *)data
+   messageReceiver:(id<CoverStoryCoverageProcessingProtocol> )receiver;
 - (NSArray *)lines;
 - (int)maxComplexity;
 - (NSString *)sourcePath;
-- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
+- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
+    messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 @end
 
 
@@ -61,7 +69,8 @@ enum {
 @private
   NSMutableDictionary *fileDatas_;
 }
-- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
+- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
+    messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 - (NSArray *)fileDatas;
 - (NSArray *)sourcePaths;
 - (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path;

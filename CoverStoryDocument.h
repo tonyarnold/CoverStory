@@ -20,15 +20,17 @@
 
 #import <Cocoa/Cocoa.h>
 #import "CoverStoryCodeViewTableView.h"
+#import "CoverStoryCoverageData.h"
 
-@class CoverStoryCoverageSet;
-
-@interface CoverStoryDocument : NSDocument<CoverStoryCodeViewTableViewDelegateProtocol> {
+@interface CoverStoryDocument : NSDocument<CoverStoryCodeViewTableViewDelegateProtocol,
+                                           CoverStoryCoverageProcessingProtocol> {
  @private
   IBOutlet CoverStoryCodeViewTableView *codeTableView_;  // the code table
   IBOutlet NSTableView *sourceFilesTableView_;
   IBOutlet NSArrayController *sourceFilesController_;
   IBOutlet NSProgressIndicator *spinner_;
+  IBOutlet NSDrawer *drawer_;
+  IBOutlet NSTextView *messageView_;
   NSString *filterString_;
   volatile BOOL openingInThread_;  // Are we opening our files in a thread
   CoverStoryCoverageSet *dataSet_;

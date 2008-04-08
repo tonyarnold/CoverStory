@@ -34,11 +34,14 @@
 
 @implementation CoverStoryCoverageFileData
 
-+ (id)coverageFileDataFromData:(NSData *)data {
-  return [[[self alloc] initWithData:data] autorelease];
++ (id)coverageFileDataFromData:(NSData *)data
+               messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
+  return [[[self alloc] initWithData:data
+                     messageReceiver:receiver] autorelease];
 }
   
-- (id)initWithData:(NSData *)data {
+- (id)initWithData:(NSData *)data
+   messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
   self = [super init];
   if (self != nil) {
     lines_ = [[NSMutableArray alloc] init];
@@ -54,7 +57,9 @@
       string = [[[NSString alloc] initWithData:data 
                                       encoding:NSMacOSRomanStringEncoding] autorelease];    }
     if (!string) {
-      NSLog(@"failed to process data as UTF8 or MacOSRoman, currently don't try other encodings");
+      if (receiver) {
+        [receiver coverageErrorMessage:@"Failed to process data as UTF8 or MacOSRoman"];
+      }
       [self release];
       self = nil;
     } else {
@@ -280,14 +285,29 @@
   return maxComplexity_;
 }
 
-- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData {
+- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
+    messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
   // must be for the same paths
-  if (![[fileData sourcePath] isEqual:sourcePath_])
+  if (![[fileData sourcePath] isEqual:sourcePath_]) {
+    if (receiver) {
+      NSString *message =
+        [NSString stringWithFormat:@"Coverage is for different source paths '%@' vs '%@'",
+         [fileData sourcePath], sourcePath_];
+      [receiver coverageErrorMessage:message];
+    }
     return NO;
+  }
 
   // make sure the source file lines actually match
-  if ([fileData numberTotalLines] != [self numberTotalLines])
+  if ([fileData numberTotalLines] != [self numberTotalLines]) {
+    if (receiver) {
+      NSString *message =
+        [NSString stringWithFormat:@"Coverage source (%@) has different line count '%d' vs '%d'",
+         sourcePath_, [fileData numberTotalLines], [self numberTotalLines]];
+      [receiver coverageErrorMessage:message];
+    }
     return NO;
+  }
   NSArray *newLines = [fileData lines];
   for (int x = 0, max = [newLines count] ; x < max ; ++x ) {
     CoverStoryCoverageLineData *lineNew = [newLines objectAtIndex:x];
@@ -296,8 +316,12 @@
     // string match, if either says kCoverStoryNotExecutedMarker, 
     // they both have to say kCoverStoryNotExecutedMarker
     if (![[lineNew line] isEqual:[lineMe line]]) {
-      NSLog(@"failed to merge lines, code doesn't match, index %d - '%@' vs '%@'",
-            x, [lineNew line], [lineMe line]);
+      if (receiver) {
+        NSString *message =
+          [NSString stringWithFormat:@"Coverage source (%@) line %d doesn't match, '%@' vs '%@'",
+           sourcePath_, x, [lineNew line], [lineMe line]];
+        [receiver coverageErrorMessage:message];
+      }
       return NO;
     }
     // we don't check if the lines weren't hit between the two because we could
@@ -350,14 +374,15 @@
   [super dealloc];
 }
 
-- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData {
+- (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
+    messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
   CoverStoryCoverageFileData *currentData =
     [fileDatas_ objectForKey:[fileData sourcePath]];
   if (currentData) {
     // we need to merge them
     // (this is needed for headers w/ inlines where if you process >1 gcno/gcda
     // then you could get that header reported >1 time)
-    return [currentData addFileData:fileData];
+    return [currentData addFileData:fileData messageReceiver:receiver];
   }
   
   [fileDatas_ setObject:fileData forKey:[fileData sourcePath]];
