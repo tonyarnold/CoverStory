@@ -598,6 +598,11 @@ static NSString *const kPrefsToWatch[] = {
   [dataSet_ release];
   dataSet_ = [[CoverStoryCoverageSet alloc] init];
   [self didChangeValueForKey:@"dataSet_"];
+
+  // clear the message view before we start
+  // add the message, color, and scroll
+  [messageView_ setString:@""];
+
   NSError *error = nil;
   if (![self readFromURL:[NSURL fileURLWithPath:[self fileName]]
                   ofType:[self fileType]
