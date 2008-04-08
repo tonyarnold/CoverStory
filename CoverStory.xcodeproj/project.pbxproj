@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 44;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -26,8 +26,6 @@
 		8BFD651E0B405B6400AFCDA2 /* CoverStory.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8BFD651D0B405B6400AFCDA2 /* CoverStory.icns */; };
 		8BFE723D0B46FE3400A3C7DD /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BFE723C0B46FE3400A3C7DD /* Carbon.framework */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
-		8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */; };
-		8D15AC2E0486D014006FF6A4 /* CoverStoryDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B4FDCFA73011CA2CEA /* CoverStoryDocument.nib */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		8D15AC310486D014006FF6A4 /* CoverStoryDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* CoverStoryDocument.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -35,6 +33,8 @@
 		F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */; };
 		F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; };
 		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; };
+		F4CA81F20DAAC44F00B4AB10 /* CoverStoryDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */; };
+		F4CA81F30DAAC44F00B4AB10 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4CA81F00DAAC44F00B4AB10 /* MainMenu.xib */; };
 		F4E280D40D81F38700DD304F /* GTMRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E280D30D81F38700DD304F /* GTMRegex.m */; };
 /* End PBXBuildFile section */
 
@@ -77,8 +77,6 @@
 		2A37F4ACFDCFA73011CA2CEA /* CoverStoryDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryDocument.m; sourceTree = "<group>"; };
 		2A37F4AEFDCFA73011CA2CEA /* CoverStoryDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryDocument.h; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2A37F4B5FDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/CoverStoryDocument.nib; sourceTree = "<group>"; };
-		2A37F4B7FDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		32DBCF750370BD2300C91783 /* CoverStory.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStory.pch; sourceTree = "<group>"; };
 		63BC85EA0B4D863400CDC9E5 /* main.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = main.css; sourceTree = "<group>"; };
@@ -120,6 +118,8 @@
 		F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSEnumerator+Filter.m"; sourceTree = "<group>"; };
 		F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMScriptRunner.h; sourceTree = "<group>"; };
 		F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMScriptRunner.m; sourceTree = "<group>"; };
+		F4CA81EF0DAAC44F00B4AB10 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CoverStoryDocument.xib; sourceTree = "<group>"; };
+		F4CA81F10DAAC44F00B4AB10 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F4E280D20D81F38700DD304F /* GTMRegex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMRegex.h; sourceTree = "<group>"; };
 		F4E280D30D81F38700DD304F /* GTMRegex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMRegex.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -220,11 +220,11 @@
 				8B2A9C6C0D84F84600599386 /* gcda.icns */,
 				8B63DA5B0D94070100395A2B /* openscript.scpt */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
-				2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */,
-				2A37F4B4FDCFA73011CA2CEA /* CoverStoryDocument.nib */,
 				63BC85EA0B4D863400CDC9E5 /* main.css */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
 				63BC85F20B4D868100CDC9E5 /* CoverStoryHelp */,
+				F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */,
+				F4CA81F00DAAC44F00B4AB10 /* MainMenu.xib */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
 			);
 			name = Resources;
@@ -331,7 +331,7 @@
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "CoverStory" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.0";
 			hasScannedForEncodings = 1;
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Gcover */;
 			projectDirPath = "";
@@ -349,11 +349,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
-				8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */,
-				8D15AC2E0486D014006FF6A4 /* CoverStoryDocument.nib in Resources */,
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
 				8BFD651E0B405B6400AFCDA2 /* CoverStory.icns in Resources */,
 				63BC85EC0B4D863400CDC9E5 /* main.css in Resources */,
+				F4CA81F20DAAC44F00B4AB10 /* CoverStoryDocument.xib in Resources */,
+				F4CA81F30DAAC44F00B4AB10 /* MainMenu.xib in Resources */,
 				63BC85FD0B4D868100CDC9E5 /* CoverStoryHelp in Resources */,
 				8B2A9C6D0D84F84600599386 /* gcov.icns in Resources */,
 				8B2A9C6E0D84F84600599386 /* gcno.icns in Resources */,
@@ -445,22 +445,6 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		2A37F4B4FDCFA73011CA2CEA /* CoverStoryDocument.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				2A37F4B5FDCFA73011CA2CEA /* English */,
-			);
-			name = CoverStoryDocument.nib;
-			sourceTree = "<group>";
-		};
-		2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				2A37F4B7FDCFA73011CA2CEA /* English */,
-			);
-			name = MainMenu.nib;
-			sourceTree = "<group>";
-		};
 		2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -475,6 +459,22 @@
 				63BC85F30B4D868100CDC9E5 /* English */,
 			);
 			name = CoverStoryHelp;
+			sourceTree = "<group>";
+		};
+		F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F4CA81EF0DAAC44F00B4AB10 /* English */,
+			);
+			name = CoverStoryDocument.xib;
+			sourceTree = "<group>";
+		};
+		F4CA81F00DAAC44F00B4AB10 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F4CA81F10DAAC44F00B4AB10 /* English */,
+			);
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
