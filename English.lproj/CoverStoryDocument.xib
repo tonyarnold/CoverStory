@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9C31</string>
-		<string key="IBDocument.InterfaceBuilderVersion">648</string>
+		<string key="IBDocument.SystemVersion">9C7010</string>
+		<string key="IBDocument.InterfaceBuilderVersion">649</string>
 		<string key="IBDocument.AppKitVersion">949.26</string>
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="115"/>
+			<integer value="104"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -144,7 +144,7 @@
 										</object>
 										<object class="NSProgressIndicator" id="653340993">
 											<reference key="NSNextResponder" ref="356534437"/>
-											<int key="NSvFlags">5412</int>
+											<int key="NSvFlags">-2147478236</int>
 											<object class="NSPSMatrix" key="NSDrawMatrix"/>
 											<string key="NSFrame">{{5, 9}, {16, 16}}</string>
 											<reference key="NSSuperview" ref="356534437"/>
@@ -351,7 +351,7 @@
 										<object class="NSSearchField" id="400697391">
 											<reference key="NSNextResponder" ref="356534437"/>
 											<int key="NSvFlags">290</int>
-											<string key="NSFrame">{{26, 8}, {116, 19}}</string>
+											<string key="NSFrame">{{29, 8}, {113, 19}}</string>
 											<reference key="NSSuperview" ref="356534437"/>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSSearchFieldCell" key="NSCell" id="405409117">
@@ -1459,10 +1459,10 @@
 								</object>
 								<object class="NSMutableArray" key="dict.values">
 									<bool key="EncodedWithXMLCoder">YES</bool>
-									<integer value="0" id="6"/>
-									<integer value="1" id="5"/>
-									<reference ref="6"/>
-									<reference ref="5"/>
+									<reference ref="8"/>
+									<reference ref="9"/>
+									<reference ref="8"/>
+									<reference ref="9"/>
 									<string>openSelectedSource</string>
 								</object>
 							</object>
@@ -1470,6 +1470,14 @@
 						</object>
 					</object>
 					<int key="connectionID">530</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">searchField_</string>
+						<reference key="source" ref="665462168"/>
+						<reference key="destination" ref="400697391"/>
+					</object>
+					<int key="connectionID">531</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2143,9 +2151,9 @@
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{237, 766}, {800, 500}}</string>
+					<string>{{237, 356}, {800, 500}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{237, 766}, {800, 500}}</string>
+					<string>{{237, 356}, {800, 500}}</string>
 					<reference ref="9"/>
 					<string>{{17, 334}, {800, 500}}</string>
 					<reference ref="9"/>
@@ -2190,7 +2198,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">530</int>
+			<int key="maxID">531</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2234,6 +2242,7 @@
 							<string>codeTableView_</string>
 							<string>drawer_</string>
 							<string>messageView_</string>
+							<string>searchField_</string>
 							<string>sourceFilesController_</string>
 							<string>sourceFilesTableView_</string>
 							<string>spinner_</string>
@@ -2243,6 +2252,7 @@
 							<string>CoverStoryCodeViewTableView</string>
 							<string>NSDrawer</string>
 							<string>NSTextView</string>
+							<string>NSSearchField</string>
 							<string>NSArrayController</string>
 							<string>NSTableView</string>
 							<string>NSProgressIndicator</string>

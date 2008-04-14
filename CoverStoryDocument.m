@@ -45,6 +45,7 @@
 - (void)configureCoverageVsComplexityColumns;
 - (void)addMessageFromThread:(NSString *)message isError:(BOOL)isError;
 - (void)addMessage:(NSDictionary *)msgInfo;
+- (BOOL)isClosed;
 @end
 
 static NSString *const kPrefsToWatch[] = { 
@@ -81,6 +82,13 @@ static NSString *const kPrefsToWatch[] = {
 
 
 - (void)awakeFromNib {
+  searchFieldFullFrame_ = [searchField_ frame];
+  searchFieldShrunkFrame_ = searchFieldFullFrame_;
+  float spinWidth = searchFieldFullFrame_.origin.x - [spinner_ frame].origin.x;
+  searchFieldFullFrame_.origin.x -= spinWidth;
+  searchFieldFullFrame_.size.width += spinWidth;
+  [searchField_ setFrame:searchFieldFullFrame_];
+  
   [sourceFilesController_ addObserver:self 
                            forKeyPath:@"selectedObjects" 
                               options:NSKeyValueObservingOptionNew
@@ -104,7 +112,7 @@ static NSString *const kPrefsToWatch[] = {
   [sourceFilesController_ setSortDescriptors:[NSArray arrayWithObject:ascending]];
   [self configureCoverageVsComplexityColumns];
   if (openingInThread_) {
-    [spinner_ startAnimation:self];
+    [self setOpenThreadState:YES];
   }
 }
 
@@ -112,7 +120,10 @@ static NSString *const kPrefsToWatch[] = {
   return @"CoverStoryDocument";
 }
   
+// Called as a performSelectorOnMainThread, so must check to make sure
+// we haven't been closed.
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData {
+  if ([self isClosed]) return NO;
   [self willChangeValueForKey:@"dataSet_"];
   BOOL isGood = [dataSet_ addFileData:fileData messageReceiver:self];
   [self didChangeValueForKey:@"dataSet_"];
@@ -647,17 +658,61 @@ static NSString *const kPrefsToWatch[] = {
                                            to:coverageTitles[index]];
 }
 
+// Moves our searchfield to display our spinner and starts it spinning.
+// Called as a performSelectorOnMainThread, so must check to make sure
+// we haven't been closed.
+- (void)displayAndAnimateSpinner:(NSNumber*)start {
+  if ([self isClosed]) return;
+  if (spinner_) {
+    BOOL starting = [start boolValue];
+    NSString *effect;
+    NSRect rect;
+    if (starting) {
+      rect = searchFieldShrunkFrame_;
+      effect = NSViewAnimationFadeInEffect;
+    } else {
+      rect = searchFieldFullFrame_;
+      effect = NSViewAnimationFadeOutEffect;
+    }
+    NSValue *endFrameRectValue = [NSValue valueWithRect:rect];
+    NSDictionary *searchAnimation = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     searchField_, NSViewAnimationTargetKey,
+                                     endFrameRectValue, NSViewAnimationEndFrameKey,
+                                     nil];
+    NSDictionary *spinnerAnimation = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      spinner_, NSViewAnimationTargetKey,
+                                      effect, NSViewAnimationEffectKey,
+                                      nil];
+    
+    NSArray *animations;
+    if (starting) {
+      animations = [NSArray arrayWithObjects:
+                    searchAnimation, 
+                    spinnerAnimation, 
+                    nil];
+    } else {
+      animations = [NSArray arrayWithObjects:
+                    spinnerAnimation,
+                    searchAnimation,
+                    nil];
+    }               
+    NSViewAnimation *viewAnimation 
+      = [[[NSViewAnimation alloc] initWithViewAnimations:animations] autorelease];
+    [viewAnimation startAnimation];
+    if (starting) {
+      [spinner_ startAnimation:self];
+    } else {
+      
+      [spinner_ stopAnimation:self];
+    }
+  } 
+}
+
 - (void)setOpenThreadState:(BOOL)threadRunning {
   openingInThread_ = threadRunning;
-  if (spinner_) {
-    if (openingInThread_) {
-      [spinner_ performSelectorOnMainThread:@selector(startAnimation:)
-                                 withObject:self waitUntilDone:NO];
-    } else {
-      [spinner_ performSelectorOnMainThread:@selector(stopAnimation:)
-                                 withObject:self waitUntilDone:NO];
-    }
-  }
+  [self performSelectorOnMainThread:@selector(displayAndAnimateSpinner:) 
+                         withObject:[NSNumber numberWithBool:openingInThread_]
+                      waitUntilDone:NO];
 }
 
 - (void)addMessageFromThread:(NSString *)message isError:(BOOL)isError {
@@ -676,8 +731,24 @@ static NSString *const kPrefsToWatch[] = {
   [self addMessageFromThread:message isError:YES];
 }
 
+- (void)close {
+  // No need to synchronize this because it should only ever be called from
+  // main thread
+  documentClosed_ = YES;
+  [super close];
+}
 
+- (BOOL)isClosed {
+  // No need to synchronize this because it should only ever be called from main
+  // thread.
+  return documentClosed_;
+}
+
+// Called as a performSelectorOnMainThread, so must check to make sure
+// we haven't been closed.
 - (void)addMessage:(NSDictionary *)msgInfo {
+  if ([self isClosed]) return;
+
   NSString *message = [msgInfo objectForKey:@"message"];
   BOOL isError = [[msgInfo objectForKey:@"isError"] boolValue];
   if (message) {

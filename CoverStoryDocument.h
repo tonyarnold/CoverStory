@@ -31,6 +31,11 @@
   IBOutlet NSProgressIndicator *spinner_;
   IBOutlet NSDrawer *drawer_;
   IBOutlet NSTextView *messageView_;
+  IBOutlet NSSearchField *searchField_;
+  NSRect searchFieldFullFrame_;
+  NSRect searchFieldShrunkFrame_;
+  BOOL documentClosed_;
+                                             
   NSString *filterString_;
   volatile BOOL openingInThread_;  // Are we opening our files in a thread
   CoverStoryCoverageSet *dataSet_;
