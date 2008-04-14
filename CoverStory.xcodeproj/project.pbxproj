@@ -116,14 +116,16 @@
 		8BFE723C0B46FE3400A3C7DD /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* CoverStory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoverStory.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugTigerOrLater.xcconfig; sourceTree = "<group>"; };
-		F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ReleaseTigerOrLater.xcconfig; sourceTree = "<group>"; };
+		F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DebugTigerOrLater.xcconfig; path = Project/DebugTigerOrLater.xcconfig; sourceTree = "<group>"; };
+		F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ReleaseTigerOrLater.xcconfig; path = Project/ReleaseTigerOrLater.xcconfig; sourceTree = "<group>"; };
 		F41390DB0D77103C00F72B31 /* GTMNSFileManager+Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSFileManager+Path.h"; sourceTree = "<group>"; };
 		F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSFileManager+Path.m"; sourceTree = "<group>"; };
 		F41390F30D771A5400F72B31 /* GTMNSEnumerator+Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSEnumerator+Filter.h"; sourceTree = "<group>"; };
 		F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSEnumerator+Filter.m"; sourceTree = "<group>"; };
 		F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMScriptRunner.h; sourceTree = "<group>"; };
 		F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMScriptRunner.m; sourceTree = "<group>"; };
+		F4C187F60DB3CEED009BB8C6 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
+		F4C187F90DB3CF23009BB8C6 /* GTMDebugSelectorValidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDebugSelectorValidation.h; sourceTree = "<group>"; };
 		F4CA81EF0DAAC44F00B4AB10 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CoverStoryDocument.xib; sourceTree = "<group>"; };
 		F4CA81F10DAAC44F00B4AB10 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F4E280D20D81F38700DD304F /* GTMRegex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMRegex.h; sourceTree = "<group>"; };
@@ -285,11 +287,21 @@
 		F47A7A3D0D748DAC002302AB /* google-toolbox-for-mac */ = {
 			isa = PBXGroup;
 			children = (
+				F4C187F60DB3CEED009BB8C6 /* GTMDefines.h */,
 				F4138F240D751FCF00F72B31 /* Foundation */,
+				F4C187F80DB3CF07009BB8C6 /* DebugUtils */,
 				F4138F270D75200B00F72B31 /* XcodeConfig */,
 			);
 			name = "google-toolbox-for-mac";
 			path = "external/google-toolbox-for-mac";
+			sourceTree = "<group>";
+		};
+		F4C187F80DB3CF07009BB8C6 /* DebugUtils */ = {
+			isa = PBXGroup;
+			children = (
+				F4C187F90DB3CF23009BB8C6 /* GTMDebugSelectorValidation.h */,
+			);
+			path = DebugUtils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

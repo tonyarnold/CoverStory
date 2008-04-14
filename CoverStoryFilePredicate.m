@@ -61,7 +61,16 @@
 
 @implementation NSString (CoverStoryStringMatching)
 - (BOOL)cs_isRegularExpressionEqual:(NSString*)string {
-  return [self gtm_firstSubStringMatchedByPattern:string] != nil;
+  // if the pattern didn't parse, always show things
+  BOOL result = YES;
+
+  // no point in catching errors since we do this as they type
+  GTMRegex *regex = [GTMRegex regexWithPattern:string
+                                       options:kGTMRegexOptionIgnoreCase];
+  if (regex) {
+    result = [regex matchesSubStringInString:self];
+  }
+  return result;
 }
 
 - (BOOL)cs_isWildcardPatternEqual:(NSString*)string {
