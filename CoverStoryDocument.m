@@ -43,6 +43,9 @@
                        inFolder:(NSString *)folderPath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
 - (void)configureCoverageVsComplexityColumns;
+- (void)addMessageFromThread:(NSString *)message 
+                        path:(NSString*)path 
+                     isError:(BOOL)isError;
 - (void)addMessageFromThread:(NSString *)message isError:(BOOL)isError;
 - (void)addMessage:(NSDictionary *)msgInfo;
 - (BOOL)isClosed;
@@ -65,6 +68,15 @@ static NSString *const kPrefsToWatch[] = {
 - (id)init {
   if ((self = [super init])) {
     dataSet_ = [[CoverStoryCoverageSet alloc] init];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"error" ofType:@"png"];
+    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+    errorIcon_ = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
+    path = [[NSBundle mainBundle] pathForResource:@"warning" ofType:@"png"];
+    wrapper = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+    warningIcon_ = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
+    path = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"png"];
+    wrapper = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+    infoIcon_ = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
   }
   return self;
 }
@@ -144,15 +156,12 @@ static NSString *const kPrefsToWatch[] = {
                            withObject:path];
     isGood = YES;
   } else if ([typeName isEqualToString:@kGCOVTypeName]) {
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    if (data) {
-      // load it and add it to out set
-      CoverStoryCoverageFileData *fileData =
-        [CoverStoryCoverageFileData coverageFileDataFromData:data
-                                             messageReceiver:self];
-      if (fileData) {
-        isGood = [self addFileData:fileData];
-      }
+    // load it and add it to out set
+    CoverStoryCoverageFileData *fileData =
+      [CoverStoryCoverageFileData coverageFileDataFromPath:path
+                                           messageReceiver:self];
+    if (fileData) {
+      isGood = [self addFileData:fileData];
     }
   } else {
     // the wrapper doesn't have the full path, but it's already set on us, so use
@@ -196,9 +205,6 @@ static NSString *const kPrefsToWatch[] = {
 - (void)openFolderInThread:(NSString*)path {
   NSAutoreleasePool *pool = [NSAutoreleasePool new];
   [self setOpenThreadState:YES];
-  NSString *message =
-    [NSString stringWithFormat:@"Starting to scan '%@'", path];
-  [self addMessageFromThread:message isError:NO];
   
   [self processCoverageForFolder:path];
   [self setOpenThreadState:NO];
@@ -211,11 +217,6 @@ static NSString *const kPrefsToWatch[] = {
 - (void)openFileInThread:(NSString*)path {
   NSAutoreleasePool *pool = [NSAutoreleasePool new];
   [self setOpenThreadState:YES];
-
-  NSString *message =
-    [NSString stringWithFormat:@"Starting to process '%@'", path];
-  [self addMessageFromThread:message isError:NO];
-
   NSString *folderPath = [path stringByDeletingLastPathComponent];
   NSString *filename = [path lastPathComponent];
   [self processCoverageForFiles:[NSArray arrayWithObject:filename]
@@ -268,9 +269,9 @@ static NSString *const kPrefsToWatch[] = {
         if (![self processCoverageForFiles:currentFileList
                                   inFolder:currentFolder]) {
           NSString *message =
-            [NSString stringWithFormat:@"from folder '%@' failed to process files: %@",
-             currentFolder, currentFileList];
-          [self addMessageFromThread:message isError:YES];
+            [NSString stringWithFormat:@"failed to process files: %@",
+             currentFileList];
+          [self addMessageFromThread:message path:currentFolder isError:YES];
         }
         // restart the collecting w/ this filename
         currentFolder = [filename stringByDeletingLastPathComponent];
@@ -282,9 +283,9 @@ static NSString *const kPrefsToWatch[] = {
     if (![self processCoverageForFiles:currentFileList
                               inFolder:currentFolder]) {
       NSString *message =
-        [NSString stringWithFormat:@"from folder '%@' failed to process files: %@",
-         currentFolder, currentFileList];
-      [self addMessageFromThread:message isError:YES];
+        [NSString stringWithFormat:@"failed to process files: %@", 
+         currentFileList];
+      [self addMessageFromThread:message path:currentFolder isError:YES];
     }
   }
   return YES;
@@ -305,10 +306,9 @@ static NSString *const kPrefsToWatch[] = {
     NSString *filename = [filenames objectAtIndex:x];
     NSRange range = [filename rangeOfString:@"/"];
     if (range.location != NSNotFound) {
-      NSString *message =
-        [NSString stringWithFormat:@"filename '%@' had a slash, skipped",
-         filename];
-      [self addMessageFromThread:message isError:YES];
+      [self addMessageFromThread:@"skipped because filename had a slash"
+                            path:[folderPath stringByAppendingPathComponent:filename]
+                         isError:YES];
       return NO;
     }
   }
@@ -354,16 +354,22 @@ static NSString *const kPrefsToWatch[] = {
       NSString *stdErr = nil;
       NSString *stdOut = [runner run:script standardError:&stdErr];
       if (([stdOut length] == 0) || ([stdErr length] > 0)) {
-        NSString *message =
-          [NSString stringWithFormat:@"gcov returned an error for folder '%@'.  See following messages.",
-           folderPath];
-        [self addMessageFromThread:message isError:YES];
         // we don't actually care about stdout since it's just the files
         // that did work.
-        [self addMessageFromThread:stdErr isError:YES];
+        NSEnumerator *enumerator = [[stdErr componentsSeparatedByString:@"\n"] objectEnumerator];
+        NSString *message;
+        while ((message = [enumerator nextObject])) {
+          NSRange range = [message rangeOfString:@":"];
+          NSString *path = nil;
+          if (range.length != 0) {
+            path = [message substringToIndex:range.location];
+            message = [message substringFromIndex:NSMaxRange(range)];
+          }
+          [self addMessageFromThread:message path:path isError:YES];
+        }
       } 
       
-      // swince we batch process, we might have gotten some data even w/ an error
+      // since we batch process, we might have gotten some data even w/ an error
       // so we check anyways for data
       
       // collect the gcov files
@@ -371,42 +377,28 @@ static NSString *const kPrefsToWatch[] = {
                                                 inDirectory:tempDir];
       for (int x = 0 ; x < [resultPaths count] ; ++x) {
         NSString *fullPath = [resultPaths objectAtIndex:x];
-        NSData *data = [NSData dataWithContentsOfFile:fullPath];
-        if (data) {
-          // load it and add it to out set
-          CoverStoryCoverageFileData *fileData =
-            [CoverStoryCoverageFileData coverageFileDataFromData:data
-                                                 messageReceiver:self];
-          if (fileData) {
-            NSString *message = [NSString stringWithFormat:@"Collecting '%@'",
-                                 [[fullPath lastPathComponent] stringByDeletingPathExtension]];
-            [self addMessageFromThread:message isError:NO];
-            
-            [self performSelectorOnMainThread:@selector(addFileData:)
-                                   withObject:fileData
-                                waitUntilDone:NO];
-            result = YES;
-          } else {
-            NSString *message =
-              [NSString stringWithFormat:@"failed to pull data from gcov file (%@), usually means source isn't a currently handled encoding",
-               [fullPath lastPathComponent]];
-            [self addMessageFromThread:message isError:YES];
-          }
-        } else {
-          NSString *message =
-            [NSString stringWithFormat:@"failed to load data from gcov file: %@",
-             [fullPath lastPathComponent]];
-          [self addMessageFromThread:message isError:YES];
+        // load it and add it to out set
+        CoverStoryCoverageFileData *fileData =
+          [CoverStoryCoverageFileData coverageFileDataFromPath:fullPath
+                                               messageReceiver:self];
+        if (fileData) {
+          [self performSelectorOnMainThread:@selector(addFileData:)
+                                 withObject:fileData
+                              waitUntilDone:NO];
+          result = YES;
         }
       }
     } else {
+      
       [self addMessageFromThread:@"failed to write out the file lists"
+                            path:fileListPath
                          isError:YES];
     }
     
     // nuke our temp dir tree
     if (![fm removeFileAtPath:tempDir handler:nil]) {
       [self addMessageFromThread:@"failed to remove our tempdir"
+                            path:tempDir
                          isError:YES];
     }
   }
@@ -615,9 +607,9 @@ static NSString *const kPrefsToWatch[] = {
   if (![self readFromURL:[NSURL fileURLWithPath:[self fileName]]
                   ofType:[self fileType]
                    error:&error]) {
-    NSString *message =
-      [NSString stringWithFormat:@"Couldn't reload file %@", error];
-    [self addMessageFromThread:message isError:YES];
+    [self addMessageFromThread:@"couldn't reload file" 
+                          path:[self fileName]
+                       isError:YES];
   }
 }
 
@@ -726,9 +718,21 @@ static NSString *const kPrefsToWatch[] = {
                       waitUntilDone:NO];
 }
 
-- (void)coverageErrorMessage:(NSString *)message {
+- (void)addMessageFromThread:(NSString *)message
+                        path:(NSString*)path
+                     isError:(BOOL)isError {
+  NSString *pathMessage = [NSString stringWithFormat:@"%@:%@", path, message];
+  [self addMessageFromThread:pathMessage isError:isError];
+}
+
+- (void)coverageErrorForPath:(NSString*)path message:(NSString *)format, ... {
   // we use the data objects on other threads, so bounce to the main thread
-  [self addMessageFromThread:message isError:YES];
+
+  va_list list;
+  va_start(list, format);
+  NSString *message = [[NSString alloc] initWithFormat:format arguments:list];
+  va_end(list);
+  [self addMessageFromThread:message path:path isError:YES];
 }
 
 - (void)close {
@@ -763,16 +767,28 @@ static NSString *const kPrefsToWatch[] = {
     }
     
     // add the message, color, and scroll
-    [messageView_ selectAll:self];
-    NSRange fullRange = [messageView_ selectedRange];
-    NSRange appendRange = NSMakeRange(fullRange.length, 0);
-    [messageView_ replaceCharactersInRange:appendRange withString:message];
-    NSRange endRange = NSMakeRange(fullRange.length + [message length], 0);
-    [messageView_ setSelectedRange:endRange];
-    NSRange visibleRange = NSMakeRange(appendRange.location, [message length]);
-    [messageView_ setTextColor:(isError ? [NSColor redColor] : [NSColor blackColor])
-                         range:visibleRange];
+    size_t length = [[messageView_ string] length];
+    NSRange appendRange = NSMakeRange(length, 0);
+    NSTextAttachment *icon = isError ? errorIcon_ : warningIcon_;
+    NSMutableAttributedString *attrIconAndMessage
+      = [[[NSAttributedString attributedStringWithAttachment:icon] mutableCopy] autorelease];
+    NSAttributedString *attrMessage = [[[NSAttributedString alloc] initWithString:message] autorelease];
+    [attrIconAndMessage appendAttributedString:attrMessage];
+    
+    NSColor *textColor = isError ? [NSColor redColor] : [NSColor blackColor];
+    NSMutableParagraphStyle *paraStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
+    [paraStyle setFirstLineHeadIndent:0];
+    [paraStyle setHeadIndent:12];
+    NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys:
+                           textColor, NSForegroundColorAttributeName,
+                           paraStyle, NSParagraphStyleAttributeName,
+                           nil];
+    
+    [attrIconAndMessage addAttributes:attrs range:NSMakeRange(0, [attrMessage length])];
+    NSTextStorage *storage = [messageView_ textStorage];
+    [storage replaceCharactersInRange:appendRange withAttributedString:attrIconAndMessage];
     if (isError) {  // only scroll to the errors since other data can come in afterwards
+      NSRange visibleRange = NSMakeRange(appendRange.location, [attrIconAndMessage length]);
       [messageView_ scrollRangeToVisible:visibleRange];
     }
     [messageView_ display];

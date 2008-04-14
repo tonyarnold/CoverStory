@@ -23,7 +23,7 @@
 
 @interface CoverStoryCoverageFileData (PrivateMethods)
 - (void)updateCounts;
-- (BOOL)calculateComplexity;
+- (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 - (NSString*)generateSource;
 - (NSString*)runMccOnPath:(NSString*)path;
 - (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
@@ -34,16 +34,15 @@
 
 @implementation CoverStoryCoverageFileData
 
-+ (id)coverageFileDataFromData:(NSData *)data
++ (id)coverageFileDataFromPath:(NSString *)path
                messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
-  return [[[self alloc] initWithData:data
+  return [[[self alloc] initWithPath:path
                      messageReceiver:receiver] autorelease];
 }
   
-- (id)initWithData:(NSData *)data
+- (id)initWithPath:(NSString *)path
    messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
-  self = [super init];
-  if (self != nil) {
+  if ((self = [super init])) {
     lines_ = [[NSMutableArray alloc] init];
     
     // Scan in our data and create up out CoverStoryCoverageLineData objects.
@@ -51,19 +50,14 @@
 
     // Most Mac source is UTF8 or Western(MacRoman), so we'll try those and then
     // punt.
-    NSString *string = [[[NSString alloc] initWithData:data 
-                                              encoding:NSUTF8StringEncoding] autorelease];
+    NSStringEncoding encoding;
+    NSError *error;
+    NSString *string = [NSString stringWithContentsOfFile:path usedEncoding:&encoding error:&error];
     if (!string) {
-      string = [[[NSString alloc] initWithData:data 
-                                      encoding:NSMacOSRomanStringEncoding] autorelease];    }
-    if (!string) {
-      if (receiver) {
-        [receiver coverageErrorMessage:@"Failed to process data as UTF8 or MacOSRoman"];
-      }
+      [receiver coverageErrorForPath:path message:@"failed to open file %@", error];
       [self release];
       self = nil;
     } else {
-      
       NSCharacterSet *linefeeds = [NSCharacterSet characterSetWithCharactersInString:@"\n\r"];
       GTMRegex *nfLineRegex = [GTMRegex regexWithPattern:@".*//[[:blank:]]*COV_NF_LINE.*"];
       GTMRegex *nfRangeStartRegex = [GTMRegex regexWithPattern:@".*//[[:blank:]]*COV_NF_START.*"];
@@ -123,9 +117,11 @@
         // get out counts
         [self updateCounts];
         if ([self maxComplexity] == 0) {
-          [self calculateComplexity];
+          [self calculateComplexityWithMessageReceiver:receiver];
         }
       } else {
+        [receiver coverageErrorForPath:path message:@"illegal file format"];
+
         // something bad
         [self release];
         self = nil;
@@ -192,7 +188,7 @@
                          start:(int*)start 
                            end:(int*)end 
                     complexity:(int*)complexity {
-  if (!start || !end || !complexity || !scanner) return nil;
+  if (!start || !end || !complexity || !scanner) return NO;
   if (![scanner scanString:@"Line:" intoString:NULL]) return NO;
   if (![scanner scanInt:start]) return NO;
   if (![scanner scanString:@"To:" intoString:NULL]) return NO;
@@ -202,24 +198,38 @@
   return YES;
 }
   
-- (BOOL)calculateComplexity {
+- (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
   maxComplexity_ = 0;
   NSString *source = [self generateSource];
   NSString *tempPath = NSTemporaryDirectory();
   tempPath = [tempPath stringByAppendingPathComponent:[sourcePath_ lastPathComponent]];
   tempPath = [tempPath stringByAppendingPathExtension:@"complexity"];
   NSError *error;
-  BOOL isGood = [source writeToFile:tempPath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+  BOOL isGood = [source writeToFile:tempPath 
+                         atomically:YES 
+                           encoding:NSUTF8StringEncoding 
+                              error:&error];
   if (!isGood) {
-    // TODO: better error handling
-    NSLog(@"%@", error);
+    [receiver coverageErrorForPath:[self sourcePath] 
+                           message:@"Code complexity analysis unable to create "
+                                    "a temp file at %@", tempPath];
     return isGood;
   }
   
   NSString *val = [self runMccOnPath:tempPath];
-  if (!val) return NO;
+  if (![[NSFileManager defaultManager] removeFileAtPath:tempPath handler:NULL]) {
+    [receiver coverageErrorForPath:[self sourcePath] 
+                           message:@"Unable to delete temporary file: @", tempPath];
+  }
+
+  if (!val) {
+    [receiver coverageErrorForPath:[self sourcePath] 
+                           message:@"Code complexity analysis failed"];
+    return NO;
+  }
   NSScanner *complexityScanner = [NSScanner scannerWithString:val];
   isGood = [complexityScanner scanString:@"-" intoString:NULL];
+  int lastEndLine = 0;
   if (isGood) {
     while ([complexityScanner scanUpToString:@"Line:" intoString:NULL]) {
       int startLine;
@@ -229,12 +239,23 @@
                                       start:&startLine
                                         end:&endLine
                                  complexity:&complexity];
-      if (!isGood) break;
+      if (!isGood) {
+        break;
+      }
       if (complexity > maxComplexity_) {
         maxComplexity_ = complexity;
       }
       [[lines_ objectAtIndex:(startLine - 1)] setComplexity:complexity];
+      lastEndLine = endLine;
     }
+  }
+  if ([complexityScanner isAtEnd]) {
+    isGood = YES;
+  }
+  if (!isGood) {
+    [receiver coverageErrorForPath:[self sourcePath] 
+                           message:@"Code complexity analysis unable to parse "
+                                    "file somewhere after line %d", lastEndLine];
   }
   return isGood;
 }
@@ -290,10 +311,9 @@
   // must be for the same paths
   if (![[fileData sourcePath] isEqual:sourcePath_]) {
     if (receiver) {
-      NSString *message =
-        [NSString stringWithFormat:@"Coverage is for different source paths '%@' vs '%@'",
-         [fileData sourcePath], sourcePath_];
-      [receiver coverageErrorMessage:message];
+      [receiver coverageErrorForPath:sourcePath_ 
+                             message:@"coverage is for different source path:%@", 
+       [fileData sourcePath]];
     }
     return NO;
   }
@@ -301,10 +321,9 @@
   // make sure the source file lines actually match
   if ([fileData numberTotalLines] != [self numberTotalLines]) {
     if (receiver) {
-      NSString *message =
-        [NSString stringWithFormat:@"Coverage source (%@) has different line count '%d' vs '%d'",
-         sourcePath_, [fileData numberTotalLines], [self numberTotalLines]];
-      [receiver coverageErrorMessage:message];
+      [receiver coverageErrorForPath:sourcePath_ 
+                             message:@"coverage source (%@) has different line count '%d' vs '%d'",
+       [fileData sourcePath], [fileData numberTotalLines], [self numberTotalLines]];
     }
     return NO;
   }
@@ -317,10 +336,9 @@
     // they both have to say kCoverStoryNotExecutedMarker
     if (![[lineNew line] isEqual:[lineMe line]]) {
       if (receiver) {
-        NSString *message =
-          [NSString stringWithFormat:@"Coverage source (%@) line %d doesn't match, '%@' vs '%@'",
-           sourcePath_, x, [lineNew line], [lineMe line]];
-        [receiver coverageErrorMessage:message];
+        [receiver coverageErrorForPath:sourcePath_
+                               message:@"coverage source (%@) line %d doesn't match, '%@' vs '%@'",
+         [fileData sourcePath], x, [lineNew line], [lineMe line]];
       }
       return NO;
     }

@@ -39,6 +39,9 @@
   NSString *filterString_;
   volatile BOOL openingInThread_;  // Are we opening our files in a thread
   CoverStoryCoverageSet *dataSet_;
+  NSTextAttachment *errorIcon_;
+  NSTextAttachment *warningIcon_;
+  NSTextAttachment *infoIcon_;
 }
 
 // Opens up the source code file in Xcode.

@@ -19,6 +19,9 @@
 		8B63DA640D94078700395A2B /* openscript.scpt in Resources */ = {isa = PBXBuildFile; fileRef = 8B63DA5B0D94070100395A2B /* openscript.scpt */; };
 		8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */; };
 		8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */; };
+		8BC04E2C0DB0459100C2D1CA /* info.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E290DB0459100C2D1CA /* info.png */; };
+		8BC04E2D0DB0459100C2D1CA /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E2A0DB0459100C2D1CA /* error.png */; };
+		8BC04E2E0DB0459100C2D1CA /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E2B0DB0459100C2D1CA /* warning.png */; };
 		8BC4AAB80D94D06100437182 /* CoverStoryCodeViewTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */; };
 		8BFD54F60B3F009300AFCDA2 /* CoverStoryCoverageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */; };
 		8BFD5B040B3F126D00AFCDA2 /* CoverStoryScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD5B030B3F126D00AFCDA2 /* CoverStoryScroller.m */; };
@@ -98,6 +101,9 @@
 		8B7271230D92CD920090C251 /* CoverStoryPreferenceKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryPreferenceKeys.h; sourceTree = "<group>"; };
 		8BA270B60D87C9AE0092884C /* CoverStoryDocumentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryDocumentController.h; sourceTree = "<group>"; };
 		8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryDocumentController.m; sourceTree = "<group>"; };
+		8BC04E290DB0459100C2D1CA /* info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = info.png; sourceTree = SOURCE_ROOT; };
+		8BC04E2A0DB0459100C2D1CA /* error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = error.png; sourceTree = SOURCE_ROOT; };
+		8BC04E2B0DB0459100C2D1CA /* warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = warning.png; sourceTree = SOURCE_ROOT; };
 		8BC4AAB60D94D06100437182 /* CoverStoryCodeViewTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCodeViewTableView.h; sourceTree = "<group>"; };
 		8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCodeViewTableView.m; sourceTree = "<group>"; };
 		8BFD54F40B3F009300AFCDA2 /* CoverStoryCoverageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCoverageData.h; sourceTree = "<group>"; };
@@ -214,6 +220,9 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8BC04E290DB0459100C2D1CA /* info.png */,
+				8BC04E2A0DB0459100C2D1CA /* error.png */,
+				8BC04E2B0DB0459100C2D1CA /* warning.png */,
 				8BFD651D0B405B6400AFCDA2 /* CoverStory.icns */,
 				8B2A9C6A0D84F84600599386 /* gcov.icns */,
 				8B2A9C6B0D84F84600599386 /* gcno.icns */,
@@ -359,6 +368,9 @@
 				8B2A9C6E0D84F84600599386 /* gcno.icns in Resources */,
 				8B2A9C6F0D84F84600599386 /* gcda.icns in Resources */,
 				8B63DA640D94078700395A2B /* openscript.scpt in Resources */,
+				8BC04E2C0DB0459100C2D1CA /* info.png in Resources */,
+				8BC04E2D0DB0459100C2D1CA /* error.png in Resources */,
+				8BC04E2E0DB0459100C2D1CA /* warning.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

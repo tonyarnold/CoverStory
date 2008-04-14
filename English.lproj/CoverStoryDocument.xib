@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="104"/>
+			<integer value="105"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -867,7 +867,7 @@
 											<int key="NSTCFlags">1</int>
 										</object>
 										<object class="NSTextViewSharedData" key="NSSharedData">
-											<int key="NSFlags">11105</int>
+											<int key="NSFlags">11117</int>
 											<reference key="NSBackgroundColor" ref="676988305"/>
 											<reference key="NSInsertionColor" ref="985602256"/>
 											<object class="NSDictionary" key="NSSelectedAttributes">
@@ -2053,6 +2053,7 @@
 					<string>507.IBShouldRemoveOnLegacySave</string>
 					<string>508.IBShouldRemoveOnLegacySave</string>
 					<string>509.IBPluginDependency</string>
+					<string>510.IBEditorWindowLastContentRect</string>
 					<string>510.IBPluginDependency</string>
 					<string>510.editorWindowContentRectSynchronizationRect</string>
 					<string>517.IBPluginDependency</string>
@@ -2166,6 +2167,7 @@
 					<reference ref="9"/>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{0, 616}, {462, 229}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{378, 1234}, {462, 229}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2198,7 +2200,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">531</int>
+			<int key="maxID">549</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
