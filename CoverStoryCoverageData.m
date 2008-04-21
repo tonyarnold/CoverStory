@@ -48,11 +48,22 @@
     // Scan in our data and create up out CoverStoryCoverageLineData objects.
     // TODO(dmaclach): make this routine a little more "error tolerant"
 
-    // Most Mac source is UTF8 or Western(MacRoman), so we'll try those and then
-    // punt.
+    // Let NSString try to handle the encoding when opening
     NSStringEncoding encoding;
     NSError *error;
-    NSString *string = [NSString stringWithContentsOfFile:path usedEncoding:&encoding error:&error];
+    NSString *string = [NSString stringWithContentsOfFile:path
+                                             usedEncoding:&encoding
+                                                    error:&error];
+    if (!string) {
+      // Sadly, NSString doesn't detect/handle NSMacOSRomanStringEncoding very
+      // well, so we have to manually try Roman.  math.h in the system headers
+      // is in MacRoman easily causes us error w/o this extra code.
+      // (we don't care about the error here, we'll just report the parent
+      // error)
+      string = [NSString stringWithContentsOfFile:path
+                                         encoding:NSMacOSRomanStringEncoding
+                                            error:NULL];
+    }
     if (!string) {
       [receiver coverageErrorForPath:path message:@"failed to open file %@", error];
       [self release];

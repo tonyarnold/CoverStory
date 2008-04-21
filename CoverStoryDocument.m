@@ -146,7 +146,7 @@ static NSString *const kPrefsToWatch[] = {
                      ofType:(NSString *)typeName
                       error:(NSError **)outError {
   BOOL isGood = NO;
-  
+
   // the wrapper doesn't have the full path, but it's already set on us, so
   // use that instead.
   NSString *path = [self fileName];
@@ -156,7 +156,7 @@ static NSString *const kPrefsToWatch[] = {
                            withObject:path];
     isGood = YES;
   } else if ([typeName isEqualToString:@kGCOVTypeName]) {
-    // load it and add it to out set
+    // load it and add it to our set
     CoverStoryCoverageFileData *fileData =
       [CoverStoryCoverageFileData coverageFileDataFromPath:path
                                            messageReceiver:self];
@@ -164,8 +164,6 @@ static NSString *const kPrefsToWatch[] = {
       isGood = [self addFileData:fileData];
     }
   } else {
-    // the wrapper doesn't have the full path, but it's already set on us, so use
-    // that instead.
     [NSThread detachNewThreadSelector:@selector(openFileInThread:)
                              toTarget:self
                            withObject:path];
