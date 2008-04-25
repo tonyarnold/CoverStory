@@ -99,8 +99,13 @@
         [scanner setScanLocation:[scanner scanLocation] + 1];
         // handle the non feasible markers
         if (inNonFeasibleRange) {
-          // line doesn't count
-          hitCount = kCoverStoryNonFeasibleMarker;
+          // if the line was gonna count, mark it as non feasible (we only mark
+          // the lines that would have counted so the total number of non
+          // feasible lines isn't too high (otherwise comment lines, blank
+          // lines, etc. count as non feasible).
+          if (hitCount != kCoverStoryNotExecutedMarker) {
+            hitCount = kCoverStoryNonFeasibleMarker;
+          }
           // if it has the end marker, clear our state
           if ([nfRangeEndRegex matchesString:segment]) {
             inNonFeasibleRange = NO;
@@ -112,7 +117,13 @@
           }
           // if it matches the start marker, don't count it and set state
           else if ([nfRangeStartRegex matchesString:segment]) {
-            hitCount = kCoverStoryNonFeasibleMarker;
+            // if the line was gonna count, mark it as non feasible (we only mark
+            // the lines that would have counted so the total number of non
+            // feasible lines isn't too high (otherwise comment lines, blank
+            // lines, etc. count as non feasible).
+            if (hitCount != kCoverStoryNotExecutedMarker) {
+              hitCount = kCoverStoryNonFeasibleMarker;
+            }
             inNonFeasibleRange = YES;
           }
         }
@@ -127,9 +138,7 @@
         [lines_ removeObjectsInRange:NSMakeRange(0,5)];
         // get out counts
         [self updateCounts];
-        if ([self maxComplexity] == 0) {
-          [self calculateComplexityWithMessageReceiver:receiver];
-        }
+        [self calculateComplexityWithMessageReceiver:receiver];
       } else {
         [receiver coverageErrorForPath:path message:@"illegal file format"];
 
