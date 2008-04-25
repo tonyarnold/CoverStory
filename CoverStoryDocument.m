@@ -35,9 +35,9 @@
 @end
 
 typedef enum {
-  CSMessageType_Error,
-  CSMessageType_Warning,
-  CSMessageType_Info
+  kCSMessageTypeError,
+  kCSMessageTypeWarning,
+  kCSMessageTypeInfo
 } CSMessageType;
 
 @interface CoverStoryDocument (PrivateMethods)
@@ -164,7 +164,7 @@ static NSString *const kPrefsToWatch[] = {
     NSString *message =
       [NSString stringWithFormat:@"Scanning for coverage data in '%@'",
        path];
-    [self addMessageFromThread:message messageType:CSMessageType_Info];
+    [self addMessageFromThread:message messageType:kCSMessageTypeInfo];
     [NSThread detachNewThreadSelector:@selector(openFolderInThread:)
                              toTarget:self
                            withObject:path];
@@ -173,7 +173,7 @@ static NSString *const kPrefsToWatch[] = {
     NSString *message =
       [NSString stringWithFormat:@"Reading gcov data '%@'",
        path];
-    [self addMessageFromThread:message messageType:CSMessageType_Info];
+    [self addMessageFromThread:message messageType:kCSMessageTypeInfo];
     // load it and add it to our set
     CoverStoryCoverageFileData *fileData =
       [CoverStoryCoverageFileData coverageFileDataFromPath:path
@@ -183,13 +183,13 @@ static NSString *const kPrefsToWatch[] = {
     } else {
       [self addMessageFromThread:@"Failed to load gcov data"
                             path:path
-                     messageType:CSMessageType_Error];
+                     messageType:kCSMessageTypeError];
     }
   } else {
     NSString *message =
       [NSString stringWithFormat:@"Processing coverage data in '%@'",
        path];
-    [self addMessageFromThread:message messageType:CSMessageType_Info];
+    [self addMessageFromThread:message messageType:kCSMessageTypeInfo];
     [NSThread detachNewThreadSelector:@selector(openFileInThread:)
                              toTarget:self
                            withObject:path];
@@ -272,15 +272,15 @@ static NSString *const kPrefsToWatch[] = {
   int pathCount = [allFilePaths count];
   if (pathCount == 0) {
     [self addMessageFromThread:@"Found no gcda files to process."
-                   messageType:CSMessageType_Warning];
+                   messageType:kCSMessageTypeWarning];
   } else if (pathCount == 1) {
     [self addMessageFromThread:@"Found 1 gcda file to process."
-                   messageType:CSMessageType_Info];
+                   messageType:kCSMessageTypeInfo];
   } else {
     NSString *message =
       [NSString stringWithFormat:@"Found %u gcda files to process.", pathCount];
     [self addMessageFromThread:message
-                   messageType:CSMessageType_Info];
+                   messageType:kCSMessageTypeInfo];
   }
   
   // we want to back process them by chunks w/in a given directory.  so sort
@@ -310,7 +310,7 @@ static NSString *const kPrefsToWatch[] = {
             [NSString stringWithFormat:@"failed to process files: %@",
              currentFileList];
           [self addMessageFromThread:message path:currentFolder
-                         messageType:CSMessageType_Error];
+                         messageType:kCSMessageTypeError];
         }
         // restart the collecting w/ this filename
         currentFolder = [filename stringByDeletingLastPathComponent];
@@ -326,7 +326,7 @@ static NSString *const kPrefsToWatch[] = {
          currentFileList];
       [self addMessageFromThread:message
                             path:currentFolder
-                     messageType:CSMessageType_Error];
+                     messageType:kCSMessageTypeError];
     }
     // and we're done
     [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
@@ -353,7 +353,7 @@ static NSString *const kPrefsToWatch[] = {
     if (range.location != NSNotFound) {
       [self addMessageFromThread:@"skipped because filename had a slash"
                             path:[folderPath stringByAppendingPathComponent:filename]
-                     messageType:CSMessageType_Error];
+                     messageType:kCSMessageTypeError];
       return NO;
     }
   }
@@ -412,7 +412,7 @@ static NSString *const kPrefsToWatch[] = {
           }
           [self addMessageFromThread:message
                                 path:path
-                         messageType:CSMessageType_Error];
+                         messageType:kCSMessageTypeError];
         }
       } 
       
@@ -439,14 +439,14 @@ static NSString *const kPrefsToWatch[] = {
       
       [self addMessageFromThread:@"failed to write out the file lists"
                             path:fileListPath
-                     messageType:CSMessageType_Error];
+                     messageType:kCSMessageTypeError];
     }
     
     // nuke our temp dir tree
     if (![fm removeFileAtPath:tempDir handler:nil]) {
       [self addMessageFromThread:@"failed to remove our tempdir"
                             path:tempDir
-                     messageType:CSMessageType_Error];
+                     messageType:kCSMessageTypeError];
     }
   }
   
@@ -656,7 +656,7 @@ static NSString *const kPrefsToWatch[] = {
                    error:&error]) {
     [self addMessageFromThread:@"couldn't reload file" 
                           path:[self fileName]
-                   messageType:CSMessageType_Error];
+                   messageType:kCSMessageTypeError];
   }
 }
 
@@ -765,16 +765,16 @@ static NSString *const kPrefsToWatch[] = {
 - (void)finishedLoadingFileDatas:(id)ignored {
   if (numFileDatas_ == 0) {
     [self addMessageFromThread:@"No coverage data read."
-                   messageType:CSMessageType_Warning];
+                   messageType:kCSMessageTypeWarning];
   } else if (numFileDatas_ == 1) {
     [self addMessageFromThread:@"Loaded one file of coverage data."
-                   messageType:CSMessageType_Info];
+                   messageType:kCSMessageTypeInfo];
   } else {
     NSString *message =
     [NSString stringWithFormat:@"Successfully loaded %u coverage fragments.",
       numFileDatas_];
     [self addMessageFromThread:message
-                   messageType:CSMessageType_Info];
+                   messageType:kCSMessageTypeInfo];
   }
 }
 
@@ -811,7 +811,7 @@ static NSString *const kPrefsToWatch[] = {
   va_start(list, format);
   NSString *message = [[NSString alloc] initWithFormat:format arguments:list];
   va_end(list);
-  [self addMessageFromThread:message path:path messageType:CSMessageType_Error];
+  [self addMessageFromThread:message path:path messageType:kCSMessageTypeError];
 }
 
 - (void)close {
@@ -836,7 +836,7 @@ static NSString *const kPrefsToWatch[] = {
   CSMessageType msgType = [[msgInfo objectForKey:@"msgType"] intValue];
   if (message) {
     // for non-info make sure the drawer is open
-    if (msgType != CSMessageType_Info) {
+    if (msgType != kCSMessageTypeInfo) {
       [drawer_ open];
     }
     
@@ -851,15 +851,15 @@ static NSString *const kPrefsToWatch[] = {
     NSTextAttachment *icon = nil;
     NSColor *textColor = nil;
     switch (msgType) {
-      case CSMessageType_Error:
+      case kCSMessageTypeError:
         icon = errorIcon_;
         textColor = [NSColor redColor];
         break;
-      case CSMessageType_Warning:
+      case kCSMessageTypeWarning:
         icon = warningIcon_;
         textColor = [NSColor orangeColor];
         break;
-      case CSMessageType_Info:
+      case kCSMessageTypeInfo:
         icon = infoIcon_;
         textColor = [NSColor blackColor];
         break;
@@ -880,7 +880,7 @@ static NSString *const kPrefsToWatch[] = {
     [attrIconAndMessage addAttributes:attrs range:NSMakeRange(0, [attrMessage length])];
     NSTextStorage *storage = [messageView_ textStorage];
     [storage replaceCharactersInRange:appendRange withAttributedString:attrIconAndMessage];
-    if (msgType != CSMessageType_Info) {  // only scroll to the warnings/errors
+    if (msgType != kCSMessageTypeInfo) {  // only scroll to the warnings/errors
       NSRange visibleRange = NSMakeRange(appendRange.location, [attrIconAndMessage length]);
       [messageView_ scrollRangeToVisible:visibleRange];
     }
