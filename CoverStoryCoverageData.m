@@ -192,7 +192,13 @@
   GTMScriptRunner *runner = [GTMScriptRunner runnerWithBash];
   NSString *mccpath = [[NSBundle mainBundle] pathForAuxiliaryExecutable:@"mcc"];
   if (!mccpath) return nil;
-  return [runner run:[NSString stringWithFormat:@"%@ %@", mccpath, path]];
+  NSString *result =
+    [runner run:[NSString stringWithFormat:@"%@ %@", mccpath, path]];
+  // To avoid running out processes, we spin the event loop to cleanup this
+  // fork, if we wait for the one from the whole folder, then large build
+  // folders error from not being able to fork.
+  [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+  return result;
 }
   
 - (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
