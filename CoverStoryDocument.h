@@ -42,6 +42,8 @@
   NSTextAttachment *errorIcon_;
   NSTextAttachment *warningIcon_;
   NSTextAttachment *infoIcon_;
+  unsigned int numFileDatas_;
+  NSViewAnimation *currentAnimation_;
 }
 
 // Opens up the source code file in Xcode.
