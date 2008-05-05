@@ -19,13 +19,14 @@
 
 #import "CoverStoryCoverageData.h"
 #import "GTMRegex.h"
-#import "GTMScriptRunner.h"
+
+// this will return something we need to free
+char *mcc(const char* untf8String);
 
 @interface CoverStoryCoverageFileData (PrivateMethods)
 - (void)updateCounts;
 - (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 - (NSString*)generateSource;
-- (NSString*)runMccOnPath:(NSString*)path;
 - (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
                          start:(int*)start 
                            end:(int*)end 
@@ -196,19 +197,6 @@
   }
   return source;
 }  
-
-- (NSString*)runMccOnPath:(NSString*)path {
-  GTMScriptRunner *runner = [GTMScriptRunner runnerWithBash];
-  NSString *mccpath = [[NSBundle mainBundle] pathForAuxiliaryExecutable:@"mcc"];
-  if (!mccpath) return nil;
-  NSString *result =
-    [runner run:[NSString stringWithFormat:@"%@ %@", mccpath, path]];
-  // To avoid running out processes, we spin the event loop to cleanup this
-  // fork, if we wait for the one from the whole folder, then large build
-  // folders error from not being able to fork.
-  [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-  return result;
-}
   
 - (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
                          start:(int*)start 
@@ -227,34 +215,23 @@
 - (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
   maxComplexity_ = 0;
   NSString *source = [self generateSource];
-  NSString *tempPath = NSTemporaryDirectory();
-  tempPath = [tempPath stringByAppendingPathComponent:[sourcePath_ lastPathComponent]];
-  tempPath = [tempPath stringByAppendingPathExtension:@"complexity"];
-  NSError *error;
-  BOOL isGood = [source writeToFile:tempPath 
-                         atomically:YES 
-                           encoding:NSUTF8StringEncoding 
-                              error:&error];
-  if (!isGood) {
-    [receiver coverageErrorForPath:[self sourcePath] 
-                           message:@"Code complexity analysis unable to create "
-                                    "a temp file at %@", tempPath];
-    return isGood;
-  }
+  NSString *val = nil;
   
-  NSString *val = [self runMccOnPath:tempPath];
-  if (![[NSFileManager defaultManager] removeFileAtPath:tempPath handler:NULL]) {
-    [receiver coverageErrorForPath:[self sourcePath] 
-                           message:@"Unable to delete temporary file: @", tempPath];
+  char *mccOutput = mcc([source UTF8String]);
+  if (mccOutput) {
+    val = [[[NSString alloc] initWithBytesNoCopy:mccOutput
+                                          length:strlen(mccOutput)
+                                        encoding:NSUTF8StringEncoding
+                                    freeWhenDone:YES] autorelease];
   }
-
+    
   if (!val) {
     [receiver coverageErrorForPath:[self sourcePath] 
                            message:@"Code complexity analysis failed"];
     return NO;
   }
   NSScanner *complexityScanner = [NSScanner scannerWithString:val];
-  isGood = [complexityScanner scanString:@"-" intoString:NULL];
+  BOOL isGood = [complexityScanner scanString:@"-" intoString:NULL];
   int lastEndLine = 0;
   if (isGood) {
     while ([complexityScanner scanUpToString:@"Line:" intoString:NULL]) {

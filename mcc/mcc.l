@@ -23,19 +23,35 @@
 // http://lahtermaher.org/pub/plan/c/iecc/file/c++grammar/cpp5.l
 //
 // Does a variant of McCabe cyclomatic complexity counting of C/C++/ObjC/ObjC++
-  
-static void IncrementComplexityCount();
-static void IncrementLineCount();
-static void IncrementNesting();
 
-static void DecrementNesting();
+#include <stdarg.h>
 
-static void HandleComment();    
-static void HandleCase();
-static void EndOpenCase();
-static void HandleOpenScope();
-static void EndOpenScope();
-static void Error(const char *err);
+typedef struct {
+  int nestingDepth;
+  int totalNestingDepth;
+  int complexityCount;
+  int lineNum;
+  int startLine;
+  char debug;
+  char *outputBuffer;
+  size_t outputBufferLen;
+  size_t outputBufferSize;
+} ComplexityState;
+
+#define YY_EXTRA_TYPE ComplexityState *
+
+static void InitializeComplexityState(ComplexityState *state);
+static void DestroyComplexityState(ComplexityState *state);
+
+static void IncrementComplexityCount(yyscan_t yyscanner);
+static void IncrementLineCount(yyscan_t yyscanner);
+static void IncrementNesting(yyscan_t yyscanner, int curState);
+
+static void DecrementNesting(yyscan_t yyscanner, int curState);
+
+static void HandleComment(yyscan_t yyscanner);    
+static void HandleCase(yyscan_t yyscanner, int curState);
+static void HandleOpenScope(yyscan_t yyscanner);
 static const char* ScopeName(int scope);
   
 // States
@@ -51,6 +67,7 @@ static const char* ScopeName(int scope);
 %}
 %array
 %option stack
+%option reentrant
 %x OPENSCOPE
 %x OPENCASE
 %s SCOPE
@@ -85,30 +102,37 @@ blank_line {horizontal_white}|{v_tab}|{c_return}|{form_feed}
 
 %%
 
-"/*"                                          { /**/ HandleComment(); }
+"/*"                                          { /**/ HandleComment(yyscanner); }
 "//".*                                        {}
 
 <OPENCASE,OPENSCOPE>{horizontal_white}+       {}
 <OPENCASE>case{horizontal_white}+{identifier} {}
 <OPENCASE>:                                   {}
 <OPENCASE>default                             {}
-<OPENCASE,OPENSCOPE>"\n"                      { IncrementLineCount(); }
-<OPENCASE>.                                   { EndOpenCase(); }
+<OPENCASE,OPENSCOPE>"\n"                      { IncrementLineCount(yyscanner); }
+<OPENCASE>.                                   { yy_pop_state(yyscanner); unput(yytext[0]); }
 <OPENSCOPE>{identifier}                       {}
-<OPENSCOPE>.                                  { EndOpenScope(); }
+<OPENSCOPE>.                                  { 
+                                                if (strcmp(yytext, "{") == 0) {
+                                                  IncrementNesting(yyscanner, YY_START);
+                                                } else {
+                                                  yy_pop_state(yyscanner);
+                                                  unput(yytext[0]);
+                                                }
+                                              }
 
 {horizontal_white}+                           {}
 ({v_tab}|{c_return}|{form_feed})+             {}
-{blank_line}*"\n"                             { IncrementLineCount(); }
+{blank_line}*"\n"                             { IncrementLineCount(yyscanner); }
 
 asm                                           {}
 auto                                          {}
 break                                         {}
-case{horizontal_white}+{identifier}           { HandleCase(); }
+case{horizontal_white}+{identifier}           { HandleCase(yyscanner, YY_START); }
 char                                          {}
 const                                         {}
 continue                                      {}
-default                                       { HandleCase(); }
+default                                       { HandleCase(yyscanner, YY_START); }
 define                                        {}
 defined                                       {}
 do                                            {}
@@ -117,14 +141,14 @@ elif.*                                        {}
 #else                                         {}
 else                                          {}
 endif                                         {}
-enum                                          { HandleOpenScope(); }
+enum                                          { HandleOpenScope(yyscanner); }
 error                                         {}
 extern                                        {}
 float                                         {}
-for                                           { IncrementComplexityCount(); }
+for                                           { IncrementComplexityCount(yyscanner); }
 goto                                          {}
 #if.*                                         {}
-if                                            { IncrementComplexityCount(); }
+if                                            { IncrementComplexityCount(yyscanner); }
 ifdef                                         {}
 ifndef                                        {}
 include                                       {}
@@ -140,25 +164,25 @@ short                                         {}
 signed                                        {}
 sizeof                                        {}
 static                                        {}
-struct                                        { HandleOpenScope(); }
+struct                                        { HandleOpenScope(yyscanner); }
 switch                                        {}
 typedef                                       {}
 undef                                         {}
-union                                         { HandleOpenScope(); }
+union                                         { HandleOpenScope(yyscanner); }
 unsigned                                      {}
 void                                          {}
 volatile                                      {}
 warning                                       {}
 wchar_t                                       {}
-while                                         { IncrementComplexityCount(); }
+while                                         { IncrementComplexityCount(yyscanner); }
 
-and                                           { IncrementComplexityCount(); }
+and                                           { IncrementComplexityCount(yyscanner); }
 and_eq                                        {}
 bitand                                        {}
 bitor                                         {}
 bool                                          {}
-catch                                         { IncrementComplexityCount(); }
-class                                         { HandleOpenScope(); }
+catch                                         { IncrementComplexityCount(yyscanner); }
+class                                         { HandleOpenScope(yyscanner); }
 compl                                         {}
 const_cast                                    {}
 delete                                        {}
@@ -168,10 +192,10 @@ export                                        {}
 false                                         {}
 friend                                        {}
 inline                                        {}
-namespace                                     { HandleOpenScope(); }
+namespace                                     { HandleOpenScope(yyscanner); }
 new                                           {}
 not                                           {}
-or                                            { IncrementComplexityCount(); }
+or                                            { IncrementComplexityCount(yyscanner); }
 or_eq                                         {}
 operator                                      {}
 protected                                     {}
@@ -191,7 +215,7 @@ virtual                                       {}
 xor                                           {}
 xor_eq                                        {}
  
-interface                                     { HandleOpenScope(); }
+interface                                     { HandleOpenScope(yyscanner); }
 protocol                                      {}
 implementation                                {}
 synchronized                                  {}
@@ -230,8 +254,8 @@ finally                                       {}
 "#"                                           {}
 "##"                                          {}
 "@"                                           {}
-"{"                                           { IncrementNesting(); }
-"}"                                           { DecrementNesting(); }
+"{"                                           { IncrementNesting(yyscanner, YY_START); }
+"}"                                           { DecrementNesting(yyscanner, YY_START); }
 "["                                           {}
 "]"                                           {}
 "."                                           {}
@@ -247,7 +271,7 @@ finally                                       {}
 ">"                                           {}
 "^"                                           {}
 "|"                                           {}
-"?"                                           { IncrementComplexityCount(); }
+"?"                                           { IncrementComplexityCount(yyscanner); }
 ":"                                           {}
 ";"                                           {}
 "="                                           {}
@@ -263,8 +287,8 @@ finally                                       {}
 ">="                                          {}
 "=="                                          {}
 "!="                                          {}
-"&&"                                          { IncrementComplexityCount(); }
-"||"                                          { IncrementComplexityCount(); }
+"&&"                                          { IncrementComplexityCount(yyscanner); }
+"||"                                          { IncrementComplexityCount(yyscanner); }
 "*="                                          {}
 "/="                                          {}
 "%="                                          {}
@@ -279,157 +303,248 @@ finally                                       {}
 
 %%
 
-int gNestingDepth = 0;
-int gTotalNestingDepth = 0;
-int gComplexityCount = 1;
-int gLineNum = 1;
-int gStartLine = 0;
-char gDebug = 0;
-        
-int yywrap() { 
+void InitializeComplexityState(ComplexityState *state) {
+  state->nestingDepth = 0;
+  state->totalNestingDepth = 0;
+  state->complexityCount = 1;
+  state->lineNum = 1;
+  state->startLine = 0;
+  state->debug = 0;
+
+  state->outputBufferLen = 0;
+  state->outputBufferSize = 2048;
+  state->outputBuffer = malloc(state->outputBufferSize);
+  if (state->outputBuffer) {
+    state->outputBuffer[0] = 0;
+  }
+}
+
+void DestroyComplexityState(ComplexityState *state) {
+  if (state && state->outputBuffer) {
+    free(state->outputBuffer);
+    state->outputBuffer = 0;
+  }
+}
+
+void appendMessage(ComplexityState *state, const char *format, ...) {
+  if (!state || !state->outputBuffer) return;
+  va_list args;
+  va_start(args, format);
+  char *localBuffer = 0;
+  int charCount = vasprintf(&localBuffer, format, args);
+  if (charCount != -1) {
+    if ((state->outputBufferSize - state->outputBufferLen) <= charCount) {
+      state->outputBufferSize += charCount + 1024;
+      state->outputBuffer = realloc(state->outputBuffer, state->outputBufferSize);
+    }
+    if (state->outputBuffer) {
+      memcpy(state->outputBuffer + state->outputBufferLen, localBuffer, charCount);
+      state->outputBufferLen += charCount;
+      state->outputBuffer[state->outputBufferLen] = 0;
+    }
+  }
+  if (localBuffer) {
+    free(localBuffer);
+  }
+  va_end(args);
+}
+
+int yywrap(yyscan_t yyscanner) { 
   return 1;
 }
 
+#ifdef EMBED_MCC
+
+// returns a buffer you have to call free on
+char *mcc(const char* utf8String) {
+  char *result = 0;
+
+  ComplexityState complexityState;
+  InitializeComplexityState(&complexityState);
+  // complexityState.debug = 1;
+  appendMessage(&complexityState, "- -\n");
+  
+  yyscan_t scanner;
+  yylex_init(&scanner);
+  yyset_extra(&complexityState, scanner);
+  
+  YY_BUFFER_STATE buf = yy_scan_string(utf8String, scanner);
+  yylex(scanner);
+  yy_delete_buffer(buf, scanner);
+  yylex_destroy(scanner);
+
+  appendMessage(&complexityState, "\n");
+  if (complexityState.outputBuffer) {
+    // extract the buffer for our result
+    result = complexityState.outputBuffer;
+    complexityState.outputBuffer = 0;
+  }
+
+  DestroyComplexityState(&complexityState);
+
+  return result;
+}
+
+#else // !defined(EMBED_MCC)
+
 int main (int argc, const char * argv[]) {
   // Skip over program name
-  if (getenv("DEBUG") != NULL) {
-    gDebug = 1;
-  }
   ++argv;
   --argc; 
   if (argc) {
     for (int i = 0; i < argc; ++i) {
+      FILE *our_in = NULL;
       if (strcmp(argv[i], "-") == 0) {
-        yyin = stdin;
+        our_in = stdin;
       } else {
-        yyin = fopen(argv[i], "r");
+        our_in = fopen(argv[i], "r");
       }
-      if (!yyin) {
-        Error("Unable to open file");
+      if (!our_in) {
+        printf("Unable to open file");
+        exit(1);
       }
-      printf("- %s\n", argv[i]);  
-      yylex();
-      printf("\n");
-      if (yyin != stdin) {
-        fclose(yyin);
+
+      ComplexityState complexityState;
+      InitializeComplexityState(&complexityState);
+      if (getenv("DEBUG") != NULL) {
+        complexityState.debug = 1;
+      }
+      appendMessage(&complexityState, "- %s\n", argv[i]);
+        
+      yyscan_t scanner;
+      yylex_init(&scanner);
+      yyset_extra(&complexityState, scanner);
+      yyset_in(our_in, scanner);
+
+      yylex(scanner);
+
+      yylex_destroy(scanner);
+      
+      appendMessage(&complexityState, "\n");
+      if (complexityState.outputBuffer) {
+        printf("%s", complexityState.outputBuffer);
+      }
+      DestroyComplexityState(&complexityState);
+      if (our_in != stdin) {
+        fclose(our_in);
       }
     }
   } else {
-    yyin = stdin;
-    yylex();
+    ComplexityState complexityState;
+    InitializeComplexityState(&complexityState);
+    if (getenv("DEBUG") != NULL) {
+      complexityState.debug = 1;
+    }
+    
+    yyscan_t scanner;
+    yylex_init(&scanner);
+    yyset_extra(&complexityState, scanner);
+    
+    yyset_in(stdin, scanner);
+    yylex(scanner);
+    yylex_destroy(scanner);
   }
   return 0;
 }
+
+#endif // defined(EMBED_MCC)
         
-void IncrementComplexityCount() {
-  if (gDebug) {
-    printf("\tIncrease Complexity: (%s - %d)\n", yytext, gLineNum);
+void IncrementComplexityCount(yyscan_t yyscanner) {
+  ComplexityState *state = yyget_extra(yyscanner);
+  if (state->debug) {
+    appendMessage(state, "\tIncrease Complexity: (%s - %d)\n",
+                  yyget_text(yyscanner), state->lineNum);
   }
-  gComplexityCount += 1;
+  state->complexityCount += 1;
 }
 
-void IncrementLineCount() {
-  gLineNum += 1;
+void IncrementLineCount(yyscan_t yyscanner) {
+  ComplexityState *state = yyget_extra(yyscanner);
+  state->lineNum += 1;
 }
 
-void IncrementNesting() {
-  if (YY_START == OPENSCOPE) {
-    yy_pop_state();
-    yy_push_state(SCOPE);
+void IncrementNesting(yyscan_t yyscanner, int curState) {
+  ComplexityState *state = yyget_extra(yyscanner);
+  if (curState == OPENSCOPE) {
+    yy_pop_state(yyscanner);
+    yy_push_state(SCOPE, yyscanner);
   } else {
-    if (gNestingDepth == 0) {
-      gStartLine = gLineNum;
+    if (state->nestingDepth == 0) {
+      state->startLine = state->lineNum;
     }
-    gNestingDepth += 1;
-    yy_push_state(BRACE);
+    state->nestingDepth += 1;
+    yy_push_state(BRACE, yyscanner);
   }
-  if (gDebug) {
-    for (int i = 0; i < gTotalNestingDepth; i++) {
-      printf("\t");
+  if (state->debug) {
+    for (int i = 0; i < state->totalNestingDepth; i++) {
+      appendMessage(state, "\t");
     }
-    gTotalNestingDepth += 1; 
-    printf("Increase Nesting To %s: (%s - %d)\n", ScopeName(YY_START), 
-           yytext, gLineNum);
+    state->totalNestingDepth += 1; 
+    appendMessage(state, "Increase Nesting To %s: (%s - %d)\n", ScopeName(curState), 
+                  yyget_text(yyscanner), state->lineNum);
   }
 }
 
-void DecrementNesting() {
-  if (YY_START == BRACE) {
-    gNestingDepth -= 1;
-    if (gNestingDepth == 0 && gComplexityCount) {
+void DecrementNesting(yyscan_t yyscanner, int curState) {
+  ComplexityState *state = yyget_extra(yyscanner);
+  if (curState == BRACE) {
+    state->nestingDepth -= 1;
+    if (state->nestingDepth == 0 && state->complexityCount) {
       char *risk;
-      if (gComplexityCount < 11) {
+      if (state->complexityCount < 11) {
         risk = "low";
-      } else if (gComplexityCount < 21) {
+      } else if (state->complexityCount < 21) {
         risk = "moderate";
-      } else if (gComplexityCount < 51) {
+      } else if (state->complexityCount < 51) {
         risk = "high";
       } else {
         risk = "extreme";
       }
-      printf("Line: %d To: %d Complexity: %d Risk: %s\n", 
-             gStartLine, gLineNum, gComplexityCount, risk);
-      gComplexityCount = 1;
+      appendMessage(state, "Line: %d To: %d Complexity: %d Risk: %s\n", 
+                    state->startLine, state->lineNum, state->complexityCount, risk);
+      state->complexityCount = 1;
     }
   }
-  yy_pop_state();
+  yy_pop_state(yyscanner);
 
-  if (gDebug) {
-    gTotalNestingDepth -= 1;
-    for (int i = 0; i < gTotalNestingDepth; i++) {
-      printf("\t");
+  if (state->debug) {
+    state->totalNestingDepth -= 1;
+    for (int i = 0; i < state->totalNestingDepth; i++) {
+      appendMessage(state, "\t");
     }
-    printf("Decrease Nesting To %s: (%s - %d)\n", ScopeName(YY_START), 
-           yytext, gLineNum);
+    appendMessage(state, "Decrease Nesting To %s: (%s - %d)\n", ScopeName(curState), 
+                  yyget_text(yyscanner), state->lineNum);
   }
         
 }
 
-void HandleCase() {
- if (YY_START != OPENCASE) { 
-   IncrementComplexityCount(); 
-   yy_push_state(OPENCASE);
- }
+void HandleCase(yyscan_t yyscanner, int curState) {
+  if (curState != OPENCASE) { 
+    IncrementComplexityCount(yyscanner); 
+    yy_push_state(OPENCASE, yyscanner);
+  }
 }
 
-void EndOpenCase() {
-  yy_pop_state(); 
-  unput(yytext[0]);
-}
-
-void HandleComment() {
+void HandleComment(yyscan_t yyscanner) {
   while(1) {
     int c;
-    while ((c = input()) != '*' && c != EOF && c != '\n');  
+    while ((c = input(yyscanner)) != '*' && c != EOF && c != '\n');  
     if ( c == '*' ) {
-      while ( (c = input()) == '*' );
+      while ( (c = input(yyscanner)) == '*' );
       if ( c == '/' ) break;    
     }
     if (c == '\n') {
-      IncrementLineCount();
+      IncrementLineCount(yyscanner);
     } else if ( c == EOF ) {
-      Error( "EOF in comment" );
+      ComplexityState *state = yyget_extra(yyscanner);
+      appendMessage(state, "EOF in comment");
       break;
     }
   }
 }
         
-void HandleOpenScope() {
-  yy_push_state(OPENSCOPE);
-}
-
-void EndOpenScope() {
-  if (strcmp(yytext, "{") == 0) {
-    IncrementNesting();
-  } else {
-    yy_pop_state();
-    unput(yytext[0]);
-  }
-}
-        
-void Error(const char *err) {
-  printf(err);
-  exit(1);
+void HandleOpenScope(yyscan_t yyscanner) {
+  yy_push_state(OPENSCOPE, yyscanner);
 }
 
 const char* ScopeName(int scope) {
