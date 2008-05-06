@@ -50,7 +50,6 @@ static void IncrementNesting(yyscan_t yyscanner, int curState);
 static void DecrementNesting(yyscan_t yyscanner, int curState);
 
 static void HandleComment(yyscan_t yyscanner);    
-static void HandleCase(yyscan_t yyscanner, int curState);
 static void HandleOpenScope(yyscan_t yyscanner);
 static const char* ScopeName(int scope);
   
@@ -59,9 +58,6 @@ static const char* ScopeName(int scope);
 //             (namespace, class, enum, struct) but we've not sure if we
 //             are declaring the scope, or defining it. If we hit a '{' before
 //             a ';' we will be defining. Otherwise we are declaring.
-// OPENCASE  - we have encountered a case statement. Not sure yet whether
-//             it is followed by another case or define, so we need to check
-//             before increasing complexity.
 // SCOPE     - we are defining a scoped area (namespace, class, enum, struct)
 // BRACE     - we are in a non "scoped" area surrounded by {}.
 %}
@@ -69,7 +65,6 @@ static const char* ScopeName(int scope);
 %option stack
 %option reentrant
 %x OPENSCOPE
-%x OPENCASE
 %s SCOPE
 %s BRACE
 identifier [a-zA-Z_][0-9a-zA-Z_]*
@@ -105,12 +100,8 @@ blank_line {horizontal_white}|{v_tab}|{c_return}|{form_feed}
 "/*"                                          { /**/ HandleComment(yyscanner); }
 "//".*                                        {}
 
-<OPENCASE,OPENSCOPE>{horizontal_white}+       {}
-<OPENCASE>case{horizontal_white}+{identifier} {}
-<OPENCASE>:                                   {}
-<OPENCASE>default                             {}
-<OPENCASE,OPENSCOPE>"\n"                      { IncrementLineCount(yyscanner); }
-<OPENCASE>.                                   { yy_pop_state(yyscanner); unput(yytext[0]); }
+<OPENSCOPE>{horizontal_white}+                {}
+<OPENSCOPE>"\n"                      { IncrementLineCount(yyscanner); }
 <OPENSCOPE>{identifier}                       {}
 <OPENSCOPE>.                                  { 
                                                 if (strcmp(yytext, "{") == 0) {
@@ -128,11 +119,11 @@ blank_line {horizontal_white}|{v_tab}|{c_return}|{form_feed}
 asm                                           {}
 auto                                          {}
 break                                         {}
-case{horizontal_white}+{identifier}           { HandleCase(yyscanner, YY_START); }
+case                                          { IncrementComplexityCount(yyscanner); }
 char                                          {}
 const                                         {}
 continue                                      {}
-default                                       { HandleCase(yyscanner, YY_START); }
+default                                       { IncrementComplexityCount(yyscanner); }
 define                                        {}
 defined                                       {}
 do                                            {}
@@ -516,13 +507,6 @@ void DecrementNesting(yyscan_t yyscanner, int curState) {
         
 }
 
-void HandleCase(yyscan_t yyscanner, int curState) {
-  if (curState != OPENCASE) { 
-    IncrementComplexityCount(yyscanner); 
-    yy_push_state(OPENCASE, yyscanner);
-  }
-}
-
 void HandleComment(yyscan_t yyscanner) {
   while(1) {
     int c;
@@ -554,7 +538,6 @@ const char* ScopeName(int scope) {
   ScopeMap map[] = {
     NUMTONAME(INITIAL),
     NUMTONAME(OPENSCOPE), 
-    NUMTONAME(OPENCASE), 
     NUMTONAME(SCOPE),
     NUMTONAME(BRACE) 
   };
