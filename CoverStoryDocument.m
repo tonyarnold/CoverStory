@@ -206,7 +206,8 @@ static NSString *const kPrefsToWatch[] = {
   NSIndexSet *selectedRows = [codeTableView_ selectedRowIndexes];
   if ([selectedRows count]) {
     NSString *scriptPath = [[NSBundle mainBundle] pathForResource:@"openscript"
-                                                           ofType:@"scpt"];
+                                                           ofType:@"scpt"
+                                                      inDirectory:@"Scripts"];
     if (scriptPath) {
       GTMScriptRunner *runner = [GTMScriptRunner runnerWithInterpreter:@"/usr/bin/osascript"];
       [runner runScript:scriptPath
