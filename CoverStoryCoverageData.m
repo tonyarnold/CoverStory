@@ -209,6 +209,8 @@ char *mcc(const char* untf8String);
   if (![scanner scanInt:end]) return NO;
   if (![scanner scanString:@"Complexity:" intoString:NULL]) return NO;
   if (![scanner scanInt:complexity]) return NO;
+  // Risk
+  if (![scanner scanUpToString:@"Line:" intoString:NULL]) return NO;
   return YES;
 }
   
@@ -231,36 +233,28 @@ char *mcc(const char* untf8String);
     return NO;
   }
   NSScanner *complexityScanner = [NSScanner scannerWithString:val];
-  BOOL isGood = [complexityScanner scanString:@"-" intoString:NULL];
   int lastEndLine = 0;
-  if (isGood) {
-    while ([complexityScanner scanUpToString:@"Line:" intoString:NULL]) {
-      int startLine;
-      int endLine;
-      int complexity;
-      isGood = [self scanMccLineFromScanner:complexityScanner
-                                      start:&startLine
-                                        end:&endLine
-                                 complexity:&complexity];
-      if (!isGood) {
-        break;
-      }
+  while (![complexityScanner isAtEnd]) {
+    int startLine;
+    int endLine;
+    int complexity;
+    if ([self scanMccLineFromScanner:complexityScanner
+                               start:&startLine
+                                 end:&endLine
+                          complexity:&complexity]) {
       if (complexity > maxComplexity_) {
         maxComplexity_ = complexity;
       }
       [[lines_ objectAtIndex:(startLine - 1)] setComplexity:complexity];
       lastEndLine = endLine;
+    } else {
+      [receiver coverageErrorForPath:[self sourcePath] 
+                             message:@"Code complexity analysis unable to parse "
+                                      "file somewhere after line %d", lastEndLine];
+      return NO;
     }
   }
-  if ([complexityScanner isAtEnd]) {
-    isGood = YES;
-  }
-  if (!isGood) {
-    [receiver coverageErrorForPath:[self sourcePath] 
-                           message:@"Code complexity analysis unable to parse "
-                                    "file somewhere after line %d", lastEndLine];
-  }
-  return isGood;
+  return YES;
 }
 
 - (NSArray *)lines {

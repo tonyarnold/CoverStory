@@ -362,7 +362,6 @@ char *mcc(const char* utf8String) {
   ComplexityState complexityState;
   InitializeComplexityState(&complexityState);
   // complexityState.debug = 1;
-  appendMessage(&complexityState, "- -\n");
   
   yyscan_t scanner;
   yylex_init(&scanner);
@@ -373,7 +372,6 @@ char *mcc(const char* utf8String) {
   yy_delete_buffer(buf, scanner);
   yylex_destroy(scanner);
 
-  appendMessage(&complexityState, "\n");
   if (complexityState.outputBuffer) {
     // extract the buffer for our result
     result = complexityState.outputBuffer;

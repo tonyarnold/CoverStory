@@ -260,7 +260,7 @@ const float kGoodCoverage = 75.0f;
 @implementation CoverageFileDataToComplexityTransformer
 
 const float kBadComplexity = 50.0f;
-const float kGoodComplexity = 10.0f;
+const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
 
 + (Class)transformedValueClass {
   return [NSAttributedString class];
@@ -284,7 +284,11 @@ const float kGoodComplexity = 10.0f;
   if (maxComplexity > kBadComplexity) {
     hue = redHue;
   } else if (maxComplexity > kGoodComplexity) {
-    hue = redHue + (greenHue * (maxComplexity - kGoodComplexity) / (kBadComplexity - kGoodComplexity));
+    // The higher the complexity, the less green we want, so subtract from 1.0
+    // to invert the fraction of "bad".
+    float percentComplex =
+      ((maxComplexity - kGoodComplexity) / (kBadComplexity - kGoodComplexity));
+    hue = redHue + (greenHue * (1.0f - percentComplex));
   } else {
     hue = greenHue;
   }
