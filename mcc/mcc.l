@@ -101,7 +101,7 @@ blank_line {horizontal_white}|{v_tab}|{c_return}|{form_feed}
 "//".*                                        {}
 
 <OPENSCOPE>{horizontal_white}+                {}
-<OPENSCOPE>"\n"                      { IncrementLineCount(yyscanner); }
+<OPENSCOPE>"\n"                               { IncrementLineCount(yyscanner); }
 <OPENSCOPE>{identifier}                       {}
 <OPENSCOPE>.                                  { 
                                                 if (strcmp(yytext, "{") == 0) {
