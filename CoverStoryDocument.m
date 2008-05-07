@@ -337,6 +337,27 @@ static NSString *const kPrefsToWatch[] = {
   return YES;
 }
 
+- (NSString *)tempDirName {
+  // go w/ temp dir if anything goes wrong
+  NSString *result = NSTemporaryDirectory();
+  // throw a guid on it so if we're scanning >1 place at a time, each gets
+  // it's own sandbox.
+  CFUUIDRef uuidRef = CFUUIDCreate(NULL);
+  if (uuidRef) {
+    CFStringRef uuidStr = CFUUIDCreateString(NULL, uuidRef);
+    if (uuidStr) {
+      result = [result stringByAppendingPathComponent:(NSString*)uuidStr];
+      CFRelease(uuidStr);
+    } else {
+      NSLog(@"failed to convert our CFUUIDRef into a CFString");
+    }
+    CFRelease(uuidRef);
+  } else {
+    NSLog(@"failed to generate a CFUUIDRef");
+  }
+  return result;
+}
+
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath {
   
@@ -344,8 +365,7 @@ static NSString *const kPrefsToWatch[] = {
     return NO;
   }
   
-  NSString *tempDir = NSTemporaryDirectory();
-  tempDir = [tempDir stringByAppendingPathComponent:[folderPath lastPathComponent]];
+  NSString *tempDir = [self tempDirName];
   
   // make sure all the filenames are just leaves
   for (int x = 0 ; x < [filenames count] ; ++x) {
