@@ -32,8 +32,7 @@
   IBOutlet NSDrawer *drawer_;
   IBOutlet NSTextView *messageView_;
   IBOutlet NSSearchField *searchField_;
-  NSRect searchFieldFullFrame_;
-  NSRect searchFieldShrunkFrame_;
+  float annimationWidth_;
   BOOL documentClosed_;
                                              
   NSString *filterString_;

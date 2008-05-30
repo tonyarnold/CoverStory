@@ -102,12 +102,14 @@ static NSString *const kPrefsToWatch[] = {
 
 
 - (void)awakeFromNib {
-  searchFieldFullFrame_ = [searchField_ frame];
-  searchFieldShrunkFrame_ = searchFieldFullFrame_;
-  float spinWidth = searchFieldFullFrame_.origin.x - [spinner_ frame].origin.x;
-  searchFieldFullFrame_.origin.x -= spinWidth;
-  searchFieldFullFrame_.size.width += spinWidth;
-  [searchField_ setFrame:searchFieldFullFrame_];
+  // expand the search field to start out (odds are we've already started to
+  // load something, but the annimation is done by a selector invoke on the main
+  // thread so it will happen after we've been called.)
+  NSRect searchFieldFrame = [searchField_ frame];
+  annimationWidth_ = searchFieldFrame.origin.x - [spinner_ frame].origin.x;
+  searchFieldFrame.origin.x -= annimationWidth_;
+  searchFieldFrame.size.width += annimationWidth_;
+  [searchField_ setFrame:searchFieldFrame];
   
   [sourceFilesController_ addObserver:self 
                            forKeyPath:@"selectedObjects" 
@@ -131,9 +133,6 @@ static NSString *const kPrefsToWatch[] = {
                                                              ascending:YES] autorelease];
   [sourceFilesController_ setSortDescriptors:[NSArray arrayWithObject:ascending]];
   [self configureCoverageVsComplexityColumns];
-  if (openingInThread_) {
-    [self setOpenThreadState:YES];
-  }
 }
 
 - (NSString *)windowNibName {
@@ -254,7 +253,6 @@ static NSString *const kPrefsToWatch[] = {
   [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
   [pool release];
 }
-
 
 - (BOOL)processCoverageForFolder:(NSString *)path {
   // cycle through the directory...
@@ -662,6 +660,13 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 - (void)reloadData:(id)sender {
+  if (openingInThread_) {
+    // starting a reload keeps pushing to the existing data, so block it until
+    // we're done.
+    [self addMessageFromThread:@"Still loading data, can't start a reload." 
+                   messageType:kCSMessageTypeWarning];
+    return;
+  }
   [self willChangeValueForKey:@"dataSet_"];
   [dataSet_ release];
   dataSet_ = [[CoverStoryCoverageSet alloc] init];
@@ -732,12 +737,14 @@ static NSString *const kPrefsToWatch[] = {
     }
     BOOL starting = [start boolValue];
     NSString *effect;
-    NSRect rect;
+    NSRect rect = [searchField_ frame];
     if (starting) {
-      rect = searchFieldShrunkFrame_;
+      rect.origin.x += annimationWidth_;
+      rect.size.width -= annimationWidth_;
       effect = NSViewAnimationFadeInEffect;
     } else {
-      rect = searchFieldFullFrame_;
+      rect.origin.x -= annimationWidth_;
+      rect.size.width += annimationWidth_;
       effect = NSViewAnimationFadeOutEffect;
     }
     NSValue *endFrameRectValue = [NSValue valueWithRect:rect];
