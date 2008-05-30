@@ -824,14 +824,40 @@ static NSString *const kPrefsToWatch[] = {
   if (numFileDatas_ == 0) {
     [self addMessageFromThread:@"No coverage data read."
                    messageType:kCSMessageTypeWarning];
-  } else if (numFileDatas_ == 1) {
-    [self addMessageFromThread:@"Loaded one file of coverage data."
-                   messageType:kCSMessageTypeInfo];
   } else {
-    NSString *message =
-    [NSString stringWithFormat:@"Successfully loaded %u coverage fragments.",
-      numFileDatas_];
-    [self addMessageFromThread:message
+    if (numFileDatas_ == 1) {
+      [self addMessageFromThread:@"Loaded one file of coverage data."
+                     messageType:kCSMessageTypeInfo];
+    } else {
+      NSString *message =
+        [NSString stringWithFormat:@"Successfully loaded %u coverage fragments.",
+         numFileDatas_];
+      [self addMessageFromThread:message
+                     messageType:kCSMessageTypeInfo];
+    }
+    SInt32 totalLines = [dataSet_ numberTotalLines];
+    SInt32 hitLines   = [dataSet_ numberHitCodeLines];
+    SInt32 codeLines  = [dataSet_ numberCodeLines];
+    SInt32 nonfeasible  = [dataSet_ numberNonFeasibleLines];
+    float coverage = [[dataSet_ coverage] floatValue];
+    NSString *summary = nil;
+    if (nonfeasible > 0) {
+      summary = [NSString stringWithFormat:
+                 @"Full dataset executed %.2f%% of %d lines (%d executed, "
+                 @"%d executable, %d non-feasible, %d total lines).",
+                 coverage, codeLines, hitLines, codeLines, nonfeasible,
+                 totalLines];
+    } else {
+      summary = [NSString stringWithFormat:
+                 @"Full dataset executed %.2f%% of %d lines (%d executed, "
+                 @"%d executable, %d total lines).",
+                 coverage, codeLines, hitLines, codeLines, totalLines];
+    }
+    [self addMessageFromThread:summary
+                   messageType:kCSMessageTypeInfo];
+    [self addMessageFromThread:@"There is a tooltip on the total above the file"
+                               @" list that shows numbers for the currently"
+                               @" displayed set."
                    messageType:kCSMessageTypeInfo];
   }
 }

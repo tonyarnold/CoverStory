@@ -368,6 +368,7 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSAssert1([value respondsToSelector:@selector(objectEnumerator)],
            @"Only handle collections : %@", value);
   NSEnumerator *arrayEnum = [value objectEnumerator];
+  SInt32 sources = [value count];
   SInt32 totalLines = 0;
   SInt32 hitLines   = 0;
   SInt32 codeLines  = 0;
@@ -387,14 +388,15 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSString *statString = nil;
   if (nonfeasible) {
     statString = [NSString stringWithFormat:
-                  @"Executed %.2f%% of %d lines (%d executed, %d executable, "
-                  "%d non-feasible, %d total lines)", coverage, codeLines, 
-                  hitLines, codeLines, nonfeasible, totalLines];
+                  @"Executed %.2f%% of %d lines (%d sources, %d executed, "
+                  "%d executable, %d non-feasible, %d total lines)", coverage,
+                  codeLines, sources, hitLines, codeLines, nonfeasible,
+                  totalLines];
   } else {
     statString = [NSString stringWithFormat:
-                  @"Executed %.2f%% of %d lines (%d executed, %d executable, "
-                  "%d total lines)", coverage, codeLines, hitLines, 
-                  codeLines, totalLines];
+                  @"Executed %.2f%% of %d lines (%d sources, %d executed, "
+                  "%d executable, %d total lines)", coverage, codeLines,
+                  sources, hitLines, codeLines, totalLines];
   }
   return statString;
 }
