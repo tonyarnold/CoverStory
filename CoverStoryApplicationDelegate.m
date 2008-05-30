@@ -20,6 +20,8 @@
 #import "CoverStoryApplicationDelegate.h"
 #import "CoverStoryDocumentController.h"
 #import "CoverStoryPreferenceKeys.h"
+#import "CoverStoryFilePredicate.h"
+#import "CoverStoryDocument.h"
 
 @implementation CoverStoryApplicationDelegate
 - (void)applicationWillFinishLaunching:(NSNotification *)notification {
@@ -42,6 +44,12 @@
                                     forName:transformerNames[i]];
   }
   
+  // Most code uses initialize to get the defaults in, but these two classes
+  // won't have initialize called until a window gets created, so we force their
+  // defaults in now so the prefs and menus will have the right states.
+  [CoverStoryFilePredicate registerDefaults];
+  [CoverStoryDocument registerDefaults];
+  
   // Set our document controller up as the shared document controller
   // so we don't ge NSDocumentController instead.
   [[[CoverStoryDocumentController alloc] init] autorelease];
@@ -55,7 +63,9 @@
   // Doesn't do anything, just exists so that prefs will toggle via bindings.
   // Seems weird to need it, but hey.
 }
-
+- (IBAction)hideUnittestSources:(id)sender {
+  // Same comment as hideSDKSources
+}
 - (IBAction)showComplexity:(id)sender {
   // Same comment as hideSDKSources
 }

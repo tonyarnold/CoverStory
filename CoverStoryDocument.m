@@ -60,6 +60,9 @@ typedef enum {
 
 static NSString *const kPrefsToWatch[] = { 
   kCoverStoryHideSystemSourcesKey,
+  kCoverStorySystemSourcesPatternsKey,
+  kCoverStoryHideUnittestSourcesKey,
+  kCoverStoryUnittestSourcesPatternsKey,
   kCoverStoryShowComplexityKey,
   kCoverStoryMissedLineColorKey,
   kCoverStoryUnexecutableLineColorKey,
@@ -68,6 +71,20 @@ static NSString *const kPrefsToWatch[] = {
 };
 
 @implementation CoverStoryDocument
+
++ (void)registerDefaults {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSDictionary *documentDefaults =
+    [NSDictionary dictionaryWithObjectsAndKeys:
+     [NSNumber numberWithInt:kCoverStoryFilterStringTypeWildcardPattern],
+     kCoverStoryFilterStringTypeKey,
+     [NSNumber numberWithBool:NO], // defaults to coverage
+     kCoverStoryShowComplexityKey,
+     nil];
+  
+  [defaults registerDefaults:documentDefaults];
+}
+
 - (NSString*)valuesKey:(NSString*)key {
   return [NSString stringWithFormat:@"values.%@", key];
 }
@@ -489,8 +506,21 @@ static NSString *const kPrefsToWatch[] = {
     // Jump to first missing code block
     [self tableView:codeTableView_ handleSelectionKey:NSDownArrowFunctionKey];
   } else if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
-    if ([keyPath isEqualToString:[self valuesKey:kCoverStoryHideSystemSourcesKey]]){
+    if ([keyPath isEqualToString:[self valuesKey:kCoverStoryHideSystemSourcesKey]] ||
+        [keyPath isEqualToString:[self valuesKey:kCoverStoryHideUnittestSourcesKey]]) {
       [sourceFilesController_ rearrangeObjects];
+    } else if ([keyPath isEqualToString:[self valuesKey:kCoverStorySystemSourcesPatternsKey]]) {
+      NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+      if ([defaults boolForKey:kCoverStoryHideSystemSourcesKey]) {
+        // if we're hiding them then update because the pattern changed
+        [sourceFilesController_ rearrangeObjects];
+      }
+    } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryUnittestSourcesPatternsKey]]) {
+      NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+      if ([defaults boolForKey:kCoverStoryHideUnittestSourcesKey]) {
+        // if we're hiding them then update because the pattern changed
+        [sourceFilesController_ rearrangeObjects];
+      }
     } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryShowComplexityKey]]) {
       [self configureCoverageVsComplexityColumns];
       [sourceFilesTableView_ reloadData];

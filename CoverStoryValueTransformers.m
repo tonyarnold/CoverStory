@@ -115,18 +115,19 @@
 
 + (void)initialize {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  NSDictionary *appDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
-                               [NSArchiver archivedDataWithRootObject:[NSColor redColor]], 
-                               kCoverStoryMissedLineColorKey,
-                               [NSArchiver archivedDataWithRootObject:[NSColor grayColor]],
-                               kCoverStoryUnexecutableLineColorKey,
-                               [NSArchiver archivedDataWithRootObject:[NSColor grayColor]],
-                               kCoverStoryNonFeasibleLineColorKey,
-                               [NSArchiver archivedDataWithRootObject:[NSColor blackColor]],
-                               kCoverStoryExecutedLineColorKey,
-                               nil];
+  NSDictionary *lineTransformerDefaults =
+    [NSDictionary dictionaryWithObjectsAndKeys:
+     [NSArchiver archivedDataWithRootObject:[NSColor redColor]], 
+     kCoverStoryMissedLineColorKey,
+     [NSArchiver archivedDataWithRootObject:[NSColor grayColor]],
+     kCoverStoryUnexecutableLineColorKey,
+     [NSArchiver archivedDataWithRootObject:[NSColor grayColor]],
+     kCoverStoryNonFeasibleLineColorKey,
+     [NSArchiver archivedDataWithRootObject:[NSColor blackColor]],
+     kCoverStoryExecutedLineColorKey,
+     nil];
   
-  [defaults registerDefaults:appDefaults];
+  [defaults registerDefaults:lineTransformerDefaults];
 }
 
 + (Class)transformedValueClass {

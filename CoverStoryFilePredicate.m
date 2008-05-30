@@ -22,18 +22,58 @@
 #import <fnmatch.h>
 
 @interface NSString (CoverStoryStringMatching)
-- (BOOL)cs_isRegularExpressionEqual:(NSString*)string;
-- (BOOL)cs_isWildcardPatternEqual:(NSString*)string;
+- (BOOL)cs_isRegularExpressionEqual:(NSString *)string;
+- (BOOL)cs_isWildcardPatternEqual:(NSString *)string;
+- (BOOL)cs_isMatchForPatternArray:(NSArray *)patterns;
 @end
 
 @implementation CoverStoryFilePredicate
+
++ (void)registerDefaults {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSDictionary *predicateDefaults =
+  [NSDictionary dictionaryWithObjectsAndKeys:
+   [NSNumber numberWithBool:YES], // hide the systems sources by default
+   kCoverStoryHideSystemSourcesKey,
+   [NSArray arrayWithObjects:@"/usr/*",
+    @"/System/Library/Frameworks/*",
+    @"*/SDKs/MacOSX10.*",
+    nil],
+   kCoverStorySystemSourcesPatternsKey,
+   
+   [NSNumber numberWithBool:NO], // do NOT hide the unittest sources by default
+   kCoverStoryHideUnittestSourcesKey,
+   [NSArray arrayWithObjects:@"*Test.[hHmM]",
+    @"*Test.mm",
+    nil],
+   kCoverStoryUnittestSourcesPatternsKey,
+   nil];
+  
+  [defaults registerDefaults:predicateDefaults];
+}
+
 - (BOOL)evaluateWithObject:(id)object {
   BOOL isGood = YES;
   NSString *path = [object valueForKey:@"sourcePath"];
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
   BOOL hideSDKFiles = [defaults boolForKey:kCoverStoryHideSystemSourcesKey];
   if (hideSDKFiles) {
-    isGood = !([path hasPrefix:@"/Developer"] || [path hasPrefix:@"/usr"]);
+    NSArray *systemSourcesPatterns =
+      [defaults arrayForKey:kCoverStorySystemSourcesPatternsKey];
+    if (systemSourcesPatterns) {
+      isGood = ![path cs_isMatchForPatternArray:systemSourcesPatterns];
+    }
+  }
+  if (isGood) {
+    BOOL hideUnittestFiles = [defaults boolForKey:kCoverStoryHideUnittestSourcesKey];
+    if (hideUnittestFiles) {
+      NSArray *unittestSourcesPatterns =
+        [defaults arrayForKey:kCoverStoryUnittestSourcesPatternsKey];
+      if (unittestSourcesPatterns) {
+        isGood = ![path cs_isMatchForPatternArray:unittestSourcesPatterns];
+      }
+    }
   }
   if (isGood) {
     NSString *text = [searchField_ stringValue];
@@ -78,5 +118,16 @@
   int flags = FNM_CASEFOLD;
   BOOL isGood = fnmatch([pattern UTF8String], [self UTF8String], flags) == 0;
   return isGood;
+}
+
+- (BOOL)cs_isMatchForPatternArray:(NSArray *)patterns {
+  const char *utf8Self = [self UTF8String];
+  for (int idx = 0; idx < [patterns count]; ++idx) {
+    NSString *pattern = [patterns objectAtIndex:idx];
+    if (fnmatch([pattern UTF8String], utf8Self, 0) == 0) {
+      return YES;
+    }
+  }
+  return NO;
 }
 @end

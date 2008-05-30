@@ -22,4 +22,5 @@
 @interface CoverStoryFilePredicate : NSPredicate {
     IBOutlet NSSearchField *searchField_;
 }
++ (void)registerDefaults;
 @end

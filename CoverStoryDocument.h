@@ -44,6 +44,7 @@
   unsigned int numFileDatas_;
   NSViewAnimation *currentAnimation_;
 }
++ (void)registerDefaults;
 
 // Opens up the source code file in Xcode.
 - (void)openSelectedSource;
