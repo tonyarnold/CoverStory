@@ -134,8 +134,11 @@ char *mcc(const char* untf8String);
       
       // The first five lines are not data we want to show to the user
       if ([lines_ count] > 5) {
-        // The first line contains the path to our source.
-        sourcePath_ = [[[[lines_ objectAtIndex:0] line] substringFromIndex:7] retain];
+        // The first line contains the path to our source.  Most projects use
+        // paths relative to the project, so just incase they walk into a
+        // neighbor directory, resolve them.
+        NSString *srcPath = [[[lines_ objectAtIndex:0] line] substringFromIndex:7];
+        sourcePath_ = [[srcPath stringByStandardizingPath] retain];
         [lines_ removeObjectsInRange:NSMakeRange(0,5)];
         // get out counts
         [self updateCounts];
