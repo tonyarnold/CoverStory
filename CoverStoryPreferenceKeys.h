@@ -23,7 +23,7 @@
 
 // Should we filter out any test unittesting sources
 #define kCoverStoryHideUnittestSourcesKey @"hideUnittestSources"  // Boolean
-#define kCoverStoryUnittestSourcesPatternsKey @"systemSourceRegexPatterns"  // NSArray of NSString
+#define kCoverStoryUnittestSourcesPatternsKey @"unittestSourcesPatterns"  // NSArray of NSString
 
 // Are we showing coverage or complexity
 #define kCoverStoryShowComplexityKey @"showComplexity"  // Boolean
