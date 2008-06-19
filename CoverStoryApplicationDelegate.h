@@ -20,7 +20,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface CoverStoryApplicationDelegate : NSObject
-- (IBAction)hideSDKSources:(id)sender;
-- (IBAction)hideUnittestSources:(id)sender;
-- (IBAction)showComplexity:(id)sender;
+- (IBAction)toggleSDKSourcesShown:(id)sender;
+- (IBAction)toggleUnittestSourcesShown:(id)sender;
+- (IBAction)toggleComplexityShown:(id)sender;
 @end

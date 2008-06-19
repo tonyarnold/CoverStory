@@ -302,17 +302,16 @@ static NSString *const kPrefsToWatch[] = {
   // we want to back process them by chunks w/in a given directory.  so sort
   // and then break them off into chunks.
   allFilePaths = [allFilePaths sortedArrayUsingSelector:@selector(compare:)];
-  if ([allFilePaths count] > 0) {
-    
+  NSEnumerator *pathEnum = [allFilePaths objectEnumerator];
+  NSString *filename;
+  if ((filename = [pathEnum nextObject])) {
     // see our collecting w/ the first item
-    NSString *filename = [allFilePaths objectAtIndex:0];
     NSString *currentFolder = [filename stringByDeletingLastPathComponent];
     NSMutableArray *currentFileList =
-    [NSMutableArray arrayWithObject:[filename lastPathComponent]];
+      [NSMutableArray arrayWithObject:[filename lastPathComponent]];
     
     // now spin the loop
-    for (int x = 1 ; x < [allFilePaths count] ; ++x) {
-      NSString *filename = [allFilePaths objectAtIndex:x];
+    while ((filename = [pathEnum nextObject])) {
       // see if it has the same parent folder
       if ([[filename stringByDeletingLastPathComponent] isEqualTo:currentFolder]) {
         // add it
@@ -381,10 +380,10 @@ static NSString *const kPrefsToWatch[] = {
   }
   
   NSString *tempDir = [self tempDirName];
-  
+  NSEnumerator *fileNamesEnum = [filenames objectEnumerator];
+  NSString *filename;
   // make sure all the filenames are just leaves
-  for (int x = 0 ; x < [filenames count] ; ++x) {
-    NSString *filename = [filenames objectAtIndex:x];
+  while ((filename = [fileNamesEnum nextObject])) {
     NSRange range = [filename rangeOfString:@"/"];
     if (range.location != NSNotFound) {
       [self addMessageFromThread:@"skipped because filename had a slash"
@@ -405,8 +404,8 @@ static NSString *const kPrefsToWatch[] = {
   NSData *folderPathUTF8 = [folderPath dataUsingEncoding:NSUTF8StringEncoding];
   if (!folderPathUTF8 || !fileList) return NO;
   char nullByte = 0;
-  for (int x = 0 ; x < [filenames count] ; ++x) {
-    NSString *filename = [filenames objectAtIndex:x];
+  fileNamesEnum = [filenames objectEnumerator];
+  while ((filename = [fileNamesEnum nextObject])) {
     NSData *filenameUTF8 = [filename dataUsingEncoding:NSUTF8StringEncoding];
     if (!filenameUTF8) return NO;
     [fileList appendData:folderPathUTF8];
@@ -458,8 +457,9 @@ static NSString *const kPrefsToWatch[] = {
       // collect the gcov files
       NSArray *resultPaths = [fm gtm_filePathsWithExtension:@"gcov"
                                                 inDirectory:tempDir];
-      for (int x = 0 ; x < [resultPaths count] ; ++x) {
-        NSString *fullPath = [resultPaths objectAtIndex:x];
+      NSEnumerator *resultPathsEnum = [resultPaths objectEnumerator];
+      NSString *fullPath;
+      while ((fullPath = [resultPathsEnum nextObject])) {
         // load it and add it to out set
         CoverStoryCoverageFileData *fileData =
           [CoverStoryCoverageFileData coverageFileDataFromPath:fullPath
@@ -716,7 +716,7 @@ static NSString *const kPrefsToWatch[] = {
   }
 }
 
-- (void)toggleMessageDrawer:(id)sender {
+- (IBAction)toggleMessageDrawer:(id)sender {
   [drawer_ toggle:self];
 }
 
@@ -741,16 +741,16 @@ static NSString *const kPrefsToWatch[] = {
   };
   
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  int index = [defaults boolForKey:kCoverStoryShowComplexityKey] ? 1 : 0;
+  int displayIndex = [defaults boolForKey:kCoverStoryShowComplexityKey] ? 1 : 0;
   
   [codeTableView_ cs_setValueTransformerOfColumn:@"hitCount"
-                                              to:hitCountTransformerNames[index]];
+                                              to:hitCountTransformerNames[displayIndex]];
   [sourceFilesTableView_ cs_setValueTransformerOfColumn:@"coverage"
-                                                     to:coverageTransformerNames[index]];
+                                                     to:coverageTransformerNames[displayIndex]];
   [sourceFilesTableView_ cs_setSortKeyOfColumn:@"coverage"
-                                            to:coverageSortKeyNames[index]];
+                                            to:coverageSortKeyNames[displayIndex]];
   [sourceFilesTableView_ cs_setHeaderOfColumn:@"coverage"
-                                           to:coverageTitles[index]];
+                                           to:coverageTitles[displayIndex]];
 }
 
 // Moves our searchfield to display our spinner and starts it spinning.

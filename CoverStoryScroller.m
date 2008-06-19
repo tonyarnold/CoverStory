@@ -68,15 +68,14 @@
   // over the track. Note that this looks FAR better than Shark's impl.
   if (coverageData_) {
     NSRect slot = [self rectForPart:NSScrollerKnobSlot];
-    UInt32 count = [coverageData_ count];
-    NSColor *redColor = [NSColor colorWithDeviceRed:1.0 green:0.0 blue:0.0 alpha:0.8];
-    [redColor set];
+    unsigned count = [coverageData_ count];
+    [[[NSColor redColor] colorWithAlphaComponent:0.8] set];
     float oldLineWidth = [NSBezierPath defaultLineWidth];
     
     // Make our lines thick enough that they "touch" when you have two lines
     // side by side.
     [NSBezierPath setDefaultLineWidth:NSHeight(slot) / count];
-    for (int i = 0; i < count; ++i) {
+    for (unsigned i = 0; i < count; ++i) {
       CoverStoryCoverageLineData *data = [coverageData_ objectAtIndex:i];
       SInt32 hitCount = [data hitCount];
       if (hitCount == 0) {

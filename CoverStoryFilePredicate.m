@@ -122,8 +122,9 @@
 
 - (BOOL)cs_isMatchForPatternArray:(NSArray *)patterns {
   const char *utf8Self = [self UTF8String];
-  for (int idx = 0; idx < [patterns count]; ++idx) {
-    NSString *pattern = [patterns objectAtIndex:idx];
+  NSEnumerator *patternEnum = [patterns objectEnumerator];
+  NSString *pattern;
+  while ((pattern = [patternEnum nextObject])) {
     if (fnmatch([pattern UTF8String], utf8Self, 0) == 0) {
       return YES;
     }

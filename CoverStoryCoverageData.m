@@ -463,7 +463,8 @@ char *mcc(const char* untf8String);
   float numberCodeLines = [self numberCodeLines];
   float result = 0.0f;
   if (numberCodeLines > 0.0) {
-    result = (float)[self numberHitCodeLines]/numberCodeLines * 100.0f;
+    float numberHitCodeLines = [self numberHitCodeLines];
+    result = numberHitCodeLines/numberCodeLines * 100.0f;
   }
   return [NSNumber numberWithFloat:result];
 }

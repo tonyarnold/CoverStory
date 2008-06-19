@@ -19,9 +19,9 @@
 
 #import "CoverStoryApplicationDelegate.h"
 #import "CoverStoryDocumentController.h"
-#import "CoverStoryPreferenceKeys.h"
 #import "CoverStoryFilePredicate.h"
 #import "CoverStoryDocument.h"
+#import "CoverStoryPreferenceKeys.h"
 
 @implementation CoverStoryApplicationDelegate
 - (void)applicationWillFinishLaunching:(NSNotification *)notification {
@@ -59,14 +59,21 @@
   return NO;
 }
 
-- (IBAction)hideSDKSources:(id)sender {
-  // Doesn't do anything, just exists so that prefs will toggle via bindings.
-  // Seems weird to need it, but hey.
+- (void)toggleKey:(NSString*)key {
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  BOOL value = [ud boolForKey:key];
+  [ud setBool:!value forKey:key];  
 }
-- (IBAction)hideUnittestSources:(id)sender {
-  // Same comment as hideSDKSources
+
+- (IBAction)toggleSDKSourcesShown:(id)sender {
+  [self toggleKey:kCoverStoryHideSystemSourcesKey];
 }
-- (IBAction)showComplexity:(id)sender {
-  // Same comment as hideSDKSources
+
+- (IBAction)toggleUnittestSourcesShown:(id)sender {
+  [self toggleKey:kCoverStoryHideUnittestSourcesKey];
 }
+- (IBAction)toggleComplexityShown:(id)sender {
+  [self toggleKey:kCoverStoryShowComplexityKey];
+}
+
 @end

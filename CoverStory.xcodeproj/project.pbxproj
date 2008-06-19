@@ -34,6 +34,11 @@
 		8BC04E2D0DB0459100C2D1CA /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E2A0DB0459100C2D1CA /* error.png */; };
 		8BC04E2E0DB0459100C2D1CA /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E2B0DB0459100C2D1CA /* warning.png */; };
 		8BC4AAB80D94D06100437182 /* CoverStoryCodeViewTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */; };
+		8BCDD8010E09853F006EBB62 /* Reload.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD7FF0E09853F006EBB62 /* Reload.png */; };
+		8BCDD8020E09853F006EBB62 /* Complexity.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD8000E09853F006EBB62 /* Complexity.png */; };
+		8BCDD86E0E0A1C55006EBB62 /* SDK.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD86D0E0A1C55006EBB62 /* SDK.png */; };
+		8BCDD8720E0AA18A006EBB62 /* MessageDrawer.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD8700E0AA18A006EBB62 /* MessageDrawer.png */; };
+		8BCDD8730E0AA18A006EBB62 /* UnitTests.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD8710E0AA18A006EBB62 /* UnitTests.png */; };
 		8BE1A2090DD0E237008455E6 /* openscript.applescript in AppleScript */ = {isa = PBXBuildFile; fileRef = 8BBEC3630DD0E02400E5D45D /* openscript.applescript */; settings = {ATTRIBUTES = (Debug, ); }; };
 		8BFD54F60B3F009300AFCDA2 /* CoverStoryCoverageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */; };
 		8BFD5B040B3F126D00AFCDA2 /* CoverStoryScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD5B030B3F126D00AFCDA2 /* CoverStoryScroller.m */; };
@@ -119,6 +124,11 @@
 		8BC04E2B0DB0459100C2D1CA /* warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = warning.png; sourceTree = SOURCE_ROOT; };
 		8BC4AAB60D94D06100437182 /* CoverStoryCodeViewTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCodeViewTableView.h; sourceTree = "<group>"; };
 		8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCodeViewTableView.m; sourceTree = "<group>"; };
+		8BCDD7FF0E09853F006EBB62 /* Reload.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Reload.png; sourceTree = "<group>"; };
+		8BCDD8000E09853F006EBB62 /* Complexity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Complexity.png; sourceTree = "<group>"; };
+		8BCDD86D0E0A1C55006EBB62 /* SDK.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SDK.png; sourceTree = "<group>"; };
+		8BCDD8700E0AA18A006EBB62 /* MessageDrawer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageDrawer.png; sourceTree = "<group>"; };
+		8BCDD8710E0AA18A006EBB62 /* UnitTests.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnitTests.png; sourceTree = "<group>"; };
 		8BFD54F40B3F009300AFCDA2 /* CoverStoryCoverageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCoverageData.h; sourceTree = "<group>"; };
 		8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCoverageData.m; sourceTree = "<group>"; };
 		8BFD5B020B3F126D00AFCDA2 /* CoverStoryScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryScroller.h; sourceTree = "<group>"; };
@@ -203,6 +213,8 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8BFD613E0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.h */,
+				8BFD613F0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.m */,
 				8B41D3930D857F1200E60DA4 /* CoverStoryDocumentTypes.h */,
 				8B7271230D92CD920090C251 /* CoverStoryPreferenceKeys.h */,
 				8BFD5B020B3F126D00AFCDA2 /* CoverStoryScroller.h */,
@@ -215,8 +227,6 @@
 				8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */,
 				8BA270B60D87C9AE0092884C /* CoverStoryDocumentController.h */,
 				8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */,
-				8BFD613E0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.h */,
-				8BFD613F0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.m */,
 				8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */,
 				8B726FFF0D92B6EB0090C251 /* CoverStoryFilePredicate.h */,
 				8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */,
@@ -236,6 +246,9 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8BCDD8700E0AA18A006EBB62 /* MessageDrawer.png */,
+				8BCDD8710E0AA18A006EBB62 /* UnitTests.png */,
+				8BCDD86D0E0A1C55006EBB62 /* SDK.png */,
 				8BC04E290DB0459100C2D1CA /* info.png */,
 				8BC04E2A0DB0459100C2D1CA /* error.png */,
 				8BC04E2B0DB0459100C2D1CA /* warning.png */,
@@ -250,6 +263,8 @@
 				F426B6DA0E0A1D7E00348386 /* CoverStory Help */,
 				F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */,
 				F4CA81F00DAAC44F00B4AB10 /* MainMenu.xib */,
+				8BCDD7FF0E09853F006EBB62 /* Reload.png */,
+				8BCDD8000E09853F006EBB62 /* Complexity.png */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
 			);
 			name = Resources;
@@ -395,6 +410,11 @@
 				8BC04E2C0DB0459100C2D1CA /* info.png in Resources */,
 				8BC04E2D0DB0459100C2D1CA /* error.png in Resources */,
 				8BC04E2E0DB0459100C2D1CA /* warning.png in Resources */,
+				8BCDD8010E09853F006EBB62 /* Reload.png in Resources */,
+				8BCDD8020E09853F006EBB62 /* Complexity.png in Resources */,
+				8BCDD86E0E0A1C55006EBB62 /* SDK.png in Resources */,
+				8BCDD8720E0AA18A006EBB62 /* MessageDrawer.png in Resources */,
+				8BCDD8730E0AA18A006EBB62 /* UnitTests.png in Resources */,
 				F426B6EB0E0A1D7E00348386 /* CoverStory Help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -52,4 +52,5 @@
 - (void)setFilterString:(NSString *)string;
 - (IBAction)setUseWildcardPattern:(id)sender;
 - (IBAction)setUseRegularExpression:(id)sender;
+- (IBAction)toggleMessageDrawer:(id)sender;
 @end

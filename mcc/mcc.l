@@ -322,8 +322,9 @@ void appendMessage(ComplexityState *state, const char *format, ...) {
   va_list args;
   va_start(args, format);
   char *localBuffer = 0;
-  int charCount = vasprintf(&localBuffer, format, args);
-  if (charCount != -1) {
+  int result = vasprintf(&localBuffer, format, args);
+  if (result > 0) {
+    size_t charCount = result;
     if ((state->outputBufferSize - state->outputBufferLen) <= charCount) {
       state->outputBufferSize += charCount + 1024;
       state->outputBuffer = realloc(state->outputBuffer, state->outputBufferSize);
@@ -479,7 +480,7 @@ void DecrementNesting(yyscan_t yyscanner, int curState) {
   if (curState == BRACE) {
     state->nestingDepth -= 1;
     if (state->nestingDepth == 0 && state->complexityCount) {
-      char *risk;
+      const char *risk;
       if (state->complexityCount < 11) {
         risk = "low";
       } else if (state->complexityCount < 21) {
