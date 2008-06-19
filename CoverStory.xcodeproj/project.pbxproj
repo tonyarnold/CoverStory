@@ -21,7 +21,6 @@
 
 /* Begin PBXBuildFile section */
 		63BC85EC0B4D863400CDC9E5 /* main.css in Resources */ = {isa = PBXBuildFile; fileRef = 63BC85EA0B4D863400CDC9E5 /* main.css */; };
-		63BC85FD0B4D868100CDC9E5 /* CoverStoryHelp in Resources */ = {isa = PBXBuildFile; fileRef = 63BC85F20B4D868100CDC9E5 /* CoverStoryHelp */; };
 		8B2A9C6D0D84F84600599386 /* gcov.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6A0D84F84600599386 /* gcov.icns */; };
 		8B2A9C6E0D84F84600599386 /* gcno.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6B0D84F84600599386 /* gcno.icns */; };
 		8B2A9C6F0D84F84600599386 /* gcda.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6C0D84F84600599386 /* gcda.icns */; };
@@ -48,6 +47,7 @@
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */; };
 		F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; };
+		F426B6EB0E0A1D7E00348386 /* CoverStory Help in Resources */ = {isa = PBXBuildFile; fileRef = F426B6DA0E0A1D7E00348386 /* CoverStory Help */; };
 		F439DD750DCF847700147B37 /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8B469EF10D99C25A0042D75D /* mcc.l */; };
 		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; };
 		F4CA81F20DAAC44F00B4AB10 /* CoverStoryDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */; };
@@ -97,7 +97,6 @@
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		32DBCF750370BD2300C91783 /* CoverStory.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStory.pch; sourceTree = "<group>"; };
 		63BC85EA0B4D863400CDC9E5 /* main.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = main.css; sourceTree = "<group>"; };
-		63BC85F30B4D868100CDC9E5 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/CoverStoryHelp; sourceTree = "<group>"; };
 		8B198D2F0C7DF72D002E4E3F /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		8B2A9C6A0D84F84600599386 /* gcov.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gcov.icns; sourceTree = "<group>"; };
 		8B2A9C6B0D84F84600599386 /* gcno.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gcno.icns; sourceTree = "<group>"; };
@@ -136,6 +135,7 @@
 		F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSFileManager+Path.m"; sourceTree = "<group>"; };
 		F41390F30D771A5400F72B31 /* GTMNSEnumerator+Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSEnumerator+Filter.h"; sourceTree = "<group>"; };
 		F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSEnumerator+Filter.m"; sourceTree = "<group>"; };
+		F426B6DB0E0A1D7E00348386 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/CoverStory Help"; sourceTree = "<group>"; };
 		F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMScriptRunner.h; sourceTree = "<group>"; };
 		F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMScriptRunner.m; sourceTree = "<group>"; };
 		F4C187F60DB3CEED009BB8C6 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
@@ -247,7 +247,7 @@
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				63BC85EA0B4D863400CDC9E5 /* main.css */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
-				63BC85F20B4D868100CDC9E5 /* CoverStoryHelp */,
+				F426B6DA0E0A1D7E00348386 /* CoverStory Help */,
 				F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */,
 				F4CA81F00DAAC44F00B4AB10 /* MainMenu.xib */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
@@ -347,7 +347,6 @@
 				8D15AC2B0486D014006FF6A4 /* Resources */,
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
-				63BC85FF0B4D86E900CDC9E5 /* Rename Help Files */,
 				8B469F890D99F14D0042D75D /* CopyFiles */,
 			);
 			buildRules = (
@@ -390,33 +389,19 @@
 				63BC85EC0B4D863400CDC9E5 /* main.css in Resources */,
 				F4CA81F20DAAC44F00B4AB10 /* CoverStoryDocument.xib in Resources */,
 				F4CA81F30DAAC44F00B4AB10 /* MainMenu.xib in Resources */,
-				63BC85FD0B4D868100CDC9E5 /* CoverStoryHelp in Resources */,
 				8B2A9C6D0D84F84600599386 /* gcov.icns in Resources */,
 				8B2A9C6E0D84F84600599386 /* gcno.icns in Resources */,
 				8B2A9C6F0D84F84600599386 /* gcda.icns in Resources */,
 				8BC04E2C0DB0459100C2D1CA /* info.png in Resources */,
 				8BC04E2D0DB0459100C2D1CA /* error.png in Resources */,
 				8BC04E2E0DB0459100C2D1CA /* warning.png in Resources */,
+				F426B6EB0E0A1D7E00348386 /* CoverStory Help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		63BC85FF0B4D86E900CDC9E5 /* Rename Help Files */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Rename Help Files";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "## Perforce policy is no spaces in filenames, but helpbook needs the spaces. So we put them in after the build.\nif [ $ACTION == \"build\" ] && [ $BUILD_VARIANTS == \"normal\" ]  ; then\ncd \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj\"\nif [ -e CoverStoryHelp/CoverStoryHelp.html ] ; then \n  mv CoverStoryHelp/CoverStoryHelp.html 'CoverStoryHelp/CoverStory Help.html'\nfi\nif [ -e CoverStoryHelp/CoverStoryHelp.helpindex ] ; then\n  mv CoverStoryHelp/CoverStoryHelp.helpindex 'CoverStoryHelp/CoverStory Help.helpindex'\nfi\nif [ -e CoverStoryHelp ] ; then\n  rm -rf 'CoverStory Help'\n  mv CoverStoryHelp 'CoverStory Help'\nfi\nfi\n";
-		};
 		8B469EF90D99C2BC0042D75D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -492,12 +477,12 @@
 			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
-		63BC85F20B4D868100CDC9E5 /* CoverStoryHelp */ = {
+		F426B6DA0E0A1D7E00348386 /* CoverStory Help */ = {
 			isa = PBXVariantGroup;
 			children = (
-				63BC85F30B4D868100CDC9E5 /* English */,
+				F426B6DB0E0A1D7E00348386 /* English */,
 			);
-			name = CoverStoryHelp;
+			name = "CoverStory Help";
 			sourceTree = "<group>";
 		};
 		F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */ = {
