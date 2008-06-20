@@ -1,0 +1,69 @@
+        -:    0:Source:mcctest.c
+        -:    0:Graph:mcctest.gcno
+        -:    0:Data:mcctest.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  mcctest.c
+        -:    3://  mcc
+        -:    4://
+        -:    5://  Created by Dave MacLachlan on 2008/03/25.
+        -:    6://  Copyright 2008 Google Inc.
+        -:    7://  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+        -:    8://  use this file except in compliance with the License.  You may obtain a copy
+        -:    9://  of the License at
+        -:   10:// 
+        -:   11://  http://www.apache.org/licenses/LICENSE-2.0
+        -:   12:// 
+        -:   13://  Unless required by applicable law or agreed to in writing, software
+        -:   14://  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+        -:   15://  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+        -:   16://  License for the specific language governing permissions and limitations under
+        -:   17://  the License.
+        -:   18:
+        -:   19://  Test file for testing mcc
+        -:   20://  Run this through mcc, and compare it to mcctestmaster.txt
+        -:   21:
+    #####:   22:void foo() {
+    #####:   23:  switch (a) {
+    #####:   24:    case b:
+    #####:   25:    case c: {
+    #####:   26:      while (1);
+    #####:   27:      break;
+        -:   28:    }
+    #####:   29:    case d:
+    #####:   30:      foo++;
+    #####:   31:      break;
+        -:   32:    
+    #####:   33:    default:
+    #####:   34:      for(int i = 0; i < 20; i++) { j++; }
+    #####:   35:      break;
+        -:   36:  }
+        -:   37:}
+        -:   38:
+        -:   39:namespace bar {};
+        -:   40:
+        -:   41:namespace bar;
+        -:   42:namespace {
+        -:   43:struct {
+        -:   44:  struct {
+        -:   45:    int b;
+        -:   46:  }
+        -:   47:  int a;
+        -:   48:  }
+        -:   49:}
+        -:   50:
+        -:   51:class d {
+    #####:   52:  inline a() { crazy(); };
+        -:   53:  struct c b();
+        -:   54:};
+        -:   55:
+    #####:   56:struct c d::b() {
+    #####:   57:  return 0;
+        -:   58:}
+        -:   59:
+    #####:   60:void bam(struct blat *f) {
+    #####:   61:  for (int i = 0; i < 10; ++i) { // random inline comment
+    #####:   62:    if (j) return 1;
+        -:   63:  }
+        -:   64:}

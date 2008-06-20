@@ -41,7 +41,7 @@ enum {
 
 // Keeps track of the data for a whole source file.
 
-@interface CoverStoryCoverageFileData : NSObject<NSCopying, CoverStoryLineCoverageProtocol> {
+@interface CoverStoryCoverageFileData : NSObject<CoverStoryLineCoverageProtocol> {
  @private
   NSMutableArray *lines_; // of CoverStoryCoverageLineData
   SInt32 hitLines_;
@@ -72,7 +72,6 @@ enum {
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
     messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 - (NSArray *)fileDatas;
-- (NSArray *)sourcePaths;
 - (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path;
 @end
                     
@@ -80,15 +79,15 @@ enum {
 // Keeps track of the number of times a line of code has been hit. There is
 // one CoverStoryCoverageLineData object per line of code in the file. 
 
-@interface CoverStoryCoverageLineData : NSObject<NSCopying> {
+@interface CoverStoryCoverageLineData : NSObject {
  @private
   SInt32 hitCount_;  // how many times this line has been hit
   SInt32 complexity_;
   NSString *line_;  //  the line
 }
 
-+ (id)coverageLineDataWithLine:(NSString*)line hitCount:(UInt32)hitCount;
-- (id)initWithLine:(NSString*)line hitCount:(UInt32)hitCount;
++ (id)coverageLineDataWithLine:(NSString*)line hitCount:(SInt32)hitCount;
+- (id)initWithLine:(NSString*)line hitCount:(SInt32)hitCount;
 - (NSString*)line;
 - (SInt32)hitCount;
 - (void)addHits:(SInt32)newHits;

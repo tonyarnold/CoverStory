@@ -305,7 +305,7 @@ static NSString *const kPrefsToWatch[] = {
   NSEnumerator *pathEnum = [allFilePaths objectEnumerator];
   NSString *filename;
   if ((filename = [pathEnum nextObject])) {
-    // see our collecting w/ the first item
+    // seed our collecting w/ the first item
     NSString *currentFolder = [filename stringByDeletingLastPathComponent];
     NSMutableArray *currentFileList =
       [NSMutableArray arrayWithObject:[filename lastPathComponent]];

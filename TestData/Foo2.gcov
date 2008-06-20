@@ -1,0 +1,20 @@
+        -:    0:Source:Bar.m
+        -:    0:Graph:Bar.gcno
+        -:    0:Data:Bar.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  Fake gcov data for testing with non feasible marks
+    #####:    2:unreached line 1
+    #####:    3:unreached line 2
+        -:    4:
+        9:    5:reached line 1 //COV_NF_LINE
+       10:    6:reached line 2
+        -:    7:  //COV_NF_START
+    #####:    8:unreached line 3
+        -:    9:// unreached comment line 3
+        -:   10:  // COV_NF_END
+        9:   11:reached line 3
+    #####:   12:code  //COV_NF_START
+    #####:   13:unreached line 3
+        -:   14:// unreached comment line 3
+    #####:   15:code  // COV_NF_END

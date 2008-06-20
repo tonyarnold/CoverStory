@@ -53,6 +53,16 @@
 		F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */; };
 		F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; };
 		F426B6EB0E0A1D7E00348386 /* CoverStory Help in Resources */ = {isa = PBXBuildFile; fileRef = F426B6DA0E0A1D7E00348386 /* CoverStory Help */; };
+		F426B7140E0A251300348386 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F426B7130E0A251300348386 /* SenTestingKit.framework */; };
+		F426B7170E0A252900348386 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
+		F426B71A0E0A254100348386 /* CoverStoryCoverageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */; };
+		F426B7210E0A25AE00348386 /* GTMRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E280D30D81F38700DD304F /* GTMRegex.m */; };
+		F426B7230E0A25BB00348386 /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8B469EF10D99C25A0042D75D /* mcc.l */; };
+		F426B7510E0A275300348386 /* CoverStoryCoverageDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F426B7500E0A275300348386 /* CoverStoryCoverageDataTest.m */; };
+		F426B7F90E0AB75A00348386 /* Foo1a.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B7F60E0AB75A00348386 /* Foo1a.gcov */; };
+		F426B7FA0E0AB75A00348386 /* Foo1b.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B7F70E0AB75A00348386 /* Foo1b.gcov */; };
+		F426B7FB0E0AB75A00348386 /* Foo2.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B7F80E0AB75A00348386 /* Foo2.gcov */; };
+		F426B83C0E0AC13A00348386 /* Foo3.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B83B0E0AC13A00348386 /* Foo3.gcov */; };
 		F439DD750DCF847700147B37 /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8B469EF10D99C25A0042D75D /* mcc.l */; };
 		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; };
 		F4CA81F20DAAC44F00B4AB10 /* CoverStoryDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */; };
@@ -62,6 +72,20 @@
 
 /* Begin PBXContainerItemProxy section */
 		8B469F240D99C50C0042D75D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8B469ED50D99C2160042D75D;
+			remoteInfo = mcc;
+		};
+		F426B7180E0A252E00348386 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F426B70D0E0A24AE00348386;
+			remoteInfo = UnitTests;
+		};
+		F426B7CF0E0A317900348386 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
 			proxyType = 1;
@@ -146,6 +170,17 @@
 		F41390F30D771A5400F72B31 /* GTMNSEnumerator+Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSEnumerator+Filter.h"; sourceTree = "<group>"; };
 		F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSEnumerator+Filter.m"; sourceTree = "<group>"; };
 		F426B6DB0E0A1D7E00348386 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/CoverStory Help"; sourceTree = "<group>"; };
+		F426B70E0E0A24AE00348386 /* UnitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F426B70F0E0A24AE00348386 /* UnitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UnitTests-Info.plist"; sourceTree = "<group>"; };
+		F426B7130E0A251300348386 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		F426B7420E0A261000348386 /* DebugUnittest.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DebugUnittest.xcconfig; path = Target/DebugUnittest.xcconfig; sourceTree = "<group>"; };
+		F426B7430E0A261000348386 /* ReleaseUnittest.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ReleaseUnittest.xcconfig; path = Target/ReleaseUnittest.xcconfig; sourceTree = "<group>"; };
+		F426B7500E0A275300348386 /* CoverStoryCoverageDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCoverageDataTest.m; sourceTree = "<group>"; };
+		F426B79A0E0A2ECD00348386 /* GTMSenTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMSenTestCase.h; sourceTree = "<group>"; };
+		F426B7F60E0AB75A00348386 /* Foo1a.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo1a.gcov; sourceTree = "<group>"; };
+		F426B7F70E0AB75A00348386 /* Foo1b.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo1b.gcov; sourceTree = "<group>"; };
+		F426B7F80E0AB75A00348386 /* Foo2.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo2.gcov; sourceTree = "<group>"; };
+		F426B83B0E0AC13A00348386 /* Foo3.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo3.gcov; sourceTree = "<group>"; };
 		F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMScriptRunner.h; sourceTree = "<group>"; };
 		F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMScriptRunner.m; sourceTree = "<group>"; };
 		F4C187F60DB3CEED009BB8C6 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
@@ -173,6 +208,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F426B70B0E0A24AE00348386 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F426B7140E0A251300348386 /* SenTestingKit.framework in Frameworks */,
+				F426B7170E0A252900348386 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -190,6 +234,7 @@
 			children = (
 				8D15AC370486D014006FF6A4 /* CoverStory.app */,
 				8B469ED60D99C2160042D75D /* mcc */,
+				F426B70E0E0A24AE00348386 /* UnitTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -199,6 +244,7 @@
 			children = (
 				8B198D2F0C7DF72D002E4E3F /* COPYING */,
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
+				F426B7F30E0AB70200348386 /* UnitTesting */,
 				F47A7A3D0D748DAC002302AB /* google-toolbox-for-mac */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				8B469EE70D99C2330042D75D /* mcc */,
@@ -260,6 +306,7 @@
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				63BC85EA0B4D863400CDC9E5 /* main.css */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
+				F426B70F0E0A24AE00348386 /* UnitTests-Info.plist */,
 				F426B6DA0E0A1D7E00348386 /* CoverStory Help */,
 				F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */,
 				F4CA81F00DAAC44F00B4AB10 /* MainMenu.xib */,
@@ -273,6 +320,7 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F426B7130E0A251300348386 /* SenTestingKit.framework */,
 				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
 			);
 			name = Frameworks;
@@ -307,10 +355,40 @@
 		F4138F270D75200B00F72B31 /* XcodeConfig */ = {
 			isa = PBXGroup;
 			children = (
+				F426B7420E0A261000348386 /* DebugUnittest.xcconfig */,
+				F426B7430E0A261000348386 /* ReleaseUnittest.xcconfig */,
 				F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */,
 				F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */,
 			);
 			path = XcodeConfig;
+			sourceTree = "<group>";
+		};
+		F426B7990E0A2E9F00348386 /* UnitTesting */ = {
+			isa = PBXGroup;
+			children = (
+				F426B79A0E0A2ECD00348386 /* GTMSenTestCase.h */,
+			);
+			path = UnitTesting;
+			sourceTree = "<group>";
+		};
+		F426B7F30E0AB70200348386 /* UnitTesting */ = {
+			isa = PBXGroup;
+			children = (
+				F426B7500E0A275300348386 /* CoverStoryCoverageDataTest.m */,
+				F426B7F50E0AB73C00348386 /* TestData */,
+			);
+			name = UnitTesting;
+			sourceTree = "<group>";
+		};
+		F426B7F50E0AB73C00348386 /* TestData */ = {
+			isa = PBXGroup;
+			children = (
+				F426B7F60E0AB75A00348386 /* Foo1a.gcov */,
+				F426B7F70E0AB75A00348386 /* Foo1b.gcov */,
+				F426B7F80E0AB75A00348386 /* Foo2.gcov */,
+				F426B83B0E0AC13A00348386 /* Foo3.gcov */,
+			);
+			path = TestData;
 			sourceTree = "<group>";
 		};
 		F47A7A3D0D748DAC002302AB /* google-toolbox-for-mac */ = {
@@ -319,6 +397,7 @@
 				F4C187F60DB3CEED009BB8C6 /* GTMDefines.h */,
 				F4138F240D751FCF00F72B31 /* Foundation */,
 				F4C187F80DB3CF07009BB8C6 /* DebugUtils */,
+				F426B7990E0A2E9F00348386 /* UnitTesting */,
 				F4138F270D75200B00F72B31 /* XcodeConfig */,
 			);
 			name = "google-toolbox-for-mac";
@@ -367,6 +446,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F426B7190E0A252E00348386 /* PBXTargetDependency */,
 				8B469F250D99C50C0042D75D /* PBXTargetDependency */,
 			);
 			name = CoverStory;
@@ -374,6 +454,25 @@
 			productName = Gcover;
 			productReference = 8D15AC370486D014006FF6A4 /* CoverStory.app */;
 			productType = "com.apple.product-type.application";
+		};
+		F426B70D0E0A24AE00348386 /* UnitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F426B7120E0A24AF00348386 /* Build configuration list for PBXNativeTarget "UnitTests" */;
+			buildPhases = (
+				F426B7090E0A24AE00348386 /* Resources */,
+				F426B70A0E0A24AE00348386 /* Sources */,
+				F426B70B0E0A24AE00348386 /* Frameworks */,
+				F426B70C0E0A24AE00348386 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F426B7D00E0A317900348386 /* PBXTargetDependency */,
+			);
+			name = UnitTests;
+			productName = UnitTests;
+			productReference = F426B70E0E0A24AE00348386 /* UnitTests.octest */;
+			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
 
@@ -389,6 +488,7 @@
 			targets = (
 				8D15AC270486D014006FF6A4 /* CoverStory */,
 				8B469ED50D99C2160042D75D /* mcc */,
+				F426B70D0E0A24AE00348386 /* UnitTests */,
 			);
 		};
 /* End PBXProject section */
@@ -419,6 +519,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F426B7090E0A24AE00348386 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F426B7F90E0AB75A00348386 /* Foo1a.gcov in Resources */,
+				F426B7FA0E0AB75A00348386 /* Foo1b.gcov in Resources */,
+				F426B7FB0E0AB75A00348386 /* Foo2.gcov in Resources */,
+				F426B83C0E0AC13A00348386 /* Foo3.gcov in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -437,6 +548,19 @@
 			shellPath = /bin/sh;
 			shellScript = "#\n# Runs a unittest against mcc\n#\n\nif [ -f ${TEMP_FILES_DIR}/mcctest.out ]; then\n\trm ${TEMP_FILES_DIR}/mcctest.out\nfi\n\n\"${TARGET_BUILD_DIR}/${EXECUTABLE_NAME}\" mcc/mcctest.c > \"${TEMP_FILES_DIR}/mcctest.out\"\ncmp \"${TEMP_FILES_DIR}/mcctest.out\" \"${SRCROOT}/mcc/mcctestmaster.txt\"\nif [ $? -ne 0 ]; then\n\techo ${TEMP_FILES_DIR}/mcctest.out:0: error: Test Failed\n\texit 1\nfi\nexit 0";
 			showEnvVarsInLog = 0;
+		};
+		F426B70C0E0A24AE00348386 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# use the GTM script to invoke the unittests\n\"${SRCROOT}/external/google-toolbox-for-mac/UnitTesting/RunMacOSUnitTests.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -470,6 +594,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F426B70A0E0A24AE00348386 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F426B71A0E0A254100348386 /* CoverStoryCoverageData.m in Sources */,
+				F426B7210E0A25AE00348386 /* GTMRegex.m in Sources */,
+				F426B7230E0A25BB00348386 /* mcc.l in Sources */,
+				F426B7510E0A275300348386 /* CoverStoryCoverageDataTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -477,6 +612,16 @@
 			isa = PBXTargetDependency;
 			target = 8B469ED50D99C2160042D75D /* mcc */;
 			targetProxy = 8B469F240D99C50C0042D75D /* PBXContainerItemProxy */;
+		};
+		F426B7190E0A252E00348386 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F426B70D0E0A24AE00348386 /* UnitTests */;
+			targetProxy = F426B7180E0A252E00348386 /* PBXContainerItemProxy */;
+		};
+		F426B7D00E0A317900348386 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8B469ED50D99C2160042D75D /* mcc */;
+			targetProxy = F426B7CF0E0A317900348386 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -588,6 +733,40 @@
 			};
 			name = Release;
 		};
+		F426B7100E0A24AF00348386 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F426B7420E0A261000348386 /* DebugUnittest.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = CoverStory.pch;
+				INFOPLIST_FILE = "UnitTests-Info.plist";
+				LEXFLAGS = "$(inherited) --noyy_top_state";
+				PRODUCT_NAME = UnitTests;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		F426B7110E0A24AF00348386 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F426B7430E0A261000348386 /* ReleaseUnittest.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = CoverStory.pch;
+				INFOPLIST_FILE = "UnitTests-Info.plist";
+				LEXFLAGS = "$(inherited) --noyy_top_state";
+				PRODUCT_NAME = UnitTests;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -614,6 +793,15 @@
 			buildConfigurations = (
 				C05733CC08A9546B00998B17 /* Debug */,
 				C05733CD08A9546B00998B17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F426B7120E0A24AF00348386 /* Build configuration list for PBXNativeTarget "UnitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F426B7100E0A24AF00348386 /* Debug */,
+				F426B7110E0A24AF00348386 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

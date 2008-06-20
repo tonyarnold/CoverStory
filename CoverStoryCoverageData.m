@@ -58,7 +58,7 @@ char *mcc(const char* untf8String);
     if (!string) {
       // Sadly, NSString doesn't detect/handle NSMacOSRomanStringEncoding very
       // well, so we have to manually try Roman.  math.h in the system headers
-      // is in MacRoman easily causes us error w/o this extra code.
+      // is in MacRoman easily causes us errors w/o this extra code.
       // (we don't care about the error here, we'll just report the parent
       // error)
       string = [NSString stringWithContentsOfFile:path
@@ -71,9 +71,9 @@ char *mcc(const char* untf8String);
       self = nil;
     } else {
       NSCharacterSet *linefeeds = [NSCharacterSet characterSetWithCharactersInString:@"\n\r"];
-      GTMRegex *nfLineRegex = [GTMRegex regexWithPattern:@".*//[[:blank:]]*COV_NF_LINE.*"];
-      GTMRegex *nfRangeStartRegex = [GTMRegex regexWithPattern:@".*//[[:blank:]]*COV_NF_START.*"];
-      GTMRegex *nfRangeEndRegex  = [GTMRegex regexWithPattern:@".*//[[:blank:]]*COV_NF_END.*"];
+      GTMRegex *nfLineRegex = [GTMRegex regexWithPattern:@"//[[:blank:]]*COV_NF_LINE"];
+      GTMRegex *nfRangeStartRegex = [GTMRegex regexWithPattern:@"//[[:blank:]]*COV_NF_START"];
+      GTMRegex *nfRangeEndRegex  = [GTMRegex regexWithPattern:@"//[[:blank:]]*COV_NF_END"];
       BOOL inNonFeasibleRange = NO;
       NSScanner *scanner = [NSScanner scannerWithString:string];
       [scanner setCharactersToBeSkipped:nil];
@@ -108,16 +108,16 @@ char *mcc(const char* untf8String);
             hitCount = kCoverStoryNonFeasibleMarker;
           }
           // if it has the end marker, clear our state
-          if ([nfRangeEndRegex matchesString:segment]) {
+          if ([nfRangeEndRegex matchesSubStringInString:segment]) {
             inNonFeasibleRange = NO;
           }
         } else {
           // if it matches the line marker, don't count it
-          if ([nfLineRegex matchesString:segment]) {
+          if ([nfLineRegex matchesSubStringInString:segment]) {
             hitCount = kCoverStoryNonFeasibleMarker;
           }
           // if it matches the start marker, don't count it and set state
-          else if ([nfRangeStartRegex matchesString:segment]) {
+          else if ([nfRangeStartRegex matchesSubStringInString:segment]) {
             // if the line was gonna count, mark it as non feasible (we only mark
             // the lines that would have counted so the total number of non
             // feasible lines isn't too high (otherwise comment lines, blank
@@ -264,18 +264,8 @@ char *mcc(const char* untf8String);
   return lines_;
 }
 
-- (void)setLines:(NSArray *)lines {
-  [lines_ autorelease];
-  lines_ = [lines mutableCopy];
-}
-
 - (NSString *)sourcePath {
   return sourcePath_;
-}
-
-- (void)setSourcePath:(NSString *)sourcePath {
-  [sourcePath_ autorelease];
-  sourcePath_ = [sourcePath copy];
 }
 
 - (SInt32)numberTotalLines {
@@ -366,14 +356,6 @@ char *mcc(const char* untf8String);
             [self numberCodeLines], [self numberHitCodeLines]];
 }
 
-- (id)copyWithZone:(NSZone *)zone {
-  id newCopy = [[[self class] allocWithZone:zone] init];
-  [newCopy setLines:lines_];
-  [newCopy setSourcePath:sourcePath_];
-  [newCopy updateCounts];
-  return newCopy;
-}
-
 @end
 
 @implementation CoverStoryCoverageSet
@@ -409,10 +391,6 @@ char *mcc(const char* untf8String);
 
 - (NSArray *)fileDatas {
   return [fileDatas_ allValues];
-}
-
-- (NSArray *)sourcePaths {
-  return [fileDatas_ allKeys];
 }
 
 - (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path {
@@ -479,11 +457,11 @@ char *mcc(const char* untf8String);
 
 @implementation CoverStoryCoverageLineData
 
-+ (id)coverageLineDataWithLine:(NSString*)line hitCount:(UInt32)hitCount {
++ (id)coverageLineDataWithLine:(NSString*)line hitCount:(SInt32)hitCount {
   return [[[self alloc] initWithLine:line hitCount:hitCount] autorelease];
 }
 
-- (id)initWithLine:(NSString*)line hitCount:(UInt32)hitCount {
+- (id)initWithLine:(NSString*)line hitCount:(SInt32)hitCount {
   if ((self = [super init])) {
     hitCount_ = hitCount;
     line_ = [line copy];
@@ -532,10 +510,6 @@ char *mcc(const char* untf8String);
 
 - (NSString*)description {
   return [NSString stringWithFormat:@"%d %@", hitCount_, line_];
-}
-
-- (id)copyWithZone:(NSZone *)zone {
-  return [[[self class] alloc] initWithLine:line_ hitCount:hitCount_];
 }
 
 @end
