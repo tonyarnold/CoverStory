@@ -226,8 +226,14 @@ const float kGoodCoverage = 75.0f;
   NSAssert([value isKindOfClass:[CoverStoryCoverageFileData class]], 
            @"Only handle CoverStoryCoverageFileData");
   CoverStoryCoverageFileData *data = (CoverStoryCoverageFileData *)value;
-  float coverage = [[data coverage] floatValue];
-  NSString *coverageString = [NSString stringWithFormat:@"%.1f", coverage];
+  float coverage = 0.0f;
+  NSString *coverageString = nil;
+  [data coverageTotalLines:NULL
+                 codeLines:NULL
+              hitCodeLines:NULL
+          nonFeasibleLines:NULL
+            coverageString:&coverageString
+                  coverage:&coverage];
   float redHue = 0;
   float greenHue = 120.0/360.0;
   float hue = 0;
@@ -325,21 +331,27 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSAssert([value conformsToProtocol:@protocol(CoverStoryLineCoverageProtocol)], 
            @"Only handle CoverStoryLineCoverageProtocol");
   id<CoverStoryLineCoverageProtocol> data = (id<CoverStoryLineCoverageProtocol>)value;
-  SInt32 totalLines = [data numberTotalLines];
-  SInt32 hitLines   = [data numberHitCodeLines];
-  SInt32 codeLines  = [data numberCodeLines];
-  SInt32 nonfeasible  = [data numberNonFeasibleLines];
-  float coverage = [[data coverage] floatValue];
+  SInt32 totalLines = 0;
+  SInt32 codeLines = 0;
+  SInt32 hitLines = 0;
+  SInt32 nonfeasible = 0;
+  NSString *coverage = nil;
+  [data coverageTotalLines:&totalLines
+                 codeLines:&codeLines
+              hitCodeLines:&hitLines
+          nonFeasibleLines:&nonfeasible
+            coverageString:&coverage
+                  coverage:NULL];
   
   NSString *statString = nil;
   if (nonfeasible) {
     statString = [NSString stringWithFormat:
-                  @"Executed %.2f%% of %d lines (%d executed, %d executable, "
+                  @"Executed %@%% of %d lines (%d executed, %d executable, "
                   "%d non-feasible, %d total lines)", coverage, codeLines, 
                   hitLines, codeLines, nonfeasible, totalLines];
   } else {
     statString = [NSString stringWithFormat:
-                  @"Executed %.2f%% of %d lines (%d executed, %d executable, "
+                  @"Executed %@%% of %d lines (%d executed, %d executable, "
                   "%d total lines)", coverage, codeLines, hitLines, 
                   codeLines, totalLines];
   }
@@ -370,31 +382,26 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSEnumerator *arrayEnum = [value objectEnumerator];
   SInt32 sources = [value count];
   SInt32 totalLines = 0;
-  SInt32 hitLines   = 0;
-  SInt32 codeLines  = 0;
-  SInt32 nonfeasible  = 0;
-  
-  id<CoverStoryLineCoverageProtocol> data;
-  while ((data = [arrayEnum nextObject])) {
-    totalLines += [data numberTotalLines];
-    hitLines += [data numberHitCodeLines];
-    codeLines += [data numberCodeLines];
-    nonfeasible += [data numberNonFeasibleLines];
-  }
-  float coverage = 0.0;
-  if (codeLines > 0) {
-    coverage = (float)hitLines / (float)codeLines * 100.0;
-  }
+  SInt32 codeLines = 0;
+  SInt32 hitLines = 0;
+  SInt32 nonfeasible = 0;
+  NSString *coverage = nil;
+  [arrayEnum coverageTotalLines:&totalLines
+                      codeLines:&codeLines
+                   hitCodeLines:&hitLines
+               nonFeasibleLines:&nonfeasible
+                 coverageString:&coverage
+                       coverage:NULL];
   NSString *statString = nil;
   if (nonfeasible) {
     statString = [NSString stringWithFormat:
-                  @"Executed %.2f%% of %d lines (%d sources, %d executed, "
+                  @"Executed %@%% of %d lines (%d sources, %d executed, "
                   "%d executable, %d non-feasible, %d total lines)", coverage,
                   codeLines, sources, hitLines, codeLines, nonfeasible,
                   totalLines];
   } else {
     statString = [NSString stringWithFormat:
-                  @"Executed %.2f%% of %d lines (%d sources, %d executed, "
+                  @"Executed %@%% of %d lines (%d sources, %d executed, "
                   "%d executable, %d total lines)", coverage, codeLines,
                   sources, hitLines, codeLines, totalLines];
   }
@@ -423,20 +430,15 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSAssert1([value respondsToSelector:@selector(objectEnumerator)],
             @"Only handle collections : %@", value);
   NSEnumerator *arrayEnum = [value objectEnumerator];
-  SInt32 hitLines   = 0;
-  SInt32 codeLines  = 0;
-  
-  id<CoverStoryLineCoverageProtocol> data;
-  while ((data = [arrayEnum nextObject])) {
-    hitLines += [data numberHitCodeLines];
-    codeLines += [data numberCodeLines];
-  }
-  float coverage = 0.0;
-  if (codeLines > 0) {
-    coverage = (float)hitLines / (float)codeLines * 100.0;
-  }
-  
-  return [NSString stringWithFormat:@"%.2f%% of %d lines", coverage, codeLines];
+  SInt32 codeLines = 0;
+  NSString *coverage = nil;
+  [arrayEnum coverageTotalLines:NULL
+                      codeLines:&codeLines
+                   hitCodeLines:NULL
+               nonFeasibleLines:NULL
+                 coverageString:&coverage
+                       coverage:NULL];
+  return [NSString stringWithFormat:@"%@%% of %d lines", coverage, codeLines];
 }
 
 @end

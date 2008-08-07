@@ -835,21 +835,27 @@ static NSString *const kPrefsToWatch[] = {
       [self addMessageFromThread:message
                      messageType:kCSMessageTypeInfo];
     }
-    SInt32 totalLines = [dataSet_ numberTotalLines];
-    SInt32 hitLines   = [dataSet_ numberHitCodeLines];
-    SInt32 codeLines  = [dataSet_ numberCodeLines];
-    SInt32 nonfeasible  = [dataSet_ numberNonFeasibleLines];
-    float coverage = [[dataSet_ coverage] floatValue];
+    SInt32 totalLines = 0;
+    SInt32 codeLines = 0;
+    SInt32 hitLines = 0;
+    SInt32 nonfeasible = 0;
+    NSString *coverage = nil;
+    [dataSet_ coverageTotalLines:&totalLines
+                       codeLines:&codeLines
+                    hitCodeLines:&hitLines
+                nonFeasibleLines:&nonfeasible
+                  coverageString:&coverage
+                        coverage:NULL];
     NSString *summary = nil;
     if (nonfeasible > 0) {
       summary = [NSString stringWithFormat:
-                 @"Full dataset executed %.2f%% of %d lines (%d executed, "
+                 @"Full dataset executed %@%% of %d lines (%d executed, "
                  @"%d executable, %d non-feasible, %d total lines).",
                  coverage, codeLines, hitLines, codeLines, nonfeasible,
                  totalLines];
     } else {
       summary = [NSString stringWithFormat:
-                 @"Full dataset executed %.2f%% of %d lines (%d executed, "
+                 @"Full dataset executed %@%% of %d lines (%d executed, "
                  @"%d executable, %d total lines).",
                  coverage, codeLines, hitLines, codeLines, totalLines];
     }

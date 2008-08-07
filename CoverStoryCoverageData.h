@@ -25,13 +25,27 @@ enum {
   // Value for hitCount for lines that are non-feasible
   kCoverStoryNonFeasibleMarker = -2
 };
-  
+
 @protocol CoverStoryLineCoverageProtocol
-- (SInt32)numberTotalLines;
-- (SInt32)numberCodeLines; // doesn't include non-feasible
-- (SInt32)numberHitCodeLines;
-- (SInt32)numberNonFeasibleLines;
-- (NSNumber *)coverage;
+- (void)coverageTotalLines:(SInt32 *)outTotal
+                 codeLines:(SInt32 *)outCode // doesn't include non-feasible
+              hitCodeLines:(SInt32 *)outHitCode
+          nonFeasibleLines:(SInt32 *)outNonFeasible
+            coverageString:(NSString **)outCoverageString
+                  coverage:(float *)outCoverage; // use the string for display,
+                                                 // this is just here for calcs
+                                                 // and sorts
+@end
+
+@interface NSEnumerator (CodeCoverage)
+- (void)coverageTotalLines:(SInt32 *)outTotal
+                 codeLines:(SInt32 *)outCode
+              hitCodeLines:(SInt32 *)outHitCode
+          nonFeasibleLines:(SInt32 *)outNonFeasible
+            coverageString:(NSString **)outCoverageString
+                  coverage:(float *)outCoverage; // use the string for display,
+                                                 // this is just here for calcs
+                                                 // and sorts
 @end
 
 // methods to get feedback while the data is processed
@@ -57,6 +71,7 @@ enum {
    messageReceiver:(id<CoverStoryCoverageProcessingProtocol> )receiver;
 - (NSArray *)lines;
 - (int)maxComplexity;
+- (NSNumber *)coverage; // this is only vended for the table to sort with
 - (NSString *)sourcePath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
     messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;

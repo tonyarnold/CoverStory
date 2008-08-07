@@ -111,21 +111,24 @@
     STAssertEqualObjects([data sourcePath],
                    testData[x].sourcePath,
                    @"index %u", x);
-    STAssertEquals([data numberTotalLines],
-                   testData[x].numberTotalLines,
-                   @"index %u", x);
-    STAssertEquals([data numberCodeLines],
-                   testData[x].numberCodeLines,
-                   @"index %u", x);
-    STAssertEquals([data numberHitCodeLines],
-                   testData[x].numberHitCodeLines,
-                   @"index %u", x);
-    STAssertEquals([data numberNonFeasibleLines],
-                   testData[x].numberNonFeasibleLines,
-                   @"index %u", x);
-    STAssertEqualObjects([data coverage],
-                         [NSNumber numberWithFloat:testData[x].coverage],
-                         @"index %u", x);
+    SInt32 totalLines = 0;
+    SInt32 codeLines = 0;
+    SInt32 hitCodeLines = 0;
+    SInt32 nonFeasible = 0;
+    NSString *coverageString = nil;
+    float coverage = 0.0f;
+    [data coverageTotalLines:&totalLines
+                   codeLines:&codeLines
+                hitCodeLines:&hitCodeLines
+            nonFeasibleLines:&nonFeasible
+              coverageString:&coverageString
+                    coverage:&coverage];
+    STAssertEquals(totalLines, testData[x].numberTotalLines, @"index %u", x);
+    STAssertEquals(codeLines, testData[x].numberCodeLines, @"index %u", x);
+    STAssertEquals(hitCodeLines, testData[x].numberHitCodeLines, @"index %u", x);
+    STAssertEquals(nonFeasible, testData[x].numberNonFeasibleLines, @"index %u", x);
+    STAssertEqualsWithAccuracy(coverage, testData[x].coverage, 0x001f, @"index %u", x);
+    STAssertNotNil(coverageString, @"index %u", x);
     
     STAssertGreaterThan([[data description] length], 5U, @"index %u", x);
   }

@@ -23,6 +23,78 @@
 // this will return something we need to free
 char *mcc(const char* untf8String);
 
+// helper for building the string to make sure rounding doesn't get us
+static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
+                          NSString **outCoverageString) {
+  float coverage = 0.0;
+  if (codeLines > 0) {
+    coverage = (float)hitCodeLines/(float)codeLines * 100.0f;
+  }
+  if (outCoverageString) {
+    *outCoverageString = [NSString stringWithFormat:@"%.1f", coverage];
+    // make sure we never round to 100% if it's not 100%
+    if ([*outCoverageString isEqual:@"100.0"]) {
+      if (hitCodeLines == codeLines) {
+        *outCoverageString = @"100";
+      } else {
+        *outCoverageString = @"99.9";
+      }
+    }
+  }
+  return coverage;
+}
+
+@implementation NSEnumerator (CodeCoverage)
+- (void)coverageTotalLines:(SInt32 *)outTotal
+                 codeLines:(SInt32 *)outCode
+              hitCodeLines:(SInt32 *)outHitCode
+          nonFeasibleLines:(SInt32 *)outNonFeasible
+            coverageString:(NSString **)outCoverageString
+                  coverage:(float *)outCoverage {
+  // collect the data
+  SInt32 sumTotal = 0;
+  SInt32 sumCode = 0;
+  SInt32 sumHitCode = 0;
+  SInt32 sumNonFeasible = 0;
+  id<CoverStoryLineCoverageProtocol> data;
+  while ((data = [self nextObject])) {
+    SInt32 localTotal = 0;
+    SInt32 localCode = 0;
+    SInt32 localHitCode = 0;
+    SInt32 localNonFeasible = 0;
+    [data coverageTotalLines:&localTotal
+                   codeLines:&localCode
+                hitCodeLines:&localHitCode
+            nonFeasibleLines:&localNonFeasible
+              coverageString:NULL
+                    coverage:NULL];
+    sumTotal += localTotal;
+    sumCode += localCode;
+    sumHitCode += localHitCode;
+    sumNonFeasible += localNonFeasible;
+  }
+  
+  if (outTotal) {
+    *outTotal = sumTotal;
+  }
+  if (outCode) {
+    *outCode = sumCode;
+  }
+  if (outHitCode) {
+    *outHitCode = sumHitCode;
+  }
+  if (outNonFeasible) {
+    *outNonFeasible = sumNonFeasible;
+  }
+  if (outCoverageString || outCoverage) {
+    float coverage = codeCoverage(sumCode, sumHitCode, outCoverageString);
+    if (outCoverage) {
+      *outCoverage = coverage;
+    }
+  }
+}
+@end
+
 @interface CoverStoryCoverageFileData (PrivateMethods)
 - (void)updateCounts;
 - (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
@@ -268,28 +340,41 @@ char *mcc(const char* untf8String);
   return sourcePath_;
 }
 
-- (SInt32)numberTotalLines {
-  return [lines_ count];
-}
-
-- (SInt32)numberCodeLines {
-  return codeLines_;
-}
-
-- (SInt32)numberHitCodeLines {
-  return hitLines_;
-}
-
-- (SInt32)numberNonFeasibleLines {
-  return nonfeasible_;
-}
-
 - (NSNumber *)coverage {
-  float result = 0.0;
-  if (codeLines_ > 0.0) {
-    result = (float)hitLines_/(float)codeLines_ * 100.0f;
-  }
+  float result = 0.0f;
+  [self coverageTotalLines:NULL
+                 codeLines:NULL
+              hitCodeLines:NULL
+          nonFeasibleLines:NULL
+            coverageString:NULL
+                  coverage:&result];
   return [NSNumber numberWithFloat:result];
+}
+
+- (void)coverageTotalLines:(SInt32 *)outTotal
+                 codeLines:(SInt32 *)outCode
+              hitCodeLines:(SInt32 *)outHitCode
+          nonFeasibleLines:(SInt32 *)outNonFeasible
+            coverageString:(NSString **)outCoverageString
+                  coverage:(float *)outCoverage {
+  if (outTotal) {
+    *outTotal = [lines_ count];
+  }
+  if (outCode) {
+    *outCode = codeLines_;
+  }
+  if (outHitCode) {
+    *outHitCode = hitLines_;
+  }
+  if (outNonFeasible) {
+    *outNonFeasible = nonfeasible_;
+  }
+  if (outCoverageString || outCoverage) {
+    float coverage = codeCoverage(codeLines_, hitLines_, outCoverageString);
+    if (outCoverage) {
+      *outCoverage = coverage;
+    }
+  }
 }
 
 - (int)maxComplexity {
@@ -309,15 +394,15 @@ char *mcc(const char* untf8String);
   }
 
   // make sure the source file lines actually match
-  if ([fileData numberTotalLines] != [self numberTotalLines]) {
+  NSArray *newLines = [fileData lines];
+  if ([newLines count] != [lines_ count]) {
     if (receiver) {
       [receiver coverageErrorForPath:sourcePath_ 
                              message:@"coverage source (%@) has different line count '%d' vs '%d'",
-       [fileData sourcePath], [fileData numberTotalLines], [self numberTotalLines]];
+       [fileData sourcePath], [newLines count], [lines_ count]];
     }
     return NO;
   }
-  NSArray *newLines = [fileData lines];
   for (int x = 0, max = [newLines count] ; x < max ; ++x ) {
     CoverStoryCoverageLineData *lineNew = [newLines objectAtIndex:x];
     CoverStoryCoverageLineData *lineMe = [lines_ objectAtIndex:x];
@@ -352,8 +437,7 @@ char *mcc(const char* untf8String);
 - (NSString *)description {
   return [NSString stringWithFormat:
             @"%@: %d total lines, %d lines non-feasible, %d lines of code, %d lines hit",
-            sourcePath_, [self numberTotalLines], [self numberNonFeasibleLines],
-            [self numberCodeLines], [self numberHitCodeLines]];
+            sourcePath_, [lines_ count], nonfeasible_, codeLines_, hitLines_];
 }
 
 @end
@@ -397,54 +481,20 @@ char *mcc(const char* untf8String);
   return [fileDatas_ objectForKey:path];
 }
 
-- (SInt32)numberTotalLines {
-  SInt32 total = 0;
+- (void)coverageTotalLines:(SInt32 *)outTotal
+                 codeLines:(SInt32 *)outCode
+              hitCodeLines:(SInt32 *)outHitCode
+          nonFeasibleLines:(SInt32 *)outNonFeasible
+            coverageString:(NSString **)outCoverageString
+                  coverage:(float *)outCoverage {
+  // use the enum helper
   NSEnumerator *enumerator = [fileDatas_ objectEnumerator];
-  CoverStoryCoverageFileData *fileData = nil;
-  while ((fileData = [enumerator nextObject]) != nil) {
-    total += [fileData numberTotalLines];
-  }
-  return total;
-}
-
-- (SInt32)numberCodeLines {
-  SInt32 total = 0;
-  NSEnumerator *enumerator = [fileDatas_ objectEnumerator];
-  CoverStoryCoverageFileData *fileData = nil;
-  while ((fileData = [enumerator nextObject]) != nil) {
-    total += [fileData numberCodeLines];
-  }
-  return total;
-}
-
-- (SInt32)numberHitCodeLines {
-  SInt32 total = 0;
-  NSEnumerator *enumerator = [fileDatas_ objectEnumerator];
-  CoverStoryCoverageFileData *fileData = nil;
-  while ((fileData = [enumerator nextObject]) != nil) {
-    total += [fileData numberHitCodeLines];
-  }
-  return total;
-}
-
-- (SInt32)numberNonFeasibleLines {
-  SInt32 total = 0;
-  NSEnumerator *enumerator = [fileDatas_ objectEnumerator];
-  CoverStoryCoverageFileData *fileData = nil;
-  while ((fileData = [enumerator nextObject]) != nil) {
-    total += [fileData numberNonFeasibleLines];
-  }
-  return total;
-}
-
-- (NSNumber *)coverage {
-  float numberCodeLines = [self numberCodeLines];
-  float result = 0.0f;
-  if (numberCodeLines > 0.0) {
-    float numberHitCodeLines = [self numberHitCodeLines];
-    result = numberHitCodeLines/numberCodeLines * 100.0f;
-  }
-  return [NSNumber numberWithFloat:result];
+  [enumerator coverageTotalLines:outTotal
+                       codeLines:outCode
+                    hitCodeLines:outHitCode
+                nonFeasibleLines:outNonFeasible
+                  coverageString:outCoverageString
+                        coverage:outCoverage];
 }
 
 - (NSString *)description {
