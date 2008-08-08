@@ -7,9 +7,9 @@
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
-// 
+//
 //  http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 //  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -73,7 +73,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
     sumHitCode += localHitCode;
     sumNonFeasible += localNonFeasible;
   }
-  
+
   if (outTotal) {
     *outTotal = sumTotal;
   }
@@ -100,8 +100,8 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
 - (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 - (NSString*)generateSource;
 - (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
-                         start:(int*)start 
-                           end:(int*)end 
+                         start:(int*)start
+                           end:(int*)end
                     complexity:(int*)complexity;
 @end
 
@@ -112,12 +112,12 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
   return [[[self alloc] initWithPath:path
                      messageReceiver:receiver] autorelease];
 }
-  
+
 - (id)initWithPath:(NSString *)path
    messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
   if ((self = [super init])) {
     lines_ = [[NSMutableArray alloc] init];
-    
+
     // Scan in our data and create up out CoverStoryCoverageLineData objects.
     // TODO(dmaclach): make this routine a little more "error tolerant"
 
@@ -169,7 +169,11 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
         if (!goodScan) {
           segment = @"";
         }
-        [scanner setScanLocation:[scanner scanLocation] + 1];
+        // skip over the newline (file might not end in one if the source file
+        // didn't).
+        if (![scanner isAtEnd]) {
+          [scanner setScanLocation:[scanner scanLocation] + 1];
+        }
         // handle the non feasible markers
         if (inNonFeasibleRange) {
           // if the line was gonna count, mark it as non feasible (we only mark
@@ -200,10 +204,10 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
             inNonFeasibleRange = YES;
           }
         }
-        [lines_ addObject:[CoverStoryCoverageLineData coverageLineDataWithLine:segment 
+        [lines_ addObject:[CoverStoryCoverageLineData coverageLineDataWithLine:segment
                                                                       hitCount:hitCount]];
       }
-      
+
       // The first five lines are not data we want to show to the user
       if ([lines_ count] > 5) {
         // The first line contains the path to our source.  Most projects use
@@ -224,7 +228,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
       }
     }
   }
-  
+
   return self;
 }
 
@@ -271,11 +275,11 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
     [source appendFormat:@"%@\n", [dataPoint line]];
   }
   return source;
-}  
-  
+}
+
 - (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
-                         start:(int*)start 
-                           end:(int*)end 
+                         start:(int*)start
+                           end:(int*)end
                     complexity:(int*)complexity {
   if (!start || !end || !complexity || !scanner) return NO;
   if (![scanner scanString:@"Line:" intoString:NULL]) return NO;
@@ -288,12 +292,12 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
   if (![scanner scanUpToString:@"Line:" intoString:NULL]) return NO;
   return YES;
 }
-  
+
 - (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
   maxComplexity_ = 0;
   NSString *source = [self generateSource];
   NSString *val = nil;
-  
+
   char *mccOutput = mcc([source UTF8String]);
   if (mccOutput) {
     val = [[[NSString alloc] initWithBytesNoCopy:mccOutput
@@ -301,9 +305,9 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
                                         encoding:NSUTF8StringEncoding
                                     freeWhenDone:YES] autorelease];
   }
-    
+
   if (!val) {
-    [receiver coverageErrorForPath:[self sourcePath] 
+    [receiver coverageErrorForPath:[self sourcePath]
                            message:@"Code complexity analysis failed"];
     return NO;
   }
@@ -323,7 +327,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
       [[lines_ objectAtIndex:(startLine - 1)] setComplexity:complexity];
       lastEndLine = endLine;
     } else {
-      [receiver coverageErrorForPath:[self sourcePath] 
+      [receiver coverageErrorForPath:[self sourcePath]
                              message:@"Code complexity analysis unable to parse "
                                       "file somewhere after line %d", lastEndLine];
       return NO;
@@ -386,8 +390,8 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
   // must be for the same paths
   if (![[fileData sourcePath] isEqual:sourcePath_]) {
     if (receiver) {
-      [receiver coverageErrorForPath:sourcePath_ 
-                             message:@"coverage is for different source path:%@", 
+      [receiver coverageErrorForPath:sourcePath_
+                             message:@"coverage is for different source path:%@",
        [fileData sourcePath]];
     }
     return NO;
@@ -397,7 +401,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
   NSArray *newLines = [fileData lines];
   if ([newLines count] != [lines_ count]) {
     if (receiver) {
-      [receiver coverageErrorForPath:sourcePath_ 
+      [receiver coverageErrorForPath:sourcePath_
                              message:@"coverage source (%@) has different line count '%d' vs '%d'",
        [fileData sourcePath], [newLines count], [lines_ count]];
     }
@@ -407,7 +411,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
     CoverStoryCoverageLineData *lineNew = [newLines objectAtIndex:x];
     CoverStoryCoverageLineData *lineMe = [lines_ objectAtIndex:x];
 
-    // string match, if either says kCoverStoryNotExecutedMarker, 
+    // string match, if either says kCoverStoryNotExecutedMarker,
     // they both have to say kCoverStoryNotExecutedMarker
     if (![[lineNew line] isEqual:[lineMe line]]) {
       if (receiver) {
@@ -421,14 +425,14 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
     // be processing big and little endian runs, and w/ ifdefs one set of lines
     // would be ignored in one run, but not in the other.
   }
-  
+
   // spin though once more summing the counts
   for (int x = 0, max = [newLines count] ; x < max ; ++x ) {
     CoverStoryCoverageLineData *lineNew = [newLines objectAtIndex:x];
     CoverStoryCoverageLineData *lineMe = [lines_ objectAtIndex:x];
     [lineMe addHits:[lineNew hitCount]];
   }
-    
+
   // then add the number
   [self updateCounts];
   return YES;
@@ -454,7 +458,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
 
 - (void)dealloc {
   [fileDatas_ release];
-  
+
   [super dealloc];
 }
 
@@ -468,7 +472,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
     // then you could get that header reported >1 time)
     return [currentData addFileData:fileData messageReceiver:receiver];
   }
-  
+
   [fileDatas_ setObject:fileData forKey:[fileData sourcePath]];
   return YES;
 }

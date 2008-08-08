@@ -93,6 +93,7 @@
     { @"Foo1b", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
     { @"Foo2", @"Bar.m", 0, 15, 4, 2, 5, 50.0 },
     { @"Foo3", @"mcctest.c", 7, 64, 18, 0, 0, 0.0 },
+    { @"NoEndingNewline", @"Baz.m", 0, 11, 8, 6, 0, 75.0 },
   };
   for (size_t x = 0; x < sizeof(testData)/sizeof(struct TestDataRecord); ++x) {
     NSString *path = [testBundle pathForResource:testData[x].name
