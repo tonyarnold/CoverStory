@@ -135,7 +135,95 @@
   }
 }
 
-- (void)test4FileDataAddFileData {
+- (void)test4FileDataLineEndings {
+  NSBundle *testBundle = [NSBundle bundleForClass:[self class]];
+  STAssertNotNil(testBundle, nil);
+  
+  struct TestDataRecord {
+    NSString *name;
+    NSString *sourcePath;
+    int maxComplexity;
+    SInt32 numberTotalLines;
+    SInt32 numberCodeLines;
+    SInt32 numberHitCodeLines;
+    SInt32 numberNonFeasibleLines;
+    float coverage;
+  } testData[] = {
+    { @"testCR", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
+    { @"testLF", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
+    { @"testCRLF", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
+  };
+  NSMutableSet *fileContentsSet = [NSMutableSet set];
+  STAssertNotNil(fileContentsSet, nil);
+  CoverStoryCoverageFileData *prevData = nil;
+  for (size_t x = 0; x < sizeof(testData)/sizeof(struct TestDataRecord); ++x) {
+    NSString *path = [testBundle pathForResource:testData[x].name
+                                          ofType:@"gcov"];
+    // load the file blob and store in a set to ensure they each have different
+    // byte sequences (due to the end of line markers they are using)
+    STAssertNotNil(path, @"index %u", x);
+    NSData *fileContents = [NSData dataWithContentsOfFile:path];
+    STAssertNotNil(fileContents, @"index %u", x);
+    [fileContentsSet addObject:fileContents];
+    STAssertEquals([fileContentsSet count], (unsigned)(x + 1),
+                   @"failed to get a uniq file contents at index %u", x);
+    // now process the file
+    CoverStoryCoverageFileData *data =
+      [CoverStoryCoverageFileData coverageFileDataFromPath:path
+                                           messageReceiver:nil];
+    STAssertNotNil(data, @"index %u", x);
+    STAssertEquals([[data lines] count],
+                   (unsigned)testData[x].numberTotalLines,
+                   @"index %u", x);
+    STAssertEquals([data maxComplexity],
+                   testData[x].maxComplexity,
+                   @"index %u", x);
+    STAssertEqualObjects([data sourcePath],
+                         testData[x].sourcePath,
+                         @"index %u", x);
+    SInt32 totalLines = 0;
+    SInt32 codeLines = 0;
+    SInt32 hitCodeLines = 0;
+    SInt32 nonFeasible = 0;
+    NSString *coverageString = nil;
+    float coverage = 0.0f;
+    [data coverageTotalLines:&totalLines
+                   codeLines:&codeLines
+                hitCodeLines:&hitCodeLines
+            nonFeasibleLines:&nonFeasible
+              coverageString:&coverageString
+                    coverage:&coverage];
+    STAssertEquals(totalLines, testData[x].numberTotalLines, @"index %u", x);
+    STAssertEquals(codeLines, testData[x].numberCodeLines, @"index %u", x);
+    STAssertEquals(hitCodeLines, testData[x].numberHitCodeLines, @"index %u", x);
+    STAssertEquals(nonFeasible, testData[x].numberNonFeasibleLines, @"index %u", x);
+    STAssertEqualsWithAccuracy(coverage, testData[x].coverage, 0x001f, @"index %u", x);
+    STAssertNotNil(coverageString, @"index %u", x);
+    
+    // compare this to the previous to make sure we got the same thing (the
+    // file all match except for newlines).
+    if (prevData) {
+      NSArray *prevDataLines = [prevData lines];
+      NSArray *dataLines = [data lines];
+      STAssertNotNil(prevDataLines, @"index %u", x);
+      STAssertNotNil(dataLines, @"index %u", x);
+      STAssertEquals([prevDataLines count], [dataLines count], @"index %u", x);
+      for (unsigned int y = 0 ; y < [dataLines count] ; ++y) {
+        CoverStoryCoverageLineData *prevDataLine = [prevDataLines objectAtIndex:y];
+        CoverStoryCoverageLineData *dataLine = [prevDataLines objectAtIndex:y];
+        STAssertNotNil(prevDataLine, @"index %u - %u", y, x);
+        STAssertNotNil(dataLine, @"index %u - %u", y, x);
+        STAssertEqualObjects([prevDataLine line], [dataLine line],
+                             @"line contents didn't match at index %u - %u", y, x);
+        STAssertEquals([prevDataLine hitCount], [dataLine hitCount],
+                       @"line hits didn't match at index %u - %u", y, x);
+      }
+    }
+    prevData = data;
+  }
+}
+
+- (void)test5FileDataAddFileData {
   // TODO: write this one
   // test each of the fail paths
   // test that the working sum does as expected w/ NF, and non executable lines

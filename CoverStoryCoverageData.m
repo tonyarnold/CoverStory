@@ -151,6 +151,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
       [scanner setCharactersToBeSkipped:nil];
       while (![scanner isAtEnd]) {
         NSString *segment;
+        // scan in hit count
         BOOL goodScan = [scanner scanUpToString:@":" intoString:&segment];
         [scanner setScanLocation:[scanner scanLocation] + 1];
         SInt32 hitCount = 0;
@@ -162,18 +163,18 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
             }
           }
         }
+        // scan in line number
         goodScan = [scanner scanUpToString:@":" intoString:&segment];
         [scanner setScanLocation:[scanner scanLocation] + 1];
+        // scan in the code line
         goodScan = [scanner scanUpToCharactersFromSet:linefeeds
                                            intoString:&segment];
         if (!goodScan) {
           segment = @"";
         }
-        // skip over the newline (file might not end in one if the source file
-        // didn't).
-        if (![scanner isAtEnd]) {
-          [scanner setScanLocation:[scanner scanLocation] + 1];
-        }
+        // skip over the end of line marker (CR, LF, CRLF), and it's possible
+        // on the end of the file that there is none of them.
+        [scanner scanCharactersFromSet:linefeeds intoString:NULL];
         // handle the non feasible markers
         if (inNonFeasibleRange) {
           // if the line was gonna count, mark it as non feasible (we only mark
