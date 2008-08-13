@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9D34</string>
+		<string key="IBDocument.SystemVersion">9E17</string>
 		<string key="IBDocument.InterfaceBuilderVersion">670</string>
 		<string key="IBDocument.AppKitVersion">949.33</string>
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="105"/>
+			<integer value="104"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -381,11 +381,11 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<reference ref="345045078"/>
 						<reference ref="769722486"/>
+						<reference ref="949881907"/>
 						<reference ref="969973924"/>
 						<reference ref="860687637"/>
 						<reference ref="799988858"/>
 						<reference ref="949881907"/>
-						<reference ref="341957646"/>
 						<reference ref="773123229"/>
 						<reference ref="683901393"/>
 					</object>
@@ -1274,7 +1274,6 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 								</object>
 								<string key="NSFrame">{{1, 1}, {445, 207}}</string>
 								<reference key="NSSuperview" ref="31273239"/>
-								<reference key="NSNextKeyView" ref="386329635"/>
 								<reference key="NSDocView" ref="386329635"/>
 								<reference key="NSBGColor" ref="676988305"/>
 								<object class="NSCursor" key="NSCursor">
@@ -1306,7 +1305,6 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						</object>
 						<string key="NSFrame">{{0, 20}, {462, 209}}</string>
 						<reference key="NSSuperview" ref="495056555"/>
-						<reference key="NSNextKeyView" ref="12209125"/>
 						<int key="NSsFlags">18</int>
 						<reference key="NSVScroller" ref="483343609"/>
 						<reference key="NSHScroller" ref="814710367"/>
@@ -2040,8 +2038,8 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							<reference ref="133495832"/>
 							<reference ref="160125727"/>
 							<reference ref="103774080"/>
-							<reference ref="125046664"/>
 							<reference ref="145490167"/>
+							<reference ref="125046664"/>
 						</object>
 						<reference key="parent" ref="431660496"/>
 					</object>
@@ -2615,9 +2613,9 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{159, -79}, {800, 500}}</string>
+					<string>{{154, 277}, {800, 500}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{159, -79}, {800, 500}}</string>
+					<string>{{154, 277}, {800, 500}}</string>
 					<reference ref="9"/>
 					<string>{{17, 334}, {800, 500}}</string>
 					<reference ref="9"/>
@@ -2639,7 +2637,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{251, 421}, {616, 0}}</string>
+					<string>{{246, 777}, {616, 0}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2669,7 +2667,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">573</int>
+			<int key="maxID">620</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2806,6 +2804,13 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">external/google-toolbox-for-mac/UnitTesting/GTMSenTestCase.h</string>
 					</object>
 				</object>
 			</object>

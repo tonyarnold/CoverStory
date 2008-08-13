@@ -91,16 +91,24 @@ static NSString *const kPrefsToWatch[] = {
 
 - (id)init {
   if ((self = [super init])) {
+    
     dataSet_ = [[CoverStoryCoverageSet alloc] init];
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"error" ofType:@"png"];
-    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
-    errorIcon_ = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
-    path = [[NSBundle mainBundle] pathForResource:@"warning" ofType:@"png"];
-    wrapper = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+
+    NSString *path;
+    NSFileWrapper *wrapper;
+    NSBundle *mainBundle = [NSBundle mainBundle];
+
+    path        = [mainBundle pathForResource:@"error" ofType:@"png"];
+    wrapper     = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+    errorIcon_  = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
+
+    path         = [mainBundle pathForResource:@"warning" ofType:@"png"];
+    wrapper      = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
     warningIcon_ = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
-    path = [[NSBundle mainBundle] pathForResource:@"info" ofType:@"png"];
-    wrapper = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
-    infoIcon_ = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
+    
+    path         = [mainBundle pathForResource:@"info" ofType:@"png"];
+    wrapper      = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+    infoIcon_    = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
   }
   return self;
 }
@@ -246,7 +254,18 @@ static NSString *const kPrefsToWatch[] = {
 - (void)openFolderInThread:(NSString*)path {
   NSAutoreleasePool *pool = [NSAutoreleasePool new];
   [self setOpenThreadState:YES];
-  [self processCoverageForFolder:path];
+  @try {
+    [self processCoverageForFolder:path];
+  }
+  @catch (NSException *e) {
+    NSString *msg =
+      [NSString stringWithFormat:@"Internal error while processing directory (%@ - %@).",
+                                 [e name], [e reason]];
+    [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
+  }
+  [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
+                         withObject:@"ignored"
+                      waitUntilDone:NO];
   [self setOpenThreadState:NO];
   
   // Clean up NSTask Zombies.
@@ -259,8 +278,16 @@ static NSString *const kPrefsToWatch[] = {
   [self setOpenThreadState:YES];
   NSString *folderPath = [path stringByDeletingLastPathComponent];
   NSString *filename = [path lastPathComponent];
-  [self processCoverageForFiles:[NSArray arrayWithObject:filename]
-                       inFolder:folderPath];
+  @try {
+    [self processCoverageForFiles:[NSArray arrayWithObject:filename]
+                         inFolder:folderPath];
+  }
+  @catch (NSException *e) {
+    NSString *msg =
+    [NSString stringWithFormat:@"Internal error while processing file (%@ - %@).",
+     [e name], [e reason]];
+    [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
+  }
   [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
                          withObject:@"ignored"
                       waitUntilDone:NO];
@@ -343,10 +370,6 @@ static NSString *const kPrefsToWatch[] = {
                             path:currentFolder
                      messageType:kCSMessageTypeError];
     }
-    // and we're done
-    [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
-                           withObject:@"ignored"
-                        waitUntilDone:NO];
   }
   return YES;
 }
