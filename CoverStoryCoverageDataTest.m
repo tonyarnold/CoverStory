@@ -19,8 +19,8 @@
 - (void)test1LineDataBasics {
   struct TestDataRecord {
     NSString *line;
-    SInt32 hitCount;
-    SInt32 complexity;
+    NSInteger hitCount;
+    NSInteger complexity;
   } testData[] = {
     { nil, 0, 0 },
     { nil, 1, 1 },
@@ -46,9 +46,9 @@
 
 - (void)test2LineDataAddHits {
   struct TestDataRecord {
-    SInt32 hitCount1;
-    SInt32 hitCount2;
-    SInt32 hitCountSum;
+    NSInteger hitCount1;
+    NSInteger hitCount2;
+    NSInteger hitCountSum;
   } testData[] = {
     { 0, 0, 0 },
     { 0, 1, 1 },
@@ -83,10 +83,10 @@
     NSString *name;
     NSString *sourcePath;
     int maxComplexity;
-    SInt32 numberTotalLines;
-    SInt32 numberCodeLines;
-    SInt32 numberHitCodeLines;
-    SInt32 numberNonFeasibleLines;
+    NSInteger numberTotalLines;
+    NSInteger numberCodeLines;
+    NSInteger numberHitCodeLines;
+    NSInteger numberNonFeasibleLines;
     float coverage;
   } testData[] = {
     { @"Foo1a", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
@@ -112,10 +112,10 @@
     STAssertEqualObjects([data sourcePath],
                    testData[x].sourcePath,
                    @"index %u", x);
-    SInt32 totalLines = 0;
-    SInt32 codeLines = 0;
-    SInt32 hitCodeLines = 0;
-    SInt32 nonFeasible = 0;
+    NSInteger totalLines = 0;
+    NSInteger codeLines = 0;
+    NSInteger hitCodeLines = 0;
+    NSInteger nonFeasible = 0;
     NSString *coverageString = nil;
     float coverage = 0.0f;
     [data coverageTotalLines:&totalLines
@@ -143,10 +143,10 @@
     NSString *name;
     NSString *sourcePath;
     int maxComplexity;
-    SInt32 numberTotalLines;
-    SInt32 numberCodeLines;
-    SInt32 numberHitCodeLines;
-    SInt32 numberNonFeasibleLines;
+    NSInteger numberTotalLines;
+    NSInteger numberCodeLines;
+    NSInteger numberHitCodeLines;
+    NSInteger numberNonFeasibleLines;
     float coverage;
   } testData[] = {
     { @"testCR", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
@@ -181,10 +181,10 @@
     STAssertEqualObjects([data sourcePath],
                          testData[x].sourcePath,
                          @"index %u", x);
-    SInt32 totalLines = 0;
-    SInt32 codeLines = 0;
-    SInt32 hitCodeLines = 0;
-    SInt32 nonFeasible = 0;
+    NSInteger totalLines = 0;
+    NSInteger codeLines = 0;
+    NSInteger hitCodeLines = 0;
+    NSInteger nonFeasible = 0;
     NSString *coverageString = nil;
     float coverage = 0.0f;
     [data coverageTotalLines:&totalLines

@@ -18,6 +18,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "GTMDefines.h"
 
 enum {
   // Value for hitCount for lines that aren't executed
@@ -27,10 +28,10 @@ enum {
 };
 
 @protocol CoverStoryLineCoverageProtocol
-- (void)coverageTotalLines:(SInt32 *)outTotal
-                 codeLines:(SInt32 *)outCode // doesn't include non-feasible
-              hitCodeLines:(SInt32 *)outHitCode
-          nonFeasibleLines:(SInt32 *)outNonFeasible
+- (void)coverageTotalLines:(NSInteger *)outTotal
+                 codeLines:(NSInteger *)outCode // doesn't include non-feasible
+              hitCodeLines:(NSInteger *)outHitCode
+          nonFeasibleLines:(NSInteger *)outNonFeasible
             coverageString:(NSString **)outCoverageString
                   coverage:(float *)outCoverage; // use the string for display,
                                                  // this is just here for calcs
@@ -38,10 +39,10 @@ enum {
 @end
 
 @interface NSEnumerator (CodeCoverage)
-- (void)coverageTotalLines:(SInt32 *)outTotal
-                 codeLines:(SInt32 *)outCode
-              hitCodeLines:(SInt32 *)outHitCode
-          nonFeasibleLines:(SInt32 *)outNonFeasible
+- (void)coverageTotalLines:(NSInteger *)outTotal
+                 codeLines:(NSInteger *)outCode
+              hitCodeLines:(NSInteger *)outHitCode
+          nonFeasibleLines:(NSInteger *)outNonFeasible
             coverageString:(NSString **)outCoverageString
                   coverage:(float *)outCoverage; // use the string for display,
                                                  // this is just here for calcs
@@ -58,10 +59,10 @@ enum {
 @interface CoverStoryCoverageFileData : NSObject<CoverStoryLineCoverageProtocol> {
  @private
   NSMutableArray *lines_; // of CoverStoryCoverageLineData
-  SInt32 hitLines_;
-  SInt32 codeLines_;
-  SInt32 nonfeasible_;
-  SInt32 maxComplexity_;
+  NSInteger hitLines_;
+  NSInteger codeLines_;
+  NSInteger nonfeasible_;
+  NSInteger maxComplexity_;
   NSString *sourcePath_;
 }
 
@@ -70,7 +71,7 @@ enum {
 - (id)initWithPath:(NSString *)path
    messageReceiver:(id<CoverStoryCoverageProcessingProtocol> )receiver;
 - (NSArray *)lines;
-- (int)maxComplexity;
+- (NSInteger)maxComplexity;
 - (NSNumber *)coverage; // this is only vended for the table to sort with
 - (NSString *)sourcePath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
@@ -96,16 +97,16 @@ enum {
 
 @interface CoverStoryCoverageLineData : NSObject {
  @private
-  SInt32 hitCount_;  // how many times this line has been hit
-  SInt32 complexity_;
+  NSInteger hitCount_;  // how many times this line has been hit
+  NSInteger complexity_;
   NSString *line_;  //  the line
 }
 
-+ (id)coverageLineDataWithLine:(NSString*)line hitCount:(SInt32)hitCount;
-- (id)initWithLine:(NSString*)line hitCount:(SInt32)hitCount;
++ (id)coverageLineDataWithLine:(NSString*)line hitCount:(NSInteger)hitCount;
+- (id)initWithLine:(NSString*)line hitCount:(NSInteger)hitCount;
 - (NSString*)line;
-- (SInt32)hitCount;
-- (void)addHits:(SInt32)newHits;
-- (void)setComplexity:(SInt32)complexity;
-- (SInt32)complexity;
+- (NSInteger)hitCount;
+- (void)addHits:(NSInteger)newHits;
+- (void)setComplexity:(NSInteger)complexity;
+- (NSInteger)complexity;
 @end

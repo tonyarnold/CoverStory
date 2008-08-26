@@ -24,7 +24,7 @@
 char *mcc(const char* untf8String);
 
 // helper for building the string to make sure rounding doesn't get us
-static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
+static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
                           NSString **outCoverageString) {
   float coverage = 0.0;
   if (codeLines > 0) {
@@ -45,23 +45,23 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
 }
 
 @implementation NSEnumerator (CodeCoverage)
-- (void)coverageTotalLines:(SInt32 *)outTotal
-                 codeLines:(SInt32 *)outCode
-              hitCodeLines:(SInt32 *)outHitCode
-          nonFeasibleLines:(SInt32 *)outNonFeasible
+- (void)coverageTotalLines:(NSInteger *)outTotal
+                 codeLines:(NSInteger *)outCode
+              hitCodeLines:(NSInteger *)outHitCode
+          nonFeasibleLines:(NSInteger *)outNonFeasible
             coverageString:(NSString **)outCoverageString
                   coverage:(float *)outCoverage {
   // collect the data
-  SInt32 sumTotal = 0;
-  SInt32 sumCode = 0;
-  SInt32 sumHitCode = 0;
-  SInt32 sumNonFeasible = 0;
+  NSInteger sumTotal = 0;
+  NSInteger sumCode = 0;
+  NSInteger sumHitCode = 0;
+  NSInteger sumNonFeasible = 0;
   id<CoverStoryLineCoverageProtocol> data;
   while ((data = [self nextObject])) {
-    SInt32 localTotal = 0;
-    SInt32 localCode = 0;
-    SInt32 localHitCode = 0;
-    SInt32 localNonFeasible = 0;
+    NSInteger localTotal = 0;
+    NSInteger localCode = 0;
+    NSInteger localHitCode = 0;
+    NSInteger localNonFeasible = 0;
     [data coverageTotalLines:&localTotal
                    codeLines:&localCode
                 hitCodeLines:&localHitCode
@@ -100,9 +100,9 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
 - (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 - (NSString*)generateSource;
 - (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
-                         start:(int*)start
-                           end:(int*)end
-                    complexity:(int*)complexity;
+                         start:(NSInteger*)start
+                           end:(NSInteger*)end
+                    complexity:(NSInteger*)complexity;
 @end
 
 @implementation CoverStoryCoverageFileData
@@ -154,7 +154,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
         // scan in hit count
         BOOL goodScan = [scanner scanUpToString:@":" intoString:&segment];
         [scanner setScanLocation:[scanner scanLocation] + 1];
-        SInt32 hitCount = 0;
+        NSInteger hitCount = 0;
         if (goodScan) {
           hitCount = [segment intValue];
           if (hitCount == 0) {
@@ -279,9 +279,9 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
 }
 
 - (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
-                         start:(int*)start
-                           end:(int*)end
-                    complexity:(int*)complexity {
+                         start:(NSInteger*)start
+                           end:(NSInteger*)end
+                    complexity:(NSInteger*)complexity {
   if (!start || !end || !complexity || !scanner) return NO;
   if (![scanner scanString:@"Line:" intoString:NULL]) return NO;
   if (![scanner scanInt:start]) return NO;
@@ -356,10 +356,10 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
   return [NSNumber numberWithFloat:result];
 }
 
-- (void)coverageTotalLines:(SInt32 *)outTotal
-                 codeLines:(SInt32 *)outCode
-              hitCodeLines:(SInt32 *)outHitCode
-          nonFeasibleLines:(SInt32 *)outNonFeasible
+- (void)coverageTotalLines:(NSInteger *)outTotal
+                 codeLines:(NSInteger *)outCode
+              hitCodeLines:(NSInteger *)outHitCode
+          nonFeasibleLines:(NSInteger *)outNonFeasible
             coverageString:(NSString **)outCoverageString
                   coverage:(float *)outCoverage {
   if (outTotal) {
@@ -382,7 +382,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
   }
 }
 
-- (int)maxComplexity {
+- (NSInteger)maxComplexity {
   return maxComplexity_;
 }
 
@@ -408,7 +408,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
     }
     return NO;
   }
-  for (int x = 0, max = [newLines count] ; x < max ; ++x ) {
+  for (NSUInteger x = 0, max = [newLines count] ; x < max ; ++x ) {
     CoverStoryCoverageLineData *lineNew = [newLines objectAtIndex:x];
     CoverStoryCoverageLineData *lineMe = [lines_ objectAtIndex:x];
 
@@ -428,7 +428,7 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
   }
 
   // spin though once more summing the counts
-  for (int x = 0, max = [newLines count] ; x < max ; ++x ) {
+  for (NSUInteger x = 0, max = [newLines count] ; x < max ; ++x ) {
     CoverStoryCoverageLineData *lineNew = [newLines objectAtIndex:x];
     CoverStoryCoverageLineData *lineMe = [lines_ objectAtIndex:x];
     [lineMe addHits:[lineNew hitCount]];
@@ -486,10 +486,10 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
   return [fileDatas_ objectForKey:path];
 }
 
-- (void)coverageTotalLines:(SInt32 *)outTotal
-                 codeLines:(SInt32 *)outCode
-              hitCodeLines:(SInt32 *)outHitCode
-          nonFeasibleLines:(SInt32 *)outNonFeasible
+- (void)coverageTotalLines:(NSInteger *)outTotal
+                 codeLines:(NSInteger *)outCode
+              hitCodeLines:(NSInteger *)outHitCode
+          nonFeasibleLines:(NSInteger *)outNonFeasible
             coverageString:(NSString **)outCoverageString
                   coverage:(float *)outCoverage {
   // use the enum helper
@@ -512,11 +512,11 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
 
 @implementation CoverStoryCoverageLineData
 
-+ (id)coverageLineDataWithLine:(NSString*)line hitCount:(SInt32)hitCount {
++ (id)coverageLineDataWithLine:(NSString*)line hitCount:(NSInteger)hitCount {
   return [[[self alloc] initWithLine:line hitCount:hitCount] autorelease];
 }
 
-- (id)initWithLine:(NSString*)line hitCount:(SInt32)hitCount {
+- (id)initWithLine:(NSString*)line hitCount:(NSInteger)hitCount {
   if ((self = [super init])) {
     hitCount_ = hitCount;
     line_ = [line copy];
@@ -533,19 +533,19 @@ static float codeCoverage(SInt32 codeLines, SInt32 hitCodeLines,
   return line_;
 }
 
-- (SInt32)hitCount {
+- (NSInteger)hitCount {
   return hitCount_;
 }
 
-- (void)setComplexity:(SInt32)complexity {
+- (void)setComplexity:(NSInteger)complexity {
   complexity_ = complexity;
 }
 
-- (SInt32)complexity {
+- (NSInteger)complexity {
   return complexity_;
 }
 
-- (void)addHits:(SInt32)newHits {
+- (void)addHits:(NSInteger)newHits {
   // we could be processing big and little endian runs, and w/ ifdefs one set of
   // lines would be ignored in one run, but not in the other. so...  if we were
   // a not hit line, we just take the new hits, otherwise we add any real hits

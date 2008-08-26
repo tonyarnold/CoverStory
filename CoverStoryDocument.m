@@ -590,7 +590,7 @@ static NSString *const kPrefsToWatch[] = {
   [self setFilterStringType:kCoverStoryFilterStringTypeRegularExpression];
 }
 
-- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem {
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
   typedef struct {
     CoverStoryFilterStringType type;
     SEL selector;
@@ -858,10 +858,10 @@ static NSString *const kPrefsToWatch[] = {
       [self addMessageFromThread:message
                      messageType:kCSMessageTypeInfo];
     }
-    SInt32 totalLines = 0;
-    SInt32 codeLines = 0;
-    SInt32 hitLines = 0;
-    SInt32 nonfeasible = 0;
+    NSInteger totalLines = 0;
+    NSInteger codeLines = 0;
+    NSInteger hitLines = 0;
+    NSInteger nonfeasible = 0;
     NSString *coverage = nil;
     [dataSet_ coverageTotalLines:&totalLines
                        codeLines:&codeLines

@@ -30,7 +30,7 @@
            @"Only handle CoverStoryCoverageLineData");
   CoverStoryCoverageLineData *data = (CoverStoryCoverageLineData*)value;
   // Draw the hitcount
-  SInt32 count = [data hitCount];
+  NSInteger count = [data hitCount];
 
   NSString *displayString = @"";
   NSDictionary *attributes = nil;
@@ -85,7 +85,7 @@
            @"Only handle CoverStoryCoverageLineData");
   CoverStoryCoverageLineData *data = (CoverStoryCoverageLineData*)value;
   // Draw the hitcount/complexity
-  SInt32 count = [data complexity];
+  NSInteger count = [data complexity];
   
   NSString *displayString = @"";
   NSDictionary *attributes = nil;
@@ -157,7 +157,7 @@
            @"Only handle CoverStoryCoverageLineData");
   CoverStoryCoverageLineData *data = (CoverStoryCoverageLineData*)value;
   NSString *line = [data line];
-  SInt32 hitCount = [data hitCount];
+  NSInteger hitCount = [data hitCount];
   NSString *colorName = nil;
   if (hitCount == 0) {
     colorName = kCoverStoryMissedLineColorKey;
@@ -281,7 +281,7 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSAssert([value isKindOfClass:[CoverStoryCoverageFileData class]], 
            @"Only handle CoverStoryCoverageFileData");
   CoverStoryCoverageFileData *data = (CoverStoryCoverageFileData *)value;
-  SInt32 maxComplexity = [data maxComplexity];
+  NSInteger maxComplexity = [data maxComplexity];
   NSString *coverageString = [NSString stringWithFormat:@"%d", maxComplexity];
   float redHue = 0;
   float greenHue = 120.0/360.0;
@@ -331,10 +331,10 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSAssert([value conformsToProtocol:@protocol(CoverStoryLineCoverageProtocol)], 
            @"Only handle CoverStoryLineCoverageProtocol");
   id<CoverStoryLineCoverageProtocol> data = (id<CoverStoryLineCoverageProtocol>)value;
-  SInt32 totalLines = 0;
-  SInt32 codeLines = 0;
-  SInt32 hitLines = 0;
-  SInt32 nonfeasible = 0;
+  NSInteger totalLines = 0;
+  NSInteger codeLines = 0;
+  NSInteger hitLines = 0;
+  NSInteger nonfeasible = 0;
   NSString *coverage = nil;
   [data coverageTotalLines:&totalLines
                  codeLines:&codeLines
@@ -380,11 +380,11 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSAssert1([value respondsToSelector:@selector(objectEnumerator)],
            @"Only handle collections : %@", value);
   NSEnumerator *arrayEnum = [value objectEnumerator];
-  SInt32 sources = [value count];
-  SInt32 totalLines = 0;
-  SInt32 codeLines = 0;
-  SInt32 hitLines = 0;
-  SInt32 nonfeasible = 0;
+  NSInteger sources = [value count];
+  NSInteger totalLines = 0;
+  NSInteger codeLines = 0;
+  NSInteger hitLines = 0;
+  NSInteger nonfeasible = 0;
   NSString *coverage = nil;
   [arrayEnum coverageTotalLines:&totalLines
                       codeLines:&codeLines
@@ -430,7 +430,7 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSAssert1([value respondsToSelector:@selector(objectEnumerator)],
             @"Only handle collections : %@", value);
   NSEnumerator *arrayEnum = [value objectEnumerator];
-  SInt32 codeLines = 0;
+  NSInteger codeLines = 0;
   NSString *coverage = nil;
   [arrayEnum coverageTotalLines:NULL
                       codeLines:&codeLines
