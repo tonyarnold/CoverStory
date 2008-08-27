@@ -439,6 +439,14 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   return YES;
 }
 
+- (void *)userData {
+  return userData_;
+}
+
+- (void)setUserData:(void *)userData {
+  userData_ = userData;
+}
+
 - (NSString *)description {
   return [NSString stringWithFormat:
             @"%@: %d total lines, %d lines non-feasible, %d lines of code, %d lines hit",
@@ -500,6 +508,14 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
                 nonFeasibleLines:outNonFeasible
                   coverageString:outCoverageString
                         coverage:outCoverage];
+}
+
+- (void *)userData {
+  return userData_;
+}
+
+- (void)setUserData:(void *)userData {
+  userData_ = userData;
 }
 
 - (NSString *)description {

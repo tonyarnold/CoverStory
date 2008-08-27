@@ -28,6 +28,9 @@
 // Are we showing coverage or complexity
 #define kCoverStoryShowComplexityKey @"showComplexity"  // Boolean
 
+// Should we remove common prefixes in the source list
+#define kCoverStoryRemoveCommonSourcePrefix @"removeCommonSourcePrefix"  // Boolean
+
 // Colors to display things in our views
 #define kCoverStoryMissedLineColorKey @"missedLineColor"  // NSColor
 #define kCoverStoryUnexecutableLineColorKey @"unexecutableLineColor"  // NSColor

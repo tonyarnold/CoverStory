@@ -64,6 +64,7 @@ enum {
   NSInteger nonfeasible_;
   NSInteger maxComplexity_;
   NSString *sourcePath_;
+  void *userData_;
 }
 
 + (id)coverageFileDataFromPath:(NSString *)path
@@ -76,6 +77,8 @@ enum {
 - (NSString *)sourcePath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
     messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
+- (void *)userData;
+- (void)setUserData:(void *)userData;
 @end
 
 
@@ -84,11 +87,14 @@ enum {
 @interface CoverStoryCoverageSet : NSObject<CoverStoryLineCoverageProtocol> {
 @private
   NSMutableDictionary *fileDatas_;
+  void *userData_;
 }
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
     messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 - (NSArray *)fileDatas;
 - (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path;
+- (void *)userData;
+- (void)setUserData:(void *)userData;
 @end
                     
                      

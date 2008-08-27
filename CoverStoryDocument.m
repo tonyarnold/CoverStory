@@ -64,6 +64,7 @@ static NSString *const kPrefsToWatch[] = {
   kCoverStoryHideUnittestSourcesKey,
   kCoverStoryUnittestSourcesPatternsKey,
   kCoverStoryShowComplexityKey,
+  kCoverStoryRemoveCommonSourcePrefix,
   kCoverStoryMissedLineColorKey,
   kCoverStoryUnexecutableLineColorKey,
   kCoverStoryNonFeasibleLineColorKey,
@@ -80,6 +81,8 @@ static NSString *const kPrefsToWatch[] = {
      kCoverStoryFilterStringTypeKey,
      [NSNumber numberWithBool:NO], // defaults to coverage
      kCoverStoryShowComplexityKey,
+     [NSNumber numberWithBool:YES],
+     kCoverStoryRemoveCommonSourcePrefix,
      nil];
   
   [defaults registerDefaults:documentDefaults];
@@ -122,6 +125,7 @@ static NSString *const kPrefsToWatch[] = {
   [dataSet_ release];
   [filterString_ release];
   [currentAnimation_ release];
+  [commonPathPrefix_ release];
   [super dealloc];
 }
 
@@ -169,6 +173,7 @@ static NSString *const kPrefsToWatch[] = {
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData {
   if ([self isClosed]) return NO;
   ++numFileDatas_;
+  [fileData setUserData:self]; // store us in there for the value transformer
   [self willChangeValueForKey:@"dataSet_"];
   BOOL isGood = [dataSet_ addFileData:fileData messageReceiver:self];
   [self didChangeValueForKey:@"dataSet_"];
@@ -548,6 +553,9 @@ static NSString *const kPrefsToWatch[] = {
       [self configureCoverageVsComplexityColumns];
       [sourceFilesTableView_ reloadData];
       [codeTableView_ reloadData];
+    } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryRemoveCommonSourcePrefix]]) {
+      // we to recalc the common prefix, so trigger a rearrange
+      [sourceFilesController_ rearrangeObjects];
     } else {
       NSString *const kColorsToWatch[] = { 
         kCoverStoryMissedLineColorKey,
@@ -741,6 +749,20 @@ static NSString *const kPrefsToWatch[] = {
 
 - (IBAction)toggleMessageDrawer:(id)sender {
   [drawer_ toggle:self];
+}
+
+- (void)setCommonPathPrefix:(NSString *)newPrefix {
+  [commonPathPrefix_ autorelease];
+  // we cheat, and if the pref is set, we just make sure we return no prefix
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:kCoverStoryRemoveCommonSourcePrefix]) {
+    commonPathPrefix_ = [newPrefix copy];
+  } else {
+    commonPathPrefix_ = nil;
+  }
+}
+
+- (NSString *)commonPathPrefix {
+  return commonPathPrefix_;
 }
 
 - (void)configureCoverageVsComplexityColumns {
@@ -1038,5 +1060,65 @@ static NSString *const kPrefsToWatch[] = {
   NSTableColumn *column = [self tableColumnWithIdentifier:columnName];
   NSAssert1(column, @"No %@ column?", columnName);
   [[column headerCell] setTitle:name];
+}
+@end
+
+@implementation CoverStoryArrayController
+- (void)updateCommonPathPrefix {
+  if (!owningDocument_) return;
+  
+  NSString *newPrefix = nil;
+  
+  // now figure out a new prefix
+  NSArray *arranged = [self arrangedObjects];
+  if ([arranged count] == 0) {
+    // empty string
+    newPrefix = @"";
+  } else {
+    // process the list to find the common prefix
+    
+    // start w/ the first path, and now loop throught them all, but give up
+    // the moment he only common prefix is "/"
+    NSArray *sourcePathes = [arranged valueForKey:@"sourcePath"];
+    NSEnumerator *enumerator = [sourcePathes objectEnumerator];
+    newPrefix = [enumerator nextObject];
+    NSString *basePath;
+    while (([newPrefix length] > 1) &&
+           (basePath = [enumerator nextObject])) {
+      newPrefix = [newPrefix commonPrefixWithString:basePath
+                                            options:NSLiteralSearch];
+    }
+    // if you have two files of:
+    //   /Foo/bar/spam.m
+    //   /Foo/baz/wee.m
+    // we end up here w/ "/Foo/ba" as the common prefix, but we don't want
+    // to do that, so we make sure we end in a slash
+    if (![newPrefix hasSuffix:@"/"]) {
+      NSRange lastSlash = [newPrefix rangeOfString:@"/"
+                                           options:NSBackwardsSearch];
+      if (lastSlash.location == NSNotFound) {
+        newPrefix = @"";
+      } else {
+        newPrefix = [newPrefix substringToIndex:NSMaxRange(lastSlash)];
+      }
+    }
+    // if we just have the leading "/", use no prefix
+    if ([newPrefix length] <= 1) {
+      newPrefix = @"";
+    }
+  }
+  // send it back to the document
+  [owningDocument_ setCommonPathPrefix:newPrefix];
+}
+
+- (void)rearrangeObjects {
+  // this fires when the filtering changes
+  [super rearrangeObjects];
+  [self updateCommonPathPrefix];
+}
+- (void)setContent:(id)content {
+  // this fires as results are added during a load
+  [super setContent:content];
+  [self updateCommonPathPrefix];
 }
 @end

@@ -22,6 +22,13 @@
 #import "CoverStoryCodeViewTableView.h"
 #import "CoverStoryCoverageData.h"
 
+@class CoverStoryDocument;
+
+@interface CoverStoryArrayController : NSArrayController {
+  IBOutlet CoverStoryDocument *owningDocument_;
+}
+@end
+
 @interface CoverStoryDocument : NSDocument<CoverStoryCodeViewTableViewDelegateProtocol,
                                            CoverStoryCoverageProcessingProtocol> {
  @private
@@ -43,6 +50,7 @@
   NSTextAttachment *infoIcon_;
   unsigned int numFileDatas_;
   NSViewAnimation *currentAnimation_;
+  NSString *commonPathPrefix_;
 }
 + (void)registerDefaults;
 
@@ -53,4 +61,6 @@
 - (IBAction)setUseWildcardPattern:(id)sender;
 - (IBAction)setUseRegularExpression:(id)sender;
 - (IBAction)toggleMessageDrawer:(id)sender;
+- (void)setCommonPathPrefix:(NSString *)newPrefix;
+- (NSString *)commonPathPrefix;
 @end

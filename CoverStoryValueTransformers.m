@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "CoverStoryCoverageData.h"
 #import "CoverStoryPreferenceKeys.h"
+#import "CoverStoryDocument.h"
 
 // Transformer for changing Line Data to Hit Counts.
 // Used for first column of source code table.
@@ -199,6 +200,15 @@
            @"Only handle CoverStoryCoverageFileData");
   CoverStoryCoverageFileData *data = (CoverStoryCoverageFileData *)value;
   NSString *sourcePath = [data sourcePath];
+  CoverStoryDocument *owningDoc = [data userData];
+  NSString *commonPrefix = nil;
+  if (owningDoc) {
+    commonPrefix = [owningDoc commonPathPrefix];
+  }
+  NSUInteger commonPrefixLength = [commonPrefix length];
+  if (commonPrefixLength > 0) {
+    return [sourcePath substringFromIndex:commonPrefixLength];
+  }
   return [sourcePath stringByAbbreviatingWithTildeInPath];
 }
 

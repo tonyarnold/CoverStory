@@ -38,6 +38,7 @@
    [NSArray arrayWithObjects:@"/usr/*",
     @"/System/Library/Frameworks/*",
     @"*/SDKs/MacOSX10.*",
+    @"*/SDKs/iPhone*",
     nil],
    kCoverStorySystemSourcesPatternsKey,
    
