@@ -51,6 +51,7 @@
   unsigned int numFileDatas_;
   NSViewAnimation *currentAnimation_;
   NSString *commonPathPrefix_;
+  NSString *gcovPath_;
 }
 + (void)registerDefaults;
 

@@ -112,6 +112,17 @@ static NSString *const kPrefsToWatch[] = {
     path         = [mainBundle pathForResource:@"info" ofType:@"png"];
     wrapper      = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
     infoIcon_    = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
+    
+    // Find gcov. Might want to support a default for this, but this should
+    // cover most users.
+    NSString *gcovPath = nil;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm isExecutableFileAtPath:@"/usr/bin/gcov"]) {
+      gcovPath = @"/usr/bin/gcov";
+    } else if ([fm isExecutableFileAtPath:@"/Developer/usr/bin/gcov"]) {
+      gcovPath = @"/Developer/usr/bin/gcov";
+    }
+    gcovPath_ = [gcovPath retain];
   }
   return self;
 }
@@ -126,6 +137,7 @@ static NSString *const kPrefsToWatch[] = {
   [filterString_ release];
   [currentAnimation_ release];
   [commonPathPrefix_ release];
+  [gcovPath_ release];
   [super dealloc];
 }
 
@@ -456,8 +468,8 @@ static NSString *const kPrefsToWatch[] = {
       // we use xargs to batch up the files into as few of runs of gcov as
       // possible.  (we could use -P [num_cpus] to do things in parallell)
       NSString *script =
-      [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/xargs -0 /usr/bin/gcov -l -o \"%@\" < \"%@\"",
-       tempDir, folderPath, fileListPath];
+      [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/xargs -0 %@ -l -o \"%@\" < \"%@\"",
+       tempDir, gcovPath_, folderPath, fileListPath];
       
       NSString *stdErr = nil;
       NSString *stdOut = [runner run:script standardError:&stdErr];
