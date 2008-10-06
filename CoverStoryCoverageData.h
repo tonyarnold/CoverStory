@@ -52,6 +52,7 @@ enum {
 // methods to get feedback while the data is processed
 @protocol CoverStoryCoverageProcessingProtocol
 - (void)coverageErrorForPath:(NSString*)path message:(NSString *)format, ...;
+- (void)coverageWarningForPath:(NSString*)path message:(NSString *)format, ...;
 @end
 
 // Keeps track of the data for a whole source file.
@@ -65,6 +66,7 @@ enum {
   NSInteger maxComplexity_;
   NSString *sourcePath_;
   void *userData_;
+  NSMutableArray *warnings_;
 }
 
 + (id)coverageFileDataFromPath:(NSString *)path

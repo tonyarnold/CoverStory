@@ -103,6 +103,7 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
                          start:(NSInteger*)start
                            end:(NSInteger*)end
                     complexity:(NSInteger*)complexity;
+- (NSArray *)queuedWarnings;
 @end
 
 @implementation CoverStoryCoverageFileData
@@ -117,6 +118,14 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
    messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
   if ((self = [super init])) {
     lines_ = [[NSMutableArray alloc] init];
+    // The dirty secret: we queue up warnings and don't report them in realtime.
+    // Why?  if we report them now, then if the directory with multiple arches
+    // we'll send the warning for each arch, and if the file occures in more
+    // then one set of gcda/gcno (say for headers w/ inlines), the we'll report
+    // each time we read that header.  So instead we queue them, and don't
+    // send them over to the receiver until it's added to a set, and only if
+    // it's new, this way we're sure we only send them once.
+    warnings_ = [[NSMutableArray alloc] init];
 
     // Scan in our data and create up out CoverStoryCoverageLineData objects.
     // TODO(dmaclach): make this routine a little more "error tolerant"
@@ -177,6 +186,13 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
         [scanner scanCharactersFromSet:linefeeds intoString:NULL];
         // handle the non feasible markers
         if (inNonFeasibleRange) {
+          if (hitCount > 0) {
+            NSString *warning =
+              [NSString stringWithFormat:@"Line %lu is in a Non Feasible block,"
+                                          " but was executed.",
+                                         (unsigned long)[lines_ count] - 4];
+            [warnings_ addObject:warning];
+          }
           // if the line was gonna count, mark it as non feasible (we only mark
           // the lines that would have counted so the total number of non
           // feasible lines isn't too high (otherwise comment lines, blank
@@ -191,10 +207,24 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
         } else {
           // if it matches the line marker, don't count it
           if ([nfLineRegex matchesSubStringInString:segment]) {
+            if (hitCount > 0) {
+              NSString *warning =
+                [NSString stringWithFormat:@"Line %lu is marked as a Non"
+                                            " Feasible line, but was executed.",
+                                           (unsigned long)[lines_ count] - 4];
+              [warnings_ addObject:warning];
+            }
             hitCount = kCoverStoryNonFeasibleMarker;
           }
           // if it matches the start marker, don't count it and set state
           else if ([nfRangeStartRegex matchesSubStringInString:segment]) {
+            if (hitCount > 0) {
+              NSString *warning =
+                [NSString stringWithFormat:@"Line %lu is in a Non Feasible"
+                                            " block, but was executed.",
+                                           (unsigned long)[lines_ count] - 4];
+              [warnings_ addObject:warning];
+            }
             // if the line was gonna count, mark it as non feasible (we only mark
             // the lines that would have counted so the total number of non
             // feasible lines isn't too high (otherwise comment lines, blank
@@ -236,6 +266,7 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 - (void)dealloc {
   [lines_ release];
   [sourcePath_ release];
+  [warnings_ release];
 
   [super dealloc];
 }
@@ -266,6 +297,10 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
         break;
     }
   }
+}
+
+- (NSArray *)queuedWarnings {
+  return warnings_;
 }
 
 - (NSString*)generateSource {
@@ -412,8 +447,8 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
     CoverStoryCoverageLineData *lineNew = [newLines objectAtIndex:x];
     CoverStoryCoverageLineData *lineMe = [lines_ objectAtIndex:x];
 
-    // string match, if either says kCoverStoryNotExecutedMarker,
-    // they both have to say kCoverStoryNotExecutedMarker
+    // string match the lines (since the Non Feasible support is via comments,
+    // this makes sure they also match)
     if (![[lineNew line] isEqual:[lineMe line]]) {
       if (receiver) {
         [receiver coverageErrorForPath:sourcePath_
@@ -482,7 +517,26 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
     return [currentData addFileData:fileData messageReceiver:receiver];
   }
 
+  // it's new, save it
   [fileDatas_ setObject:fileData forKey:[fileData sourcePath]];
+
+  // send the queued up warnings since this is the first time we've seen the
+  // file.
+  // TODO: this is really a hack, we would be better (since these currently are
+  // line specific) is to extend the structure to allow warnings to be hung on
+  // the line data along w/ the complexity and hit counts.  Then w/in the UI
+  // indicate how many warnings are on a file in the files list, and in the
+  // source display show the warnings inline (sorta like Xcode 3).  The other
+  // option would be to keep this basic structure, but be able to relay info w/
+  // the warning so our warning/error ui coul take clicks and open to the right
+  // file/line so the user can take action on the message.
+  NSEnumerator *enumerator = [[fileData queuedWarnings] objectEnumerator];
+  NSString *warning;
+  while ((warning = [enumerator nextObject])) {
+    [receiver coverageWarningForPath:[fileData sourcePath]
+                             message:@"%@", warning];
+  }
+
   return YES;
 }
 

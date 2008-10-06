@@ -961,6 +961,16 @@ static NSString *const kPrefsToWatch[] = {
   [self addMessageFromThread:message path:path messageType:kCSMessageTypeError];
 }
 
+- (void)coverageWarningForPath:(NSString*)path message:(NSString *)format, ... {
+  // we use the data objects on other threads, so bounce to the main thread
+  
+  va_list list;
+  va_start(list, format);
+  NSString *message = [[NSString alloc] initWithFormat:format arguments:list];
+  va_end(list);
+  [self addMessageFromThread:message path:path messageType:kCSMessageTypeWarning];
+}
+
 - (void)close {
   // No need to synchronize this because it should only ever be called from
   // main thread
