@@ -733,9 +733,14 @@
 			buildSettings = {
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_WARN_SIGN_COMPARE = NO;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/TigerGcov",
+				);
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-Wno-sign-compare",
 				);
 				OTHER_LDFLAGS = "-lgcov";
 			};
@@ -746,6 +751,11 @@
 			baseConfigurationReference = F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */;
 			buildSettings = {
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-Wno-sign-compare",
+				);
 			};
 			name = Release;
 		};

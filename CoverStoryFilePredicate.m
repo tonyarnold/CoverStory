@@ -27,6 +27,10 @@
 - (BOOL)cs_isMatchForPatternArray:(NSArray *)patterns;
 @end
 
+// the one key in our array of dictionaries.  we uses an array of dicts instead
+// of an array of strings, because then we can KVC the UI for editing them.
+static NSString * const kFilter = @"filter";
+
 @implementation CoverStoryFilePredicate
 
 + (void)registerDefaults {
@@ -35,17 +39,19 @@
   [NSDictionary dictionaryWithObjectsAndKeys:
    [NSNumber numberWithBool:YES], // hide the systems sources by default
    kCoverStoryHideSystemSourcesKey,
-   [NSArray arrayWithObjects:@"/usr/*",
-    @"/System/Library/Frameworks/*",
-    @"*/SDKs/MacOSX10.*",
-    @"*/SDKs/iPhone*",
+   [NSArray arrayWithObjects:
+    [NSDictionary dictionaryWithObject:@"/usr/*" forKey:kFilter],
+    [NSDictionary dictionaryWithObject:@"/System/Library/Frameworks/*" forKey:kFilter],
+    [NSDictionary dictionaryWithObject:@"*/SDKs/MacOSX10.*" forKey:kFilter],
+    [NSDictionary dictionaryWithObject:@"*/SDKs/iPhone*" forKey:kFilter],
     nil],
    kCoverStorySystemSourcesPatternsKey,
    
    [NSNumber numberWithBool:NO], // do NOT hide the unittest sources by default
    kCoverStoryHideUnittestSourcesKey,
-   [NSArray arrayWithObjects:@"*Test.[hHmM]",
-    @"*Test.mm",
+   [NSArray arrayWithObjects:
+    [NSDictionary dictionaryWithObject:@"*Test.[hHmM]" forKey:kFilter],
+    [NSDictionary dictionaryWithObject:@"*Test.mm" forKey:kFilter],
     nil],
    kCoverStoryUnittestSourcesPatternsKey,
    nil];
@@ -124,9 +130,11 @@
 - (BOOL)cs_isMatchForPatternArray:(NSArray *)patterns {
   const char *utf8Self = [self UTF8String];
   NSEnumerator *patternEnum = [patterns objectEnumerator];
-  NSString *pattern;
-  while ((pattern = [patternEnum nextObject])) {
-    if (fnmatch([pattern UTF8String], utf8Self, 0) == 0) {
+  NSDictionary *patternDict;
+  while ((patternDict = [patternEnum nextObject])) {
+    NSString *pattern = [patternDict objectForKey:kFilter];
+    if (([pattern length] > 0) &&
+        (fnmatch([pattern UTF8String], utf8Self, 0) == 0)) {
       return YES;
     }
   }
