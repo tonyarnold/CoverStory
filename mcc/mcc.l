@@ -1,4 +1,4 @@
-%{
+%top{
 //
 //  mcc.l
 //  CoverStory
@@ -25,6 +25,8 @@
 // Does a variant of McCabe cyclomatic complexity counting of C/C++/ObjC/ObjC++
 
 #include <stdarg.h>
+}
+%{
 
 typedef struct {
   int nestingDepth;
