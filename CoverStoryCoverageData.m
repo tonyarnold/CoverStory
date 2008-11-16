@@ -26,7 +26,7 @@ char *mcc(const char* untf8String);
 // helper for building the string to make sure rounding doesn't get us
 static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
                           NSString **outCoverageString) {
-  float coverage = 0.0;
+  float coverage = 0.0f;
   if (codeLines > 0) {
     coverage = (float)hitCodeLines/(float)codeLines * 100.0f;
   }
@@ -278,7 +278,7 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   NSEnumerator *dataEnum = [lines_ objectEnumerator];
   CoverStoryCoverageLineData* dataPoint;
   while ((dataPoint = [dataEnum nextObject]) != nil) {
-    int hitCount = [dataPoint hitCount];
+    NSInteger hitCount = [dataPoint hitCount];
     switch (hitCount) {
       case kCoverStoryNonFeasibleMarker:
         ++nonfeasible_;
@@ -348,11 +348,11 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
     return NO;
   }
   NSScanner *complexityScanner = [NSScanner scannerWithString:val];
-  int lastEndLine = 0;
+  NSInteger lastEndLine = 0;
   while (![complexityScanner isAtEnd]) {
-    int startLine;
-    int endLine;
-    int complexity;
+    NSInteger startLine;
+    NSInteger endLine;
+    NSInteger complexity;
     if ([self scanMccLineFromScanner:complexityScanner
                                start:&startLine
                                  end:&endLine

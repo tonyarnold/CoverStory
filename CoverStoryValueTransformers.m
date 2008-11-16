@@ -245,7 +245,7 @@ const float kGoodCoverage = 75.0f;
             coverageString:&coverageString
                   coverage:&coverage];
   float redHue = 0;
-  float greenHue = 120.0/360.0;
+  float greenHue = 120.0f/360.0f;
   float hue = 0;
   float saturation = 1.0f;
   float brightness = 0.75f;
@@ -294,7 +294,7 @@ const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
   NSInteger maxComplexity = [data maxComplexity];
   NSString *coverageString = [NSString stringWithFormat:@"%d", maxComplexity];
   float redHue = 0;
-  float greenHue = 120.0/360.0;
+  float greenHue = 120.0f/360.0f;
   float hue = 0;
   float saturation = 1.0f;
   float brightness = 0.75f;

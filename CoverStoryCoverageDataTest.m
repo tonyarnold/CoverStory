@@ -89,11 +89,11 @@
     NSInteger numberNonFeasibleLines;
     float coverage;
   } testData[] = {
-    { @"Foo1a", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
-    { @"Foo1b", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
-    { @"Foo2", @"Bar.m", 0, 15, 4, 2, 5, 50.0 },
-    { @"Foo3", @"mcctest.c", 7, 64, 18, 0, 0, 0.0 },
-    { @"NoEndingNewline", @"Baz.m", 0, 11, 8, 6, 0, 75.0 },
+    { @"Foo1a", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
+    { @"Foo1b", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
+    { @"Foo2", @"Bar.m", 0, 15, 4, 2, 5, 50.0f },
+    { @"Foo3", @"mcctest.c", 7, 64, 18, 0, 0, 0.0f },
+    { @"NoEndingNewline", @"Baz.m", 0, 11, 8, 6, 0, 75.0f },
   };
   for (size_t x = 0; x < sizeof(testData)/sizeof(struct TestDataRecord); ++x) {
     NSString *path = [testBundle pathForResource:testData[x].name
@@ -149,9 +149,9 @@
     NSInteger numberNonFeasibleLines;
     float coverage;
   } testData[] = {
-    { @"testCR", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
-    { @"testLF", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
-    { @"testCRLF", @"Foo.m", 0, 11, 8, 6, 0, 75.0 },
+    { @"testCR", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
+    { @"testLF", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
+    { @"testCRLF", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
   };
   NSMutableSet *fileContentsSet = [NSMutableSet set];
   STAssertNotNil(fileContentsSet, nil);

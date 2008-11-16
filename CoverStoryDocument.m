@@ -329,7 +329,7 @@ static NSString *const kPrefsToWatch[] = {
                   performOnEachSelector:@selector(stringByAppendingPathComponent:)];
   // .. and collect them all.
   NSArray *allFilePaths = [enumerator3 allObjects];
-  int pathCount = [allFilePaths count];
+  NSUInteger pathCount = [allFilePaths count];
   if (pathCount == 0) {
     [self addMessageFromThread:@"Found no gcda files to process."
                    messageType:kCSMessageTypeWarning];
@@ -661,26 +661,29 @@ static NSString *const kPrefsToWatch[] = {
   
   // Choose direction based on key and set offset and stopping conditions
   // as well as start.
-  int offset = -1;
-  int stoppingCond = 0;
+  NSInteger offset = -1;
+  NSUInteger stoppingCond = 0;
   NSRange range = NSMakeRange(0, 0);
   
   if (keyCode == NSDownArrowFunctionKey) {
     offset = 1;
     stoppingCond = [lines count] - 1;
+    if ([lines count] == 0) {
+      stoppingCond = 0;
+    }
   }
-  int startLine = 0;
+  NSUInteger startLine = 0;
   if ([currentSel count]) {
-    int first = [currentSel firstIndex];
-    int last = [currentSel lastIndex];
+    NSUInteger first = [currentSel firstIndex];
+    NSUInteger last = [currentSel lastIndex];
     range = NSMakeRange(first, last - first);
     startLine = offset == 1 ? last : first;
   }
   
   // From start, look for first line in our given direction that has
   // zero hits
-  int i;
-  for(i = startLine + offset; i != stoppingCond && i >= 0; i += offset) {
+  NSUInteger i;
+  for (i = startLine + offset; i != stoppingCond; i += offset) {
     CoverStoryCoverageLineData *lineData = [lines objectAtIndex:i];
     if ([lineData hitCount] == 0) {
       break;
@@ -691,8 +694,8 @@ static NSString *const kPrefsToWatch[] = {
   // we went
   if (i != stoppingCond) {
     // Now select "forward" everything that is zero
-    int j;
-    for (j = i; j != stoppingCond; j+= offset) {
+    NSUInteger j;
+    for (j = i; j != stoppingCond; j += offset) {
       CoverStoryCoverageLineData *lineData = [lines objectAtIndex:j];
       if ([lineData hitCount] != 0) {
         break;
@@ -700,7 +703,7 @@ static NSString *const kPrefsToWatch[] = {
     }
     
     // Now if we started in a block, select "backwards"
-    int k;
+    NSUInteger k;
     stoppingCond = offset == 1 ? 0 : [lines count] - 1;
     offset *= -1;
     for (k = i; k != stoppingCond; k+= offset) {

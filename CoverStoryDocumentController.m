@@ -18,12 +18,13 @@
 //
 
 #import "CoverStoryDocumentController.h"
+#import "GTMDefines.h"
 
 @implementation CoverStoryDocumentController
 
 // Allow us to open folders
-- (int)runModalOpenPanel:(NSOpenPanel *)openPanel 
-                forTypes:(NSArray *)extensions {
+- (NSInteger)runModalOpenPanel:(NSOpenPanel *)openPanel 
+                      forTypes:(NSArray *)extensions {
   [openPanel setCanChooseDirectories:YES];
   return [openPanel runModalForTypes:extensions];
 }

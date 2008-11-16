@@ -16,7 +16,9 @@
 //  License for the specific language governing permissions and limitations under
 //  the License.
 //
- 
+
+#import "GTMDefines.h"
+
 // Should we filter out system sources
 #define kCoverStoryHideSystemSourcesKey @"hideSystemSources"  // Boolean
 #define kCoverStorySystemSourcesPatternsKey @"systemSourcesPatterns"  // NSArray of NSString
@@ -39,7 +41,8 @@
 
 #define kCoverStoryFilterStringTypeKey @"filterStringType" // CoverStoryFilterStringType
 
-typedef enum {
+enum {
   kCoverStoryFilterStringTypeWildcardPattern = 0,
   kCoverStoryFilterStringTypeRegularExpression
-} CoverStoryFilterStringType;
+};
+typedef NSInteger CoverStoryFilterStringType;

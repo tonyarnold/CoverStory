@@ -39,7 +39,7 @@
   IBOutlet NSDrawer *drawer_;
   IBOutlet NSTextView *messageView_;
   IBOutlet NSSearchField *searchField_;
-  float annimationWidth_;
+  CGFloat annimationWidth_;
   BOOL documentClosed_;
                                              
   NSString *filterString_;
