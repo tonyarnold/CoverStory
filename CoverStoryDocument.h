@@ -52,6 +52,10 @@
   NSViewAnimation *currentAnimation_;
   NSString *commonPathPrefix_;
   NSString *gcovPath_;
+
+#if DEBUG
+  NSDate *startDate_;
+#endif
 }
 + (void)registerDefaults;
 

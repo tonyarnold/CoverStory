@@ -138,6 +138,9 @@ static NSString *const kPrefsToWatch[] = {
   [currentAnimation_ release];
   [commonPathPrefix_ release];
   [gcovPath_ release];
+#if DEBUG
+  [startDate_ release];
+#endif
   [super dealloc];
 }
 
@@ -197,6 +200,10 @@ static NSString *const kPrefsToWatch[] = {
                       error:(NSError **)outError {
   BOOL isGood = NO;
   numFileDatas_ = 0;
+#if DEBUG
+  [startDate_ release];
+  startDate_ = [[NSDate date] retain];
+#endif
 
   // the wrapper doesn't have the full path, but it's already set on us, so
   // use that instead.
@@ -929,6 +936,17 @@ static NSString *const kPrefsToWatch[] = {
                                @" displayed set."
                    messageType:kCSMessageTypeInfo];
   }
+#if DEBUG
+  if (startDate_) {
+    NSTimeInterval elapsed = -[startDate_ timeIntervalSinceNow];
+    UInt32 secs = (UInt32)elapsed % 60;
+    UInt32 mins = ((UInt32)elapsed / 60) % 60;
+    NSString *elapsedStr
+      = [NSString stringWithFormat:@"It took %u:%02u to process the data.",
+         mins, secs];
+    [self addMessageFromThread:elapsedStr messageType:kCSMessageTypeInfo];
+  }
+#endif  // DEBUG
 }
 
 - (void)setOpenThreadState:(BOOL)threadRunning {
