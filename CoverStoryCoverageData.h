@@ -18,7 +18,6 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "GTMDefines.h"
 
 enum {
   // Value for hitCount for lines that aren't executed

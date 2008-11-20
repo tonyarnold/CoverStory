@@ -25,25 +25,6 @@
 
 @implementation CoverStoryApplicationDelegate
 - (void)applicationWillFinishLaunching:(NSNotification *)notification {
-  // Transformers need to be registered on Tiger
-  id transformerNames[] = {
-    @"CoverageLineDataToHitCountTransformer",
-    @"CoverageLineDataToSourceLineTransformer",
-    @"CoverageFileDataToSourcePathTransformer",
-    @"CoverageFileDataToCoveragePercentageTransformer",
-    @"LineCoverageToCoverageSummaryTransformer",
-    @"LineCoverageToCoverageShortSummaryTransformer",
-    @"FileLineCoverageToCoverageSummaryTransformer",
-    @"CoverageLineDataToComplexityTransformer",
-    @"CoverageFileDataToComplexityTransformer",
-    @"CoverageTypeToFileCoverageHeaderTransformer"
-  };
-  for (size_t i = 0; i < sizeof(transformerNames) / sizeof(id); ++i) {
-    Class class = NSClassFromString(transformerNames[i]);
-    [NSValueTransformer setValueTransformer:[[class alloc] init]
-                                    forName:transformerNames[i]];
-  }
-  
   // Most code uses initialize to get the defaults in, but these two classes
   // won't have initialize called until a window gets created, so we force their
   // defaults in now so the prefs and menus will have the right states.
@@ -51,7 +32,7 @@
   [CoverStoryDocument registerDefaults];
   
   // Set our document controller up as the shared document controller
-  // so we don't ge NSDocumentController instead.
+  // so we don't get NSDocumentController instead.
   [[[CoverStoryDocumentController alloc] init] autorelease];
 }
 

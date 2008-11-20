@@ -167,8 +167,6 @@
 		8BFE723C0B46FE3400A3C7DD /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* CoverStory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoverStory.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DebugTigerOrLater.xcconfig; path = Project/DebugTigerOrLater.xcconfig; sourceTree = "<group>"; };
-		F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ReleaseTigerOrLater.xcconfig; path = Project/ReleaseTigerOrLater.xcconfig; sourceTree = "<group>"; };
 		F41390DB0D77103C00F72B31 /* GTMNSFileManager+Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSFileManager+Path.h"; sourceTree = "<group>"; };
 		F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSFileManager+Path.m"; sourceTree = "<group>"; };
 		F41390F30D771A5400F72B31 /* GTMNSEnumerator+Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSEnumerator+Filter.h"; sourceTree = "<group>"; };
@@ -185,6 +183,8 @@
 		F426B7F70E0AB75A00348386 /* Foo1b.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo1b.gcov; sourceTree = "<group>"; };
 		F426B7F80E0AB75A00348386 /* Foo2.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo2.gcov; sourceTree = "<group>"; };
 		F426B83B0E0AC13A00348386 /* Foo3.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo3.gcov; sourceTree = "<group>"; };
+		F43708680ED506C6000DBE9F /* DebugLeopardOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DebugLeopardOrLater.xcconfig; path = Project/DebugLeopardOrLater.xcconfig; sourceTree = "<group>"; };
+		F43708690ED506C6000DBE9F /* ReleaseLeopardOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ReleaseLeopardOrLater.xcconfig; path = Project/ReleaseLeopardOrLater.xcconfig; sourceTree = "<group>"; };
 		F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMScriptRunner.h; sourceTree = "<group>"; };
 		F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMScriptRunner.m; sourceTree = "<group>"; };
 		F485B3220E4C831200899594 /* NoEndingNewline.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NoEndingNewline.gcov; sourceTree = "<group>"; };
@@ -363,10 +363,10 @@
 		F4138F270D75200B00F72B31 /* XcodeConfig */ = {
 			isa = PBXGroup;
 			children = (
+				F43708680ED506C6000DBE9F /* DebugLeopardOrLater.xcconfig */,
+				F43708690ED506C6000DBE9F /* ReleaseLeopardOrLater.xcconfig */,
 				F426B7420E0A261000348386 /* DebugUnittest.xcconfig */,
 				F426B7430E0A261000348386 /* ReleaseUnittest.xcconfig */,
-				F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */,
-				F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */,
 			);
 			path = XcodeConfig;
 			sourceTree = "<group>";
@@ -729,23 +729,26 @@
 		};
 		C05733CC08A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F4138F280D75202E00F72B31 /* DebugTigerOrLater.xcconfig */;
+			baseConfigurationReference = F43708680ED506C6000DBE9F /* DebugLeopardOrLater.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=macosx10.5*]" = (
+					i386,
+					ppc,
+				);
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/TigerGcov",
-				);
 				OTHER_LDFLAGS = "-lgcov";
 			};
 			name = Debug;
 		};
 		C05733CD08A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F4138F290D75202E00F72B31 /* ReleaseTigerOrLater.xcconfig */;
+			baseConfigurationReference = F43708690ED506C6000DBE9F /* ReleaseLeopardOrLater.xcconfig */;
 			buildSettings = {
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				"ARCHS[sdk=macosx10.5*]" = (
+					i386,
+					ppc,
+				);
 			};
 			name = Release;
 		};

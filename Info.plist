@@ -75,6 +75,8 @@
 	<string>CoverStory Help</string>
 	<key>CFBundleHelpBookName</key>
 	<string>CoverStory Help</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.5.0</string>
 	<key>CFBundleIconFile</key>
 	<string>CoverStory</string>
 	<key>CFBundleIdentifier</key>

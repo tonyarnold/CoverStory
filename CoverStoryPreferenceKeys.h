@@ -17,8 +17,6 @@
 //  the License.
 //
 
-#import "GTMDefines.h"
-
 // Should we filter out system sources
 #define kCoverStoryHideSystemSourcesKey @"hideSystemSources"  // Boolean
 #define kCoverStorySystemSourcesPatternsKey @"systemSourcesPatterns"  // NSArray of NSString

@@ -459,7 +459,10 @@ static NSString *const kPrefsToWatch[] = {
   
   // make a scratch directory
   NSFileManager *fm = [NSFileManager defaultManager];
-  if ([fm gtm_createFullPathToDirectory:tempDir attributes:nil]) {
+  if ([fm createDirectoryAtPath:tempDir
+    withIntermediateDirectories:YES
+                     attributes:nil
+                          error:NULL]) {
     
     // now write out our file
     NSString *fileListPath = [tempDir stringByAppendingPathComponent:@"filelists.txt"];

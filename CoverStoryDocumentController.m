@@ -18,7 +18,6 @@
 //
 
 #import "CoverStoryDocumentController.h"
-#import "GTMDefines.h"
 
 @implementation CoverStoryDocumentController
 

@@ -319,11 +319,11 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
                     complexity:(NSInteger*)complexity {
   if (!start || !end || !complexity || !scanner) return NO;
   if (![scanner scanString:@"Line:" intoString:NULL]) return NO;
-  if (![scanner scanInt:start]) return NO;
+  if (![scanner scanInteger:start]) return NO;
   if (![scanner scanString:@"To:" intoString:NULL]) return NO;
-  if (![scanner scanInt:end]) return NO;
+  if (![scanner scanInteger:end]) return NO;
   if (![scanner scanString:@"Complexity:" intoString:NULL]) return NO;
-  if (![scanner scanInt:complexity]) return NO;
+  if (![scanner scanInteger:complexity]) return NO;
   // Risk
   if (![scanner scanUpToString:@"Line:" intoString:NULL]) return NO;
   return YES;
