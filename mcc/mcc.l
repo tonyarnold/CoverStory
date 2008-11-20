@@ -25,6 +25,10 @@
 // Does a variant of McCabe cyclomatic complexity counting of C/C++/ObjC/ObjC++
 
 #include <stdarg.h>
+
+// Provide an value for ECHO to se don't get the flex default.  Some part of out
+// logic below causes some '\', "'", and '"' chars to get echoed.
+# define ECHO do { ; } while (0)
 }
 %{
 
