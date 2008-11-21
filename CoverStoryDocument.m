@@ -287,6 +287,8 @@ static NSString *const kPrefsToWatch[] = {
                                  [e name], [e reason]];
     [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
   }
+
+  // Signal that we're done
   [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
                          withObject:@"ignored"
                       waitUntilDone:NO];
@@ -312,6 +314,8 @@ static NSString *const kPrefsToWatch[] = {
      [e name], [e reason]];
     [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
   }
+  
+  // Signal that we're done
   [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
                          withObject:@"ignored"
                       waitUntilDone:NO];
@@ -350,7 +354,7 @@ static NSString *const kPrefsToWatch[] = {
                    messageType:kCSMessageTypeInfo];
   }
   
-  // we want to back process them by chunks w/in a given directory.  so sort
+  // we want to batch process them by chunks w/in a given directory.  so sort
   // and then break them off into chunks.
   allFilePaths = [allFilePaths sortedArrayUsingSelector:@selector(compare:)];
   NSEnumerator *pathEnum = [allFilePaths objectEnumerator];
@@ -383,6 +387,9 @@ static NSString *const kPrefsToWatch[] = {
         [currentFileList removeAllObjects];
         [currentFileList addObject:[filename lastPathComponent]];
       }
+      
+      // Bail if we get closed
+      if ([self isClosed]) return YES;
     }
     // process whatever what we were collecting when we hit the end
     if (![self processCoverageForFiles:currentFileList
@@ -460,9 +467,10 @@ static NSString *const kPrefsToWatch[] = {
     [fileList appendBytes:&nullByte length:1];
   }
   
-  BOOL result = NO;
   GTMScriptRunner *runner = [GTMScriptRunner runnerWithBash];
   if (!runner) return NO;
+
+  BOOL result = NO;
   
   // make a scratch directory
   NSFileManager *fm = [NSFileManager defaultManager];
@@ -470,16 +478,15 @@ static NSString *const kPrefsToWatch[] = {
     withIntermediateDirectories:YES
                      attributes:nil
                           error:NULL]) {
-    
     // now write out our file
     NSString *fileListPath = [tempDir stringByAppendingPathComponent:@"filelists.txt"];
     if (fileListPath && [fileList writeToFile:fileListPath atomically:YES]) {
       // run gcov (it writes to current directory, so we cd into our dir first)
       // we use xargs to batch up the files into as few of runs of gcov as
       // possible.  (we could use -P [num_cpus] to do things in parallell)
-      NSString *script =
-      [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/xargs -0 %@ -l -o \"%@\" < \"%@\"",
-       tempDir, gcovPath_, folderPath, fileListPath];
+      NSString *script
+        = [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/xargs -0 %@ -l -o \"%@\" < \"%@\"",
+           tempDir, gcovPath_, folderPath, fileListPath];
       
       NSString *stdErr = nil;
       NSString *stdOut = [runner run:script standardError:&stdErr];
@@ -509,8 +516,8 @@ static NSString *const kPrefsToWatch[] = {
                                                 inDirectory:tempDir];
       NSEnumerator *resultPathsEnum = [resultPaths objectEnumerator];
       NSString *fullPath;
-      while ((fullPath = [resultPathsEnum nextObject])) {
-        // load it and add it to out set
+      while ((fullPath = [resultPathsEnum nextObject]) && ![self isClosed]) {
+        // load it and add it to our set
         CoverStoryCoverageFileData *fileData =
           [CoverStoryCoverageFileData coverageFileDataFromPath:fullPath
                                                messageReceiver:self];
@@ -996,15 +1003,11 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 - (void)close {
-  // No need to synchronize this because it should only ever be called from
-  // main thread
   documentClosed_ = YES;
   [super close];
 }
 
 - (BOOL)isClosed {
-  // No need to synchronize this because it should only ever be called from main
-  // thread.
   return documentClosed_;
 }
 
