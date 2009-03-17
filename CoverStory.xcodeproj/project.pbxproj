@@ -27,7 +27,6 @@
 		8B41D4BE0D85CAB000E60DA4 /* CoverStoryValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */; };
 		8B469EF20D99C25A0042D75D /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8B469EF10D99C25A0042D75D /* mcc.l */; };
 		8B469EF70D99C2AD0042D75D /* mcc.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8B469EF50D99C2630042D75D /* mcc.1 */; };
-		8B469F7F0D99F1420042D75D /* mcc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8B469ED60D99C2160042D75D /* mcc */; };
 		8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */; };
 		8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */; };
 		8BC04E2C0DB0459100C2D1CA /* info.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E290DB0459100C2D1CA /* info.png */; };
@@ -35,7 +34,6 @@
 		8BC04E2E0DB0459100C2D1CA /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E2B0DB0459100C2D1CA /* warning.png */; };
 		8BC4AAB80D94D06100437182 /* CoverStoryCodeViewTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */; };
 		8BCDD8010E09853F006EBB62 /* Reload.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD7FF0E09853F006EBB62 /* Reload.png */; };
-		8BCDD8020E09853F006EBB62 /* Complexity.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD8000E09853F006EBB62 /* Complexity.png */; };
 		8BCDD86E0E0A1C55006EBB62 /* SDK.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD86D0E0A1C55006EBB62 /* SDK.png */; };
 		8BCDD8720E0AA18A006EBB62 /* MessageDrawer.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD8700E0AA18A006EBB62 /* MessageDrawer.png */; };
 		8BCDD8730E0AA18A006EBB62 /* UnitTests.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD8710E0AA18A006EBB62 /* UnitTests.png */; };
@@ -57,13 +55,11 @@
 		F426B7170E0A252900348386 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		F426B71A0E0A254100348386 /* CoverStoryCoverageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */; };
 		F426B7210E0A25AE00348386 /* GTMRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E280D30D81F38700DD304F /* GTMRegex.m */; };
-		F426B7230E0A25BB00348386 /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8B469EF10D99C25A0042D75D /* mcc.l */; };
 		F426B7510E0A275300348386 /* CoverStoryCoverageDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F426B7500E0A275300348386 /* CoverStoryCoverageDataTest.m */; };
 		F426B7F90E0AB75A00348386 /* Foo1a.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B7F60E0AB75A00348386 /* Foo1a.gcov */; };
 		F426B7FA0E0AB75A00348386 /* Foo1b.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B7F70E0AB75A00348386 /* Foo1b.gcov */; };
 		F426B7FB0E0AB75A00348386 /* Foo2.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B7F80E0AB75A00348386 /* Foo2.gcov */; };
 		F426B83C0E0AC13A00348386 /* Foo3.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B83B0E0AC13A00348386 /* Foo3.gcov */; };
-		F439DD750DCF847700147B37 /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8B469EF10D99C25A0042D75D /* mcc.l */; };
 		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; };
 		F485B3230E4C831200899594 /* NoEndingNewline.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F485B3220E4C831200899594 /* NoEndingNewline.gcov */; };
 		F487DCC30E52137C005B47E6 /* testCR.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F487DCC00E52137C005B47E6 /* testCR.gcov */; };
@@ -75,26 +71,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8B469F240D99C50C0042D75D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8B469ED50D99C2160042D75D;
-			remoteInfo = mcc;
-		};
 		F426B7180E0A252E00348386 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F426B70D0E0A24AE00348386;
 			remoteInfo = UnitTests;
-		};
-		F426B7CF0E0A317900348386 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8B469ED50D99C2160042D75D;
-			remoteInfo = mcc;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -115,7 +97,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				8B469F7F0D99F1420042D75D /* mcc in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,7 +134,6 @@
 		8BC4AAB60D94D06100437182 /* CoverStoryCodeViewTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCodeViewTableView.h; sourceTree = "<group>"; };
 		8BC4AAB70D94D06100437182 /* CoverStoryCodeViewTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCodeViewTableView.m; sourceTree = "<group>"; };
 		8BCDD7FF0E09853F006EBB62 /* Reload.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Reload.png; sourceTree = "<group>"; };
-		8BCDD8000E09853F006EBB62 /* Complexity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Complexity.png; sourceTree = "<group>"; };
 		8BCDD86D0E0A1C55006EBB62 /* SDK.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SDK.png; sourceTree = "<group>"; };
 		8BCDD8700E0AA18A006EBB62 /* MessageDrawer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageDrawer.png; sourceTree = "<group>"; };
 		8BCDD8710E0AA18A006EBB62 /* UnitTests.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnitTests.png; sourceTree = "<group>"; };
@@ -319,7 +299,6 @@
 				F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */,
 				F4CA81F00DAAC44F00B4AB10 /* MainMenu.xib */,
 				8BCDD7FF0E09853F006EBB62 /* Reload.png */,
-				8BCDD8000E09853F006EBB62 /* Complexity.png */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
 			);
 			name = Resources;
@@ -459,7 +438,6 @@
 			);
 			dependencies = (
 				F426B7190E0A252E00348386 /* PBXTargetDependency */,
-				8B469F250D99C50C0042D75D /* PBXTargetDependency */,
 			);
 			name = CoverStory;
 			productInstallPath = "$(HOME)/Applications";
@@ -479,7 +457,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				F426B7D00E0A317900348386 /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -523,7 +500,6 @@
 				8BC04E2D0DB0459100C2D1CA /* error.png in Resources */,
 				8BC04E2E0DB0459100C2D1CA /* warning.png in Resources */,
 				8BCDD8010E09853F006EBB62 /* Reload.png in Resources */,
-				8BCDD8020E09853F006EBB62 /* Complexity.png in Resources */,
 				8BCDD86E0E0A1C55006EBB62 /* SDK.png in Resources */,
 				8BCDD8720E0AA18A006EBB62 /* MessageDrawer.png in Resources */,
 				8BCDD8730E0AA18A006EBB62 /* UnitTests.png in Resources */,
@@ -606,7 +582,6 @@
 				8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */,
 				8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */,
 				8BC4AAB80D94D06100437182 /* CoverStoryCodeViewTableView.m in Sources */,
-				F439DD750DCF847700147B37 /* mcc.l in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,7 +591,6 @@
 			files = (
 				F426B71A0E0A254100348386 /* CoverStoryCoverageData.m in Sources */,
 				F426B7210E0A25AE00348386 /* GTMRegex.m in Sources */,
-				F426B7230E0A25BB00348386 /* mcc.l in Sources */,
 				F426B7510E0A275300348386 /* CoverStoryCoverageDataTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -624,20 +598,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8B469F250D99C50C0042D75D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8B469ED50D99C2160042D75D /* mcc */;
-			targetProxy = 8B469F240D99C50C0042D75D /* PBXContainerItemProxy */;
-		};
 		F426B7190E0A252E00348386 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F426B70D0E0A24AE00348386 /* UnitTests */;
 			targetProxy = F426B7180E0A252E00348386 /* PBXContainerItemProxy */;
-		};
-		F426B7D00E0A317900348386 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8B469ED50D99C2160042D75D /* mcc */;
-			targetProxy = F426B7CF0E0A317900348386 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

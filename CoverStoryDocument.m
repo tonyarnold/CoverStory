@@ -45,10 +45,13 @@ typedef enum {
 - (void)openFileInThread:(NSString*)path;
 - (void)setOpenThreadState:(BOOL)threadRunning;
 - (BOOL)processCoverageForFolder:(NSString *)path;
+#if USE_NSOPERATION
+- (void)cleanupTempDir:(NSString *)tempDir;
+- (void)loadCoveragePath:(NSString *)fullPath;
+#endif
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
-- (void)configureCoverageVsComplexityColumns;
 - (void)addMessageFromThread:(NSString *)message 
                         path:(NSString*)path 
                  messageType:(CSMessageType)msgType;
@@ -63,7 +66,6 @@ static NSString *const kPrefsToWatch[] = {
   kCoverStorySystemSourcesPatternsKey,
   kCoverStoryHideUnittestSourcesKey,
   kCoverStoryUnittestSourcesPatternsKey,
-  kCoverStoryShowComplexityKey,
   kCoverStoryRemoveCommonSourcePrefix,
   kCoverStoryMissedLineColorKey,
   kCoverStoryUnexecutableLineColorKey,
@@ -79,8 +81,6 @@ static NSString *const kPrefsToWatch[] = {
     [NSDictionary dictionaryWithObjectsAndKeys:
      [NSNumber numberWithInt:kCoverStoryFilterStringTypeWildcardPattern],
      kCoverStoryFilterStringTypeKey,
-     [NSNumber numberWithBool:NO], // defaults to coverage
-     kCoverStoryShowComplexityKey,
      [NSNumber numberWithBool:YES],
      kCoverStoryRemoveCommonSourcePrefix,
      nil];
@@ -113,6 +113,10 @@ static NSString *const kPrefsToWatch[] = {
     wrapper      = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
     infoIcon_    = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
     
+#if USE_NSOPERATION
+    opQueue_ = [[NSOperationQueue alloc] init];
+#endif
+    
     // Find gcov. Might want to support a default for this, but this should
     // cover most users.
     NSString *gcovPath = nil;
@@ -137,6 +141,9 @@ static NSString *const kPrefsToWatch[] = {
   [filterString_ release];
   [currentAnimation_ release];
   [commonPathPrefix_ release];
+#if USE_NSOPERATION
+  [opQueue_ release];
+#endif
   [gcovPath_ release];
 #if DEBUG
   [startDate_ release];
@@ -176,7 +183,14 @@ static NSString *const kPrefsToWatch[] = {
   NSSortDescriptor *ascending = [[[NSSortDescriptor alloc] initWithKey:@"coverage"
                                                              ascending:YES] autorelease];
   [sourceFilesController_ setSortDescriptors:[NSArray arrayWithObject:ascending]];
-  [self configureCoverageVsComplexityColumns];
+
+  // TODO(dmaclach): move this into the xib since we don't have a toggle anymore
+  [codeTableView_ cs_setValueTransformerOfColumn:@"hitCount"
+                                              to:@"CoverageLineDataToHitCountTransformer"];
+  [sourceFilesTableView_ cs_setValueTransformerOfColumn:@"coverage"
+                                                     to:@"CoverageFileDataToCoveragePercentageTransformer"];
+  [sourceFilesTableView_ cs_setSortKeyOfColumn:@"coverage" to:@"coverage"];
+  [sourceFilesTableView_ cs_setHeaderOfColumn:@"coverage" to:@"%"];
 }
 
 - (NSString *)windowNibName {
@@ -287,8 +301,12 @@ static NSString *const kPrefsToWatch[] = {
                                  [e name], [e reason]];
     [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
   }
+#if USE_NSOPERATION
+  // wait for all the operations to finish
+  [opQueue_ waitUntilAllOperationsAreFinished];
+#endif
 
-  // Signal that we're done
+  // signal that we're done
   [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
                          withObject:@"ignored"
                       waitUntilDone:NO];
@@ -314,8 +332,12 @@ static NSString *const kPrefsToWatch[] = {
      [e name], [e reason]];
     [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
   }
+#if USE_NSOPERATION
+  // wait for all the operations to finish
+  [opQueue_ waitUntilAllOperationsAreFinished];
+#endif
   
-  // Signal that we're done
+  // signal that we're done
   [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
                          withObject:@"ignored"
                       waitUntilDone:NO];
@@ -426,6 +448,46 @@ static NSString *const kPrefsToWatch[] = {
   return result;
 }
 
+#if USE_NSOPERATION
+- (void)cleanupTempDir:(NSString *)tempDir {
+  @try {
+    // nuke our temp dir tree
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm removeFileAtPath:tempDir handler:nil]) {
+      [self addMessageFromThread:@"failed to remove our tempdir"
+                            path:tempDir
+                     messageType:kCSMessageTypeError];
+    }
+  }
+  @catch (NSException * e) {
+    NSString *msg
+      = [NSString stringWithFormat:@"Internal error trying to cleanup tempdir (%@ - %@).",
+         [e name], [e reason]];
+    [self addMessageFromThread:msg messageType:kCSMessageTypeError];
+  }
+}
+
+- (void)loadCoveragePath:(NSString *)fullPath {
+  @try {
+    // load it and add it to our set
+    CoverStoryCoverageFileData *fileData
+      = [CoverStoryCoverageFileData coverageFileDataFromPath:fullPath
+                                             messageReceiver:self];
+    if (fileData) {
+      [self performSelectorOnMainThread:@selector(addFileData:)
+                             withObject:fileData
+                          waitUntilDone:NO];
+    }
+  }
+  @catch (NSException * e) {
+    NSString *msg
+      = [NSString stringWithFormat:@"Internal error trying load coverage data (%@ - %@).",
+         [e name], [e reason]];
+    [self addMessageFromThread:msg messageType:kCSMessageTypeError];
+  }
+}
+#endif
+
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath {
   
@@ -478,6 +540,14 @@ static NSString *const kPrefsToWatch[] = {
     withIntermediateDirectories:YES
                      attributes:nil
                           error:NULL]) {
+#if USE_NSOPERATION
+    // create our cleanup op since it will use the other ops as dependencies
+    NSInvocationOperation *cleanupOp
+      = [[[NSInvocationOperation alloc] initWithTarget:self
+                                              selector:@selector(cleanupTempDir:)
+                                                object:tempDir] autorelease];
+#endif
+    
     // now write out our file
     NSString *fileListPath = [tempDir stringByAppendingPathComponent:@"filelists.txt"];
     if (fileListPath && [fileList writeToFile:fileListPath atomically:YES]) {
@@ -517,6 +587,18 @@ static NSString *const kPrefsToWatch[] = {
       NSEnumerator *resultPathsEnum = [resultPaths objectEnumerator];
       NSString *fullPath;
       while ((fullPath = [resultPathsEnum nextObject]) && ![self isClosed]) {
+#if USE_NSOPERATION
+        NSInvocationOperation *op
+          = [[[NSInvocationOperation alloc] initWithTarget:self
+                                                  selector:@selector(loadCoveragePath:)
+                                                    object:fullPath] autorelease];
+        // cleanup can't be done until all our other ops are done
+        [cleanupOp addDependency:op];
+        
+        // queue it up
+        [opQueue_ addOperation:op];
+        result = YES;
+#else
         // load it and add it to our set
         CoverStoryCoverageFileData *fileData =
           [CoverStoryCoverageFileData coverageFileDataFromPath:fullPath
@@ -527,6 +609,7 @@ static NSString *const kPrefsToWatch[] = {
                               waitUntilDone:NO];
           result = YES;
         }
+#endif
       }
     } else {
       
@@ -535,12 +618,17 @@ static NSString *const kPrefsToWatch[] = {
                      messageType:kCSMessageTypeError];
     }
     
+#if USE_NSOPERATION
+    // now put in the cleanup operation
+    [opQueue_ addOperation:cleanupOp];
+#else
     // nuke our temp dir tree
     if (![fm removeFileAtPath:tempDir handler:nil]) {
       [self addMessageFromThread:@"failed to remove our tempdir"
                             path:tempDir
                      messageType:kCSMessageTypeError];
     }
+#endif
   }
   
   return result;
@@ -578,10 +666,6 @@ static NSString *const kPrefsToWatch[] = {
         // if we're hiding them then update because the pattern changed
         [sourceFilesController_ rearrangeObjects];
       }
-    } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryShowComplexityKey]]) {
-      [self configureCoverageVsComplexityColumns];
-      [sourceFilesTableView_ reloadData];
-      [codeTableView_ reloadData];
     } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryRemoveCommonSourcePrefix]]) {
       // we to recalc the common prefix, so trigger a rearrange
       [sourceFilesController_ rearrangeObjects];
@@ -795,39 +879,6 @@ static NSString *const kPrefsToWatch[] = {
 
 - (NSString *)commonPathPrefix {
   return commonPathPrefix_;
-}
-
-- (void)configureCoverageVsComplexityColumns {
-  NSString *const hitCountTransformerNames[] = { 
-    @"CoverageLineDataToHitCountTransformer",
-    @"CoverageLineDataToComplexityTransformer"
-  };
-  NSString *const coverageTransformerNames[] = {
-    @"CoverageFileDataToCoveragePercentageTransformer",
-    @"CoverageFileDataToComplexityTransformer"
-  };
-  
-  NSString *const coverageSortKeyNames[] = {
-    @"coverage",
-    @"maxComplexity"
-  };
-  
-  NSString *const coverageTitles[] = {
-    @"%",
-    @"Max"
-  };
-  
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  int displayIndex = [defaults boolForKey:kCoverStoryShowComplexityKey] ? 1 : 0;
-  
-  [codeTableView_ cs_setValueTransformerOfColumn:@"hitCount"
-                                              to:hitCountTransformerNames[displayIndex]];
-  [sourceFilesTableView_ cs_setValueTransformerOfColumn:@"coverage"
-                                                     to:coverageTransformerNames[displayIndex]];
-  [sourceFilesTableView_ cs_setSortKeyOfColumn:@"coverage"
-                                            to:coverageSortKeyNames[displayIndex]];
-  [sourceFilesTableView_ cs_setHeaderOfColumn:@"coverage"
-                                           to:coverageTitles[displayIndex]];
 }
 
 // Moves our searchfield to display our spinner and starts it spinning.

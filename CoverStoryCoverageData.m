@@ -20,9 +20,6 @@
 #import "CoverStoryCoverageData.h"
 #import "GTMRegex.h"
 
-// this will return something we need to free
-char *mcc(const char* untf8String);
-
 // helper for building the string to make sure rounding doesn't get us
 static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
                           NSString **outCoverageString) {
@@ -97,12 +94,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 
 @interface CoverStoryCoverageFileData (PrivateMethods)
 - (void)updateCounts;
-- (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
-- (NSString*)generateSource;
-- (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
-                         start:(NSInteger*)start
-                           end:(NSInteger*)end
-                    complexity:(NSInteger*)complexity;
 - (NSArray *)queuedWarnings;
 @end
 
@@ -249,7 +240,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
         [lines_ removeObjectsInRange:NSMakeRange(0,5)];
         // get out counts
         [self updateCounts];
-        [self calculateComplexityWithMessageReceiver:receiver];
       } else {
         [receiver coverageErrorForPath:path message:@"illegal file format"];
 
@@ -303,75 +293,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   return warnings_;
 }
 
-- (NSString*)generateSource {
-  NSMutableString *source = [NSMutableString string];
-  NSEnumerator *dataEnum = [lines_ objectEnumerator];
-  CoverStoryCoverageLineData* dataPoint;
-  while ((dataPoint = [dataEnum nextObject]) != nil) {
-    [source appendFormat:@"%@\n", [dataPoint line]];
-  }
-  return source;
-}
-
-- (BOOL)scanMccLineFromScanner:(NSScanner*)scanner
-                         start:(NSInteger*)start
-                           end:(NSInteger*)end
-                    complexity:(NSInteger*)complexity {
-  if (!start || !end || !complexity || !scanner) return NO;
-  if (![scanner scanString:@"Line:" intoString:NULL]) return NO;
-  if (![scanner scanInteger:start]) return NO;
-  if (![scanner scanString:@"To:" intoString:NULL]) return NO;
-  if (![scanner scanInteger:end]) return NO;
-  if (![scanner scanString:@"Complexity:" intoString:NULL]) return NO;
-  if (![scanner scanInteger:complexity]) return NO;
-  // Risk
-  if (![scanner scanUpToString:@"Line:" intoString:NULL]) return NO;
-  return YES;
-}
-
-- (BOOL)calculateComplexityWithMessageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
-  maxComplexity_ = 0;
-  NSString *source = [self generateSource];
-  NSString *val = nil;
-
-  char *mccOutput = mcc([source UTF8String]);
-  if (mccOutput) {
-    val = [[[NSString alloc] initWithBytesNoCopy:mccOutput
-                                          length:strlen(mccOutput)
-                                        encoding:NSUTF8StringEncoding
-                                    freeWhenDone:YES] autorelease];
-  }
-
-  if (!val) {
-    [receiver coverageErrorForPath:[self sourcePath]
-                           message:@"Code complexity analysis failed"];
-    return NO;
-  }
-  NSScanner *complexityScanner = [NSScanner scannerWithString:val];
-  NSInteger lastEndLine = 0;
-  while (![complexityScanner isAtEnd]) {
-    NSInteger startLine;
-    NSInteger endLine;
-    NSInteger complexity;
-    if ([self scanMccLineFromScanner:complexityScanner
-                               start:&startLine
-                                 end:&endLine
-                          complexity:&complexity]) {
-      if (complexity > maxComplexity_) {
-        maxComplexity_ = complexity;
-      }
-      [[lines_ objectAtIndex:(startLine - 1)] setComplexity:complexity];
-      lastEndLine = endLine;
-    } else {
-      [receiver coverageErrorForPath:[self sourcePath]
-                             message:@"Code complexity analysis unable to parse "
-                                      "file somewhere after line %d", lastEndLine];
-      return NO;
-    }
-  }
-  return YES;
-}
-
 - (NSArray *)lines {
   return lines_;
 }
@@ -415,10 +336,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
       *outCoverage = coverage;
     }
   }
-}
-
-- (NSInteger)maxComplexity {
-  return maxComplexity_;
 }
 
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
@@ -524,12 +441,12 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   // file.
   // TODO: this is really a hack, we would be better (since these currently are
   // line specific) is to extend the structure to allow warnings to be hung on
-  // the line data along w/ the complexity and hit counts.  Then w/in the UI
-  // indicate how many warnings are on a file in the files list, and in the
-  // source display show the warnings inline (sorta like Xcode 3).  The other
-  // option would be to keep this basic structure, but be able to relay info w/
-  // the warning so our warning/error ui coul take clicks and open to the right
-  // file/line so the user can take action on the message.
+  // the line data along w/ the hit counts.  Then w/in the UI indicate how many
+  // warnings are on a file in the files list, and in the source display show
+  // the warnings inline (sorta like Xcode 3).  The other option would be to
+  // keep this basic structure, but be able to relay info w/ the warning so our
+  // warning/error ui coul take clicks and open to the right file/line so the
+  // user can take action on the message.
   NSEnumerator *enumerator = [[fileData queuedWarnings] objectEnumerator];
   NSString *warning;
   while ((warning = [enumerator nextObject])) {
@@ -605,14 +522,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 
 - (NSInteger)hitCount {
   return hitCount_;
-}
-
-- (void)setComplexity:(NSInteger)complexity {
-  complexity_ = complexity;
-}
-
-- (NSInteger)complexity {
-  return complexity_;
 }
 
 - (void)addHits:(NSInteger)newHits {

@@ -22,5 +22,4 @@
 @interface CoverStoryApplicationDelegate : NSObject
 - (IBAction)toggleSDKSourcesShown:(id)sender;
 - (IBAction)toggleUnittestSourcesShown:(id)sender;
-- (IBAction)toggleComplexityShown:(id)sender;
 @end

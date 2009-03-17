@@ -25,9 +25,6 @@
 #define kCoverStoryHideUnittestSourcesKey @"hideUnittestSources"  // Boolean
 #define kCoverStoryUnittestSourcesPatternsKey @"unittestSourcesPatterns"  // NSArray of NSString
 
-// Are we showing coverage or complexity
-#define kCoverStoryShowComplexityKey @"showComplexity"  // Boolean
-
 // Should we remove common prefixes in the source list
 #define kCoverStoryRemoveCommonSourcePrefix @"removeCommonSourcePrefix"  // Boolean
 

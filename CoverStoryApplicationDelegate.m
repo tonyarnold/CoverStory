@@ -53,8 +53,5 @@
 - (IBAction)toggleUnittestSourcesShown:(id)sender {
   [self toggleKey:kCoverStoryHideUnittestSourcesKey];
 }
-- (IBAction)toggleComplexityShown:(id)sender {
-  [self toggleKey:kCoverStoryShowComplexityKey];
-}
 
 @end

@@ -22,6 +22,10 @@
 #import "CoverStoryCodeViewTableView.h"
 #import "CoverStoryCoverageData.h"
 
+#ifndef USE_NSOPERATION
+  #define USE_NSOPERATION 0
+#endif
+
 @class CoverStoryDocument;
 
 @interface CoverStoryArrayController : NSArrayController {
@@ -51,6 +55,9 @@
   unsigned int numFileDatas_;
   NSViewAnimation *currentAnimation_;
   NSString *commonPathPrefix_;
+#if USE_NSOPERATION
+  NSOperationQueue *opQueue_;
+#endif
   NSString *gcovPath_;
 
 #if DEBUG

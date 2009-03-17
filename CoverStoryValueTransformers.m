@@ -66,47 +66,6 @@
 
 @end
 
-// Transformer for changing Line Data to Complexity.
-// Used for first column of source code table.
-@interface CoverageLineDataToComplexityTransformer : NSValueTransformer
-@end
-
-@implementation CoverageLineDataToComplexityTransformer
-
-+ (Class)transformedValueClass {
-  return [NSAttributedString class];
-}
-
-+ (BOOL)allowsReverseTransformation {
-  return NO;
-}
-
-- (id)transformedValue:(id)value {
-  NSAssert([value isKindOfClass:[CoverStoryCoverageLineData class]], 
-           @"Only handle CoverStoryCoverageLineData");
-  CoverStoryCoverageLineData *data = (CoverStoryCoverageLineData*)value;
-  // Draw the hitcount/complexity
-  NSInteger count = [data complexity];
-  
-  NSString *displayString = @"";
-  NSDictionary *attributes = nil;
-  if (count != 0) {
-    NSMutableParagraphStyle *pStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
-    [pStyle setAlignment:NSRightTextAlignment];
-    [pStyle setMinimumLineHeight:13];
-    
-    attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                  pStyle, NSParagraphStyleAttributeName,
-                  nil];
-    
-    displayString = [NSString stringWithFormat:@"%d", count];
-  }
-  return [[[NSAttributedString alloc] initWithString:displayString
-                                          attributes:attributes] autorelease];
-}
-
-@end
-
 // Transformer for changing Line Data to source lines.
 // Used for second column of source code table.
 @interface CoverageLineDataToSourceLineTransformer : NSValueTransformer
@@ -253,59 +212,6 @@ const float kGoodCoverage = 75.0f;
     hue = redHue;
   } else if (coverage < kGoodCoverage) {
     hue = redHue + (greenHue * (coverage - kBadCoverage) / (kGoodCoverage - kBadCoverage));
-  } else {
-    hue = greenHue;
-  }
-  NSColor *textColor = [NSColor colorWithCalibratedHue:hue
-                                            saturation:saturation
-                                            brightness:brightness
-                                                 alpha:1.0];
-  NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                              textColor, NSForegroundColorAttributeName, 
-                              nil];
-  return [[[NSAttributedString alloc] initWithString:coverageString
-                                          attributes:attributes] autorelease];
-}
-
-@end
-
-// Transformer for changing file data to complexity.
-// Used for second column of files table.
-@interface CoverageFileDataToComplexityTransformer : NSValueTransformer
-@end
-
-@implementation CoverageFileDataToComplexityTransformer
-
-const float kBadComplexity = 50.0f;
-const float kGoodComplexity = 5.0f;  // keeps things up to about 15 still green
-
-+ (Class)transformedValueClass {
-  return [NSAttributedString class];
-}
-
-+ (BOOL)allowsReverseTransformation {
-  return NO;
-}
-
-- (id)transformedValue:(id)value {
-  NSAssert([value isKindOfClass:[CoverStoryCoverageFileData class]], 
-           @"Only handle CoverStoryCoverageFileData");
-  CoverStoryCoverageFileData *data = (CoverStoryCoverageFileData *)value;
-  NSInteger maxComplexity = [data maxComplexity];
-  NSString *coverageString = [NSString stringWithFormat:@"%d", maxComplexity];
-  float redHue = 0;
-  float greenHue = 120.0f/360.0f;
-  float hue = 0;
-  float saturation = 1.0f;
-  float brightness = 0.75f;
-  if (maxComplexity > kBadComplexity) {
-    hue = redHue;
-  } else if (maxComplexity > kGoodComplexity) {
-    // The higher the complexity, the less green we want, so subtract from 1.0
-    // to invert the fraction of "bad".
-    float percentComplex =
-      ((maxComplexity - kGoodComplexity) / (kBadComplexity - kGoodComplexity));
-    hue = redHue + (greenHue * (1.0f - percentComplex));
   } else {
     hue = greenHue;
   }

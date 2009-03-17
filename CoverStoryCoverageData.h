@@ -62,7 +62,6 @@ enum {
   NSInteger hitLines_;
   NSInteger codeLines_;
   NSInteger nonfeasible_;
-  NSInteger maxComplexity_;
   NSString *sourcePath_;
   void *userData_;
   NSMutableArray *warnings_;
@@ -73,7 +72,6 @@ enum {
 - (id)initWithPath:(NSString *)path
    messageReceiver:(id<CoverStoryCoverageProcessingProtocol> )receiver;
 - (NSArray *)lines;
-- (NSInteger)maxComplexity;
 - (NSNumber *)coverage; // this is only vended for the table to sort with
 - (NSString *)sourcePath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
@@ -105,7 +103,6 @@ enum {
 @interface CoverStoryCoverageLineData : NSObject {
  @private
   NSInteger hitCount_;  // how many times this line has been hit
-  NSInteger complexity_;
   NSString *line_;  //  the line
 }
 
@@ -114,6 +111,4 @@ enum {
 - (NSString*)line;
 - (NSInteger)hitCount;
 - (void)addHits:(NSInteger)newHits;
-- (void)setComplexity:(NSInteger)complexity;
-- (NSInteger)complexity;
 @end

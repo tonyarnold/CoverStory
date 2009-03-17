@@ -20,14 +20,13 @@
   struct TestDataRecord {
     NSString *line;
     NSInteger hitCount;
-    NSInteger complexity;
   } testData[] = {
-    { nil, 0, 0 },
-    { nil, 1, 1 },
-    { @"line", 0, 0 },
-    { @"line2", 10, 2 },
-    { @"line3", kCoverStoryNotExecutedMarker, 0 },
-    { @"line4", kCoverStoryNonFeasibleMarker, 0 },
+    { nil, 0 },
+    { nil, 1 },
+    { @"line", 0 },
+    { @"line2", 10 },
+    { @"line3", kCoverStoryNotExecutedMarker },
+    { @"line4", kCoverStoryNonFeasibleMarker },
   };
   for (size_t x = 0; x < sizeof(testData)/sizeof(struct TestDataRecord); ++x) {
     CoverStoryCoverageLineData *data =
@@ -36,8 +35,6 @@
     STAssertNotNil(data, nil);
     STAssertEqualObjects([data line], testData[x].line, @"index %u", x);
     STAssertEquals([data hitCount], testData[x].hitCount, @"index %u", x);
-    [data setComplexity:testData[x].complexity];
-    STAssertEquals([data complexity], testData[x].complexity, @"index %u", x);
     
     STAssertGreaterThan([[data description] length], 5U, @"index %u", x);
     
@@ -82,18 +79,17 @@
   struct TestDataRecord {
     NSString *name;
     NSString *sourcePath;
-    int maxComplexity;
     NSInteger numberTotalLines;
     NSInteger numberCodeLines;
     NSInteger numberHitCodeLines;
     NSInteger numberNonFeasibleLines;
     float coverage;
   } testData[] = {
-    { @"Foo1a", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
-    { @"Foo1b", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
-    { @"Foo2", @"Bar.m", 0, 15, 4, 2, 5, 50.0f },
-    { @"Foo3", @"mcctest.c", 7, 64, 18, 0, 0, 0.0f },
-    { @"NoEndingNewline", @"Baz.m", 0, 11, 8, 6, 0, 75.0f },
+    { @"Foo1a", @"Foo.m", 11, 8, 6, 0, 75.0f },
+    { @"Foo1b", @"Foo.m", 11, 8, 6, 0, 75.0f },
+    { @"Foo2", @"Bar.m", 15, 4, 2, 5, 50.0f },
+    { @"Foo3", @"mcctest.c", 64, 18, 0, 0, 0.0f },
+    { @"NoEndingNewline", @"Baz.m", 11, 8, 6, 0, 75.0f },
   };
   for (size_t x = 0; x < sizeof(testData)/sizeof(struct TestDataRecord); ++x) {
     NSString *path = [testBundle pathForResource:testData[x].name
@@ -105,9 +101,6 @@
     STAssertNotNil(data, @"index %u", x);
     STAssertEquals([[data lines] count],
                    (unsigned)testData[x].numberTotalLines,
-                   @"index %u", x);
-    STAssertEquals([data maxComplexity],
-                   testData[x].maxComplexity,
                    @"index %u", x);
     STAssertEqualObjects([data sourcePath],
                    testData[x].sourcePath,
@@ -142,16 +135,15 @@
   struct TestDataRecord {
     NSString *name;
     NSString *sourcePath;
-    int maxComplexity;
     NSInteger numberTotalLines;
     NSInteger numberCodeLines;
     NSInteger numberHitCodeLines;
     NSInteger numberNonFeasibleLines;
     float coverage;
   } testData[] = {
-    { @"testCR", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
-    { @"testLF", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
-    { @"testCRLF", @"Foo.m", 0, 11, 8, 6, 0, 75.0f },
+    { @"testCR", @"Foo.m", 11, 8, 6, 0, 75.0f },
+    { @"testLF", @"Foo.m", 11, 8, 6, 0, 75.0f },
+    { @"testCRLF", @"Foo.m", 11, 8, 6, 0, 75.0f },
   };
   NSMutableSet *fileContentsSet = [NSMutableSet set];
   STAssertNotNil(fileContentsSet, nil);
@@ -174,9 +166,6 @@
     STAssertNotNil(data, @"index %u", x);
     STAssertEquals([[data lines] count],
                    (unsigned)testData[x].numberTotalLines,
-                   @"index %u", x);
-    STAssertEquals([data maxComplexity],
-                   testData[x].maxComplexity,
                    @"index %u", x);
     STAssertEqualObjects([data sourcePath],
                          testData[x].sourcePath,
