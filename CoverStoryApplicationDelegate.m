@@ -23,6 +23,9 @@
 #import "CoverStoryDocument.h"
 #import "CoverStoryPreferenceKeys.h"
 
+const NSInteger kCoverStorySDKToolbarIconTag = 1026;
+const NSInteger kCoverStoryUnittestToolbarIconTag = 1027;
+
 @implementation CoverStoryApplicationDelegate
 - (void)applicationWillFinishLaunching:(NSNotification *)notification {
   // Most code uses initialize to get the defaults in, but these two classes
@@ -52,6 +55,41 @@
 
 - (IBAction)toggleUnittestSourcesShown:(id)sender {
   [self toggleKey:kCoverStoryHideUnittestSourcesKey];
+}
+
+-(BOOL)validateToolbarItem:(NSToolbarItem *)theItem {
+  NSInteger tag = [theItem tag];
+  NSString *key = nil;
+  NSString *label = nil;
+  NSString *iconName = nil;
+  if (tag == kCoverStorySDKToolbarIconTag) {
+    key = kCoverStoryHideSystemSourcesKey;
+    label = NSLocalizedString(@"SDK Files", nil);
+    iconName = @"SDK";
+  } else if (tag == kCoverStoryUnittestToolbarIconTag) {
+    key = kCoverStoryHideUnittestSourcesKey;
+    label = NSLocalizedString(@"Unittest Files", nil);
+    iconName = @"UnitTests";
+  }
+  if (key) {
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    BOOL value = [ud boolForKey:key];
+    NSString *labelFormat = nil;
+    NSString *iconFormat = nil;
+    if (value) {
+      labelFormat = NSLocalizedString(@"Show %@", nil); 
+      iconFormat = @"%@";
+    } else {
+      labelFormat = NSLocalizedString(@"Hide %@", nil); 
+      iconFormat = @"%@Hide";
+    }
+    NSString *fullLabel = [NSString stringWithFormat:labelFormat, label];
+    NSString *fullIcon = [NSString stringWithFormat:iconFormat, iconName];
+    [theItem setLabel:fullLabel];
+    NSImage *image = [NSImage imageNamed:fullIcon];
+    [theItem setImage:image];
+  }
+  return YES;
 }
 
 @end
