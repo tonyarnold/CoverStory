@@ -22,17 +22,15 @@
 #import "CoverStoryFilePredicate.h"
 #import "CoverStoryDocument.h"
 #import "CoverStoryPreferenceKeys.h"
-
-const NSInteger kCoverStorySDKToolbarIconTag = 1026;
-const NSInteger kCoverStoryUnittestToolbarIconTag = 1027;
+#import "CoverStoryValueTransformers.h"
 
 @implementation CoverStoryApplicationDelegate
 - (void)applicationWillFinishLaunching:(NSNotification *)notification {
-  // Most code uses initialize to get the defaults in, but these two classes
-  // won't have initialize called until a window gets created, so we force their
-  // defaults in now so the prefs and menus will have the right states.
+  // Register default values for various classes so that prefs and menus 
+  // will have the right states.
   [CoverStoryFilePredicate registerDefaults];
   [CoverStoryDocument registerDefaults];
+  [CoverageLineDataToSourceLineTransformer registerDefaults];
   
   // Set our document controller up as the shared document controller
   // so we don't get NSDocumentController instead.
@@ -41,55 +39,6 @@ const NSInteger kCoverStoryUnittestToolbarIconTag = 1027;
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)theApplication {
   return NO;
-}
-
-- (void)toggleKey:(NSString*)key {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  BOOL value = [ud boolForKey:key];
-  [ud setBool:!value forKey:key];  
-}
-
-- (IBAction)toggleSDKSourcesShown:(id)sender {
-  [self toggleKey:kCoverStoryHideSystemSourcesKey];
-}
-
-- (IBAction)toggleUnittestSourcesShown:(id)sender {
-  [self toggleKey:kCoverStoryHideUnittestSourcesKey];
-}
-
--(BOOL)validateToolbarItem:(NSToolbarItem *)theItem {
-  NSInteger tag = [theItem tag];
-  NSString *key = nil;
-  NSString *label = nil;
-  NSString *iconName = nil;
-  if (tag == kCoverStorySDKToolbarIconTag) {
-    key = kCoverStoryHideSystemSourcesKey;
-    label = NSLocalizedString(@"SDK Files", nil);
-    iconName = @"SDK";
-  } else if (tag == kCoverStoryUnittestToolbarIconTag) {
-    key = kCoverStoryHideUnittestSourcesKey;
-    label = NSLocalizedString(@"Unittest Files", nil);
-    iconName = @"UnitTests";
-  }
-  if (key) {
-    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    BOOL value = [ud boolForKey:key];
-    NSString *labelFormat = nil;
-    NSString *iconFormat = nil;
-    if (value) {
-      labelFormat = NSLocalizedString(@"Show %@", nil); 
-      iconFormat = @"%@";
-    } else {
-      labelFormat = NSLocalizedString(@"Hide %@", nil); 
-      iconFormat = @"%@Hide";
-    }
-    NSString *fullLabel = [NSString stringWithFormat:labelFormat, label];
-    NSString *fullIcon = [NSString stringWithFormat:iconFormat, iconName];
-    [theItem setLabel:fullLabel];
-    NSImage *image = [NSImage imageNamed:fullIcon];
-    [theItem setImage:image];
-  }
-  return YES;
 }
 
 @end

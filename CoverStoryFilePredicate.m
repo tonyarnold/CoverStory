@@ -18,6 +18,7 @@
 //
 #import "CoverStoryFilePredicate.h"
 #import "CoverStoryPreferenceKeys.h"
+#import "CoverStoryDocument.h"
 #import "GTMRegex.h"
 #import <fnmatch.h>
 
@@ -64,7 +65,7 @@ static NSString * const kFilter = @"filter";
   NSString *path = [object valueForKey:@"sourcePath"];
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-  BOOL hideSDKFiles = [defaults boolForKey:kCoverStoryHideSystemSourcesKey];
+  BOOL hideSDKFiles = [document_ hideSDKFiles];
   if (hideSDKFiles) {
     NSArray *systemSourcesPatterns =
       [defaults arrayForKey:kCoverStorySystemSourcesPatternsKey];
@@ -73,7 +74,7 @@ static NSString * const kFilter = @"filter";
     }
   }
   if (isGood) {
-    BOOL hideUnittestFiles = [defaults boolForKey:kCoverStoryHideUnittestSourcesKey];
+    BOOL hideUnittestFiles = [document_ hideUnittestFiles];
     if (hideUnittestFiles) {
       NSArray *unittestSourcesPatterns =
         [defaults arrayForKey:kCoverStoryUnittestSourcesPatternsKey];

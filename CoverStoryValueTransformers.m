@@ -73,7 +73,7 @@
 
 @implementation CoverageLineDataToSourceLineTransformer
 
-+ (void)initialize {
++ (void)registerDefaults {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   NSDictionary *lineTransformerDefaults =
     [NSDictionary dictionaryWithObjectsAndKeys:

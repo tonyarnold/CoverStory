@@ -25,6 +25,9 @@
 #import "GTMNSFileManager+Path.h"
 #import "GTMNSEnumerator+Filter.h"
 
+const NSInteger kCoverStorySDKToolbarTag = 1026;
+const NSInteger kCoverStoryUnittestToolbarTag = 1027;
+
 @interface NSTableView (CoverStoryTableView)
 - (void)cs_setSortKeyOfColumn:(NSString *)columnName
                            to:(NSString *)sortKeyName;
@@ -62,9 +65,7 @@ typedef enum {
 @end
 
 static NSString *const kPrefsToWatch[] = { 
-  kCoverStoryHideSystemSourcesKey,
   kCoverStorySystemSourcesPatternsKey,
-  kCoverStoryHideUnittestSourcesKey,
   kCoverStoryUnittestSourcesPatternsKey,
   kCoverStoryRemoveCommonSourcePrefix,
   kCoverStoryMissedLineColorKey,
@@ -100,7 +101,7 @@ static NSString *const kPrefsToWatch[] = {
     NSString *path;
     NSFileWrapper *wrapper;
     NSBundle *mainBundle = [NSBundle mainBundle];
-
+    
     path        = [mainBundle pathForResource:@"error" ofType:@"png"];
     wrapper     = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
     errorIcon_  = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
@@ -112,6 +113,10 @@ static NSString *const kPrefsToWatch[] = {
     path         = [mainBundle pathForResource:@"info" ofType:@"png"];
     wrapper      = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
     infoIcon_    = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
+    
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    hideSDKFiles_ = [ud boolForKey:kCoverStoryHideSystemSourcesKey];
+    hideUnittestFiles_ = [ud boolForKey:kCoverStoryHideUnittestSourcesKey];
     
 #if USE_NSOPERATION
     opQueue_ = [[NSOperationQueue alloc] init];
@@ -651,18 +656,13 @@ static NSString *const kPrefsToWatch[] = {
     // Jump to first missing code block
     [self tableView:codeTableView_ handleSelectionKey:NSDownArrowFunctionKey];
   } else if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
-    if ([keyPath isEqualToString:[self valuesKey:kCoverStoryHideSystemSourcesKey]] ||
-        [keyPath isEqualToString:[self valuesKey:kCoverStoryHideUnittestSourcesKey]]) {
-      [sourceFilesController_ rearrangeObjects];
-    } else if ([keyPath isEqualToString:[self valuesKey:kCoverStorySystemSourcesPatternsKey]]) {
-      NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-      if ([defaults boolForKey:kCoverStoryHideSystemSourcesKey]) {
+    if ([keyPath isEqualToString:[self valuesKey:kCoverStorySystemSourcesPatternsKey]]) {
+      if (hideSDKFiles_) {
         // if we're hiding them then update because the pattern changed
         [sourceFilesController_ rearrangeObjects];
       }
     } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryUnittestSourcesPatternsKey]]) {
-      NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-      if ([defaults boolForKey:kCoverStoryHideUnittestSourcesKey]) {
+      if (hideUnittestFiles_) {
         // if we're hiding them then update because the pattern changed
         [sourceFilesController_ rearrangeObjects];
       }
@@ -730,6 +730,27 @@ static NSString *const kPrefsToWatch[] = {
       isGood = YES;
       [menuItem setState:map[i].type == type ? NSOnState : NSOffState];
       break;
+    }
+  }
+  if (!isGood) {
+    NSInteger tag = [menuItem tag];
+    NSString *label = nil;
+    if (tag == kCoverStorySDKToolbarTag) {
+      if (hideSDKFiles_) {
+        label = NSLocalizedString(@"Show SDK Source Files", nil);
+      } else {
+        label = NSLocalizedString(@"Hide SDK Source Files", nil);
+      }
+    } else if (tag == kCoverStoryUnittestToolbarTag) {
+      if (hideUnittestFiles_) {
+        label = NSLocalizedString(@"Show Unittest Source Files", nil);
+      } else {
+        label = NSLocalizedString(@"Hide Unittest Source Files", nil);   
+      }
+    }
+    if (label) {
+      isGood = YES;
+      [menuItem setTitle:label];
     }
   }
   if (!isGood) {
@@ -1060,6 +1081,57 @@ static NSString *const kPrefsToWatch[] = {
 
 - (BOOL)isClosed {
   return documentClosed_;
+}
+
+- (BOOL)hideSDKFiles {
+  return hideSDKFiles_;
+}
+
+- (BOOL)hideUnittestFiles {
+  return hideUnittestFiles_;
+}
+
+- (IBAction)toggleSDKSourcesShown:(id)sender {
+  hideSDKFiles_ = !hideSDKFiles_;
+  [sourceFilesController_ rearrangeObjects];
+}
+
+- (IBAction)toggleUnittestSourcesShown:(id)sender {
+  hideUnittestFiles_ = !hideUnittestFiles_;
+  [sourceFilesController_ rearrangeObjects];
+}
+
+-(BOOL)validateToolbarItem:(NSToolbarItem *)theItem {
+  NSInteger tag = [theItem tag];
+  BOOL value = NO;
+  NSString *label = nil;
+  NSString *iconName = nil;
+  if (tag == kCoverStorySDKToolbarTag) {
+    value = hideSDKFiles_;
+    label = NSLocalizedString(@"SDK Files", nil);
+    iconName = @"SDK";
+  } else if (tag == kCoverStoryUnittestToolbarTag) {
+    value = hideUnittestFiles_;
+    label = NSLocalizedString(@"Unittest Files", nil);
+    iconName = @"UnitTests";
+  }
+  if (label) {
+    NSString *labelFormat = nil;
+    NSString *iconFormat = nil;
+    if (value) {
+      labelFormat = NSLocalizedString(@"Show %@", nil); 
+      iconFormat = @"%@";
+    } else {
+      labelFormat = NSLocalizedString(@"Hide %@", nil); 
+      iconFormat = @"%@Hide";
+    }
+    NSString *fullLabel = [NSString stringWithFormat:labelFormat, label];
+    NSString *fullIcon = [NSString stringWithFormat:iconFormat, iconName];
+    [theItem setLabel:fullLabel];
+    NSImage *image = [NSImage imageNamed:fullIcon];
+    [theItem setImage:image];
+  }
+  return YES;
 }
 
 // Called as a performSelectorOnMainThread, so must check to make sure

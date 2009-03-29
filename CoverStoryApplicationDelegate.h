@@ -20,6 +20,4 @@
 #import <Cocoa/Cocoa.h>
 
 @interface CoverStoryApplicationDelegate : NSObject
-- (IBAction)toggleSDKSourcesShown:(id)sender;
-- (IBAction)toggleUnittestSourcesShown:(id)sender;
 @end

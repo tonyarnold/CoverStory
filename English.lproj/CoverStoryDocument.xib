@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="550"/>
+			<integer value="116"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -625,12 +625,12 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 															<int key="NSTvFlags">1388314624</int>
 															<object class="NSArray" key="NSSortDescriptors">
 																<bool key="EncodedWithXMLCoder">YES</bool>
+																<reference ref="142351396"/>
 																<object class="NSSortDescriptor">
 																	<string key="NSKey">coverage</string>
 																	<bool key="NSAscending">NO</bool>
 																	<string key="NSSelector">compare:</string>
 																</object>
-																<reference ref="142351396"/>
 															</object>
 															<int key="NSColumnAutoresizingStyle">4</int>
 															<int key="NSDraggingSourceMaskForLocal">15</int>
@@ -1857,6 +1857,14 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					</object>
 					<int key="connectionID">621</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">document_</string>
+						<reference key="source" ref="494030230"/>
+						<reference key="destination" ref="665462168"/>
+					</object>
+					<int key="connectionID">622</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -2640,7 +2648,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{569, 550}, {616, 227}}</string>
+					<string>{{569, 777}, {616, 0}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2671,32 +2679,11 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">621</int>
+			<int key="maxID">622</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<object class="IBPartialClassDescription">
-					<string key="className">CoverStoryApplicationDelegate</string>
-					<string key="superclassName">NSObject</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>toggleSDKSourcesShown:</string>
-							<string>toggleUnittestSourcesShown:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">CoverStoryApplicationDelegate.h</string>
-					</object>
-				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">CoverStoryArrayController</string>
 					<string key="superclassName">NSArrayController</string>
@@ -2735,9 +2722,13 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							<string>setUseRegularExpression:</string>
 							<string>setUseWildcardPattern:</string>
 							<string>toggleMessageDrawer:</string>
+							<string>toggleSDKSourcesShown:</string>
+							<string>toggleUnittestSourcesShown:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -2780,8 +2771,17 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string key="className">CoverStoryFilePredicate</string>
 					<string key="superclassName">NSPredicate</string>
 					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">searchField_</string>
-						<string key="NS.object.0">NSSearchField</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>document_</string>
+							<string>searchField_</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>CoverStoryDocument</string>
+							<string>NSSearchField</string>
+						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>

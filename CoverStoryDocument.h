@@ -45,7 +45,9 @@
   IBOutlet NSSearchField *searchField_;
   CGFloat annimationWidth_;
   BOOL documentClosed_;
-                                             
+  BOOL hideSDKFiles_;
+  BOOL hideUnittestFiles_;
+
   NSString *filterString_;
   volatile BOOL openingInThread_;  // Are we opening our files in a thread
   CoverStoryCoverageSet *dataSet_;
@@ -73,6 +75,11 @@
 - (IBAction)setUseWildcardPattern:(id)sender;
 - (IBAction)setUseRegularExpression:(id)sender;
 - (IBAction)toggleMessageDrawer:(id)sender;
+- (IBAction)toggleSDKSourcesShown:(id)sender;
+- (IBAction)toggleUnittestSourcesShown:(id)sender;
 - (void)setCommonPathPrefix:(NSString *)newPrefix;
 - (NSString *)commonPathPrefix;
+- (BOOL)hideSDKFiles;
+- (BOOL)hideUnittestFiles;
+
 @end

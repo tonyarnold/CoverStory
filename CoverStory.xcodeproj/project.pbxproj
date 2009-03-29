@@ -131,6 +131,7 @@
 		8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryDocumentController.m; sourceTree = "<group>"; };
 		8BAAA3E40F7D614F00DF4F12 /* SDKHide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SDKHide.png; sourceTree = "<group>"; };
 		8BAAA3E50F7D614F00DF4F12 /* UnitTestsHide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnitTestsHide.png; sourceTree = "<group>"; };
+		8BAAA4EB0F7DA25200DF4F12 /* CoverStoryValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryValueTransformers.h; sourceTree = "<group>"; };
 		8BBEC3630DD0E02400E5D45D /* openscript.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = openscript.applescript; sourceTree = "<group>"; };
 		8BC04E290DB0459100C2D1CA /* info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = info.png; sourceTree = SOURCE_ROOT; };
 		8BC04E2A0DB0459100C2D1CA /* error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = error.png; sourceTree = SOURCE_ROOT; };
@@ -266,6 +267,7 @@
 				8BA270B60D87C9AE0092884C /* CoverStoryDocumentController.h */,
 				8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */,
 				8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */,
+				8BAAA4EB0F7DA25200DF4F12 /* CoverStoryValueTransformers.h */,
 				8B726FFF0D92B6EB0090C251 /* CoverStoryFilePredicate.h */,
 				8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */,
 			);
