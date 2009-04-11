@@ -41,4 +41,64 @@
   return NO;
 }
 
+- (NSColor *)colorForKey:(NSString *)key {
+  NSUserDefaultsController *defaults
+    = [NSUserDefaultsController sharedUserDefaultsController];
+  id values = [defaults values];
+  NSData *colorData = [values valueForKey:key];
+  NSColor *color = nil;
+  if (colorData) {
+    color = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
+  }
+  return color;
+}
+
+- (void)setColor:(NSColor *)color forKey:(NSString *)key {
+  NSData *colorData = [NSArchiver archivedDataWithRootObject:color];
+  if (colorData) {
+    NSUserDefaultsController *defaults
+      = [NSUserDefaultsController sharedUserDefaultsController];
+    [[defaults defaults] setObject:colorData forKey:key];
+  }
+}
+
+- (NSColor *)executedLineColor {
+  return [self colorForKey:kCoverStoryExecutedLineColorKey];
+}
+
+- (void)setExecutedLineColor:(NSColor *)color {
+  [self setColor:color forKey:kCoverStoryExecutedLineColorKey];
+}
+
+- (NSColor *)missedLineColor {
+  return [self colorForKey:kCoverStoryMissedLineColorKey];
+}
+
+- (void)setMissedLineColor:(NSColor *)color {
+  [self setColor:color forKey:kCoverStoryMissedLineColorKey];
+}
+
+- (NSColor *)unexecutableLineColor {
+  return [self colorForKey:kCoverStoryUnexecutableLineColorKey];
+}
+
+- (void)setUnexecutableLineColor:(NSColor *)color {
+  [self setColor:color forKey:kCoverStoryUnexecutableLineColorKey];
+}
+
+- (NSColor *)nonFeasibleLineColor {
+  return [self colorForKey:kCoverStoryNonFeasibleLineColorKey];
+}
+
+- (void)setNonFeasibleLineColor:(NSColor *)color {
+  [self setColor:color forKey:kCoverStoryNonFeasibleLineColorKey];
+}
+
+- (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key {
+  return ([key isEqualToString:@"nonFeasibleLineColor"] ||
+          [key isEqualToString:@"unexecutableLineColor"] ||
+          [key isEqualToString:@"missedLineColor"] ||
+          [key isEqualToString:@"executedLineColor"]);
+}
+  
 @end

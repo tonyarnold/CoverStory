@@ -24,6 +24,12 @@
 		8B2A9C6D0D84F84600599386 /* gcov.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6A0D84F84600599386 /* gcov.icns */; };
 		8B2A9C6E0D84F84600599386 /* gcno.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6B0D84F84600599386 /* gcno.icns */; };
 		8B2A9C6F0D84F84600599386 /* gcda.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6C0D84F84600599386 /* gcda.icns */; };
+		8B408E5D0F8DBB2E00DF540E /* coverstory.js in Resources */ = {isa = PBXBuildFile; fileRef = 8B408E360F8DB8CF00DF540E /* coverstory.js */; };
+		8B408E810F8E347200DF540E /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B408E7F0F8E347200DF540E /* GTMNSString+HTML.m */; };
+		8B408E830F8E37BE00DF540E /* HTMLExport.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8B408E820F8E37BE00DF540E /* HTMLExport.strings */; };
+		8B4091020F8E6B4900DF540E /* CoverStory.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 8B4091010F8E6B4900DF540E /* CoverStory.sdef */; };
+		8B4091140F8E733D00DF540E /* CoverStoryApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4091130F8E733D00DF540E /* CoverStoryApplication.m */; };
+		8B4094C00F8EC70300DF540E /* NSColor+Scripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4094BF0F8EC70300DF540E /* NSColor+Scripting.m */; };
 		8B41D4BE0D85CAB000E60DA4 /* CoverStoryValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */; };
 		8B469EF20D99C25A0042D75D /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8B469EF10D99C25A0042D75D /* mcc.l */; };
 		8B469EF70D99C2AD0042D75D /* mcc.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8B469EF50D99C2630042D75D /* mcc.1 */; };
@@ -39,6 +45,7 @@
 		8BCDD86E0E0A1C55006EBB62 /* SDK.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD86D0E0A1C55006EBB62 /* SDK.png */; };
 		8BCDD8720E0AA18A006EBB62 /* MessageDrawer.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD8700E0AA18A006EBB62 /* MessageDrawer.png */; };
 		8BCDD8730E0AA18A006EBB62 /* UnitTests.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDD8710E0AA18A006EBB62 /* UnitTests.png */; };
+		8BD8C47C0F8D534D00320FAB /* coverstory.css in Resources */ = {isa = PBXBuildFile; fileRef = 8BD8C47B0F8D534D00320FAB /* coverstory.css */; };
 		8BE1A2090DD0E237008455E6 /* openscript.applescript in AppleScript */ = {isa = PBXBuildFile; fileRef = 8BBEC3630DD0E02400E5D45D /* openscript.applescript */; settings = {ATTRIBUTES = (Debug, ); }; };
 		8BFD54F60B3F009300AFCDA2 /* CoverStoryCoverageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */; };
 		8BFD5B040B3F126D00AFCDA2 /* CoverStoryScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD5B030B3F126D00AFCDA2 /* CoverStoryScroller.m */; };
@@ -117,6 +124,13 @@
 		8B2A9C6A0D84F84600599386 /* gcov.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gcov.icns; sourceTree = "<group>"; };
 		8B2A9C6B0D84F84600599386 /* gcno.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gcno.icns; sourceTree = "<group>"; };
 		8B2A9C6C0D84F84600599386 /* gcda.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gcda.icns; sourceTree = "<group>"; };
+		8B408E360F8DB8CF00DF540E /* coverstory.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = coverstory.js; sourceTree = "<group>"; };
+		8B408E7F0F8E347200DF540E /* GTMNSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSString+HTML.m"; sourceTree = "<group>"; };
+		8B408E800F8E347200DF540E /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+HTML.h"; sourceTree = "<group>"; };
+		8B408E820F8E37BE00DF540E /* HTMLExport.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = HTMLExport.strings; sourceTree = "<group>"; };
+		8B4091010F8E6B4900DF540E /* CoverStory.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.sdef; path = CoverStory.sdef; sourceTree = "<group>"; };
+		8B4091130F8E733D00DF540E /* CoverStoryApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryApplication.m; sourceTree = "<group>"; };
+		8B4094BF0F8EC70300DF540E /* NSColor+Scripting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSColor+Scripting.m"; sourceTree = "<group>"; };
 		8B41D3930D857F1200E60DA4 /* CoverStoryDocumentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryDocumentTypes.h; sourceTree = "<group>"; };
 		8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryValueTransformers.m; sourceTree = "<group>"; };
 		8B469ED60D99C2160042D75D /* mcc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mcc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,6 +156,7 @@
 		8BCDD86D0E0A1C55006EBB62 /* SDK.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SDK.png; sourceTree = "<group>"; };
 		8BCDD8700E0AA18A006EBB62 /* MessageDrawer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageDrawer.png; sourceTree = "<group>"; };
 		8BCDD8710E0AA18A006EBB62 /* UnitTests.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnitTests.png; sourceTree = "<group>"; };
+		8BD8C47B0F8D534D00320FAB /* coverstory.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = coverstory.css; sourceTree = "<group>"; };
 		8BFD54F40B3F009300AFCDA2 /* CoverStoryCoverageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryCoverageData.h; sourceTree = "<group>"; };
 		8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCoverageData.m; sourceTree = "<group>"; };
 		8BFD5B020B3F126D00AFCDA2 /* CoverStoryScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryScroller.h; sourceTree = "<group>"; };
@@ -252,6 +267,8 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8B4094BF0F8EC70300DF540E /* NSColor+Scripting.m */,
+				8B4091130F8E733D00DF540E /* CoverStoryApplication.m */,
 				8BFD613E0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.h */,
 				8BFD613F0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.m */,
 				8B41D3930D857F1200E60DA4 /* CoverStoryDocumentTypes.h */,
@@ -286,6 +303,8 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8B408E360F8DB8CF00DF540E /* coverstory.js */,
+				8BD8C47B0F8D534D00320FAB /* coverstory.css */,
 				8BAAA3E40F7D614F00DF4F12 /* SDKHide.png */,
 				8BAAA3E50F7D614F00DF4F12 /* UnitTestsHide.png */,
 				8BCDD8700E0AA18A006EBB62 /* MessageDrawer.png */,
@@ -298,6 +317,7 @@
 				8B2A9C6A0D84F84600599386 /* gcov.icns */,
 				8B2A9C6B0D84F84600599386 /* gcno.icns */,
 				8B2A9C6C0D84F84600599386 /* gcda.icns */,
+				8B4091010F8E6B4900DF540E /* CoverStory.sdef */,
 				8BBEC3630DD0E02400E5D45D /* openscript.applescript */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				63BC85EA0B4D863400CDC9E5 /* main.css */,
@@ -308,6 +328,7 @@
 				F4CA81F00DAAC44F00B4AB10 /* MainMenu.xib */,
 				8BCDD7FF0E09853F006EBB62 /* Reload.png */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
+				8B408E820F8E37BE00DF540E /* HTMLExport.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -343,6 +364,8 @@
 				F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */,
 				F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */,
 				F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */,
+				8B408E7F0F8E347200DF540E /* GTMNSString+HTML.m */,
+				8B408E800F8E347200DF540E /* GTMNSString+HTML.h */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -495,6 +518,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B408E5D0F8DBB2E00DF540E /* coverstory.js in Resources */,
 				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
 				8BFD651E0B405B6400AFCDA2 /* CoverStory.icns in Resources */,
@@ -514,6 +538,9 @@
 				F426B6EB0E0A1D7E00348386 /* CoverStory Help in Resources */,
 				8BAAA3E60F7D614F00DF4F12 /* SDKHide.png in Resources */,
 				8BAAA3E70F7D614F00DF4F12 /* UnitTestsHide.png in Resources */,
+				8BD8C47C0F8D534D00320FAB /* coverstory.css in Resources */,
+				8B408E830F8E37BE00DF540E /* HTMLExport.strings in Resources */,
+				8B4091020F8E6B4900DF540E /* CoverStory.sdef in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,6 +619,9 @@
 				8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */,
 				8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */,
 				8BC4AAB80D94D06100437182 /* CoverStoryCodeViewTableView.m in Sources */,
+				8B408E810F8E347200DF540E /* GTMNSString+HTML.m in Sources */,
+				8B4091140F8E733D00DF540E /* CoverStoryApplication.m in Sources */,
+				8B4094C00F8EC70300DF540E /* NSColor+Scripting.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

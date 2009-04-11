@@ -32,7 +32,7 @@
 				<string>fold</string>
 			</array>
 			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
+			<string>Editor</string>
 			<key>NSDocumentClass</key>
 			<string>CoverStoryDocument</string>
 		</dict>
@@ -90,10 +90,14 @@
 	<key>CFBundleSignature</key>
 	<string>Coß†</string>
 	<key>CFBundleVersion</key>
-	<string>3.1</string>
+	<string>4.0</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
+	<string>CoverStoryApplication</string>
+    <key>NSAppleScriptEnabled</key>
+    <string>YES</string>
+    <key>OSAScriptingDefinition</key>
+    <string>CoverStory.sdef</string>
 </dict>
 </plist>

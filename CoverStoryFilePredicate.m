@@ -65,7 +65,7 @@ static NSString * const kFilter = @"filter";
   NSString *path = [object valueForKey:@"sourcePath"];
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-  BOOL hideSDKFiles = [document_ hideSDKFiles];
+  BOOL hideSDKFiles = [document_ hideSDKSources];
   if (hideSDKFiles) {
     NSArray *systemSourcesPatterns =
       [defaults arrayForKey:kCoverStorySystemSourcesPatternsKey];
@@ -74,7 +74,7 @@ static NSString * const kFilter = @"filter";
     }
   }
   if (isGood) {
-    BOOL hideUnittestFiles = [document_ hideUnittestFiles];
+    BOOL hideUnittestFiles = [document_ hideUnittestSources];
     if (hideUnittestFiles) {
       NSArray *unittestSourcesPatterns =
         [defaults arrayForKey:kCoverStoryUnittestSourcesPatternsKey];

@@ -43,10 +43,10 @@
   IBOutlet NSDrawer *drawer_;
   IBOutlet NSTextView *messageView_;
   IBOutlet NSSearchField *searchField_;
-  CGFloat annimationWidth_;
+  CGFloat animationWidth_;
   BOOL documentClosed_;
-  BOOL hideSDKFiles_;
-  BOOL hideUnittestFiles_;
+  BOOL hideSDKSources_;
+  BOOL hideUnittestSources_;
 
   NSString *filterString_;
   volatile BOOL openingInThread_;  // Are we opening our files in a thread
@@ -79,7 +79,8 @@
 - (IBAction)toggleUnittestSourcesShown:(id)sender;
 - (void)setCommonPathPrefix:(NSString *)newPrefix;
 - (NSString *)commonPathPrefix;
-- (BOOL)hideSDKFiles;
-- (BOOL)hideUnittestFiles;
-
+- (BOOL)hideSDKSources;
+- (BOOL)hideUnittestSources;
+- (BOOL)completelyOpened; 
+- (id)handleExportHTMLScriptCommand:(NSScriptCommand *)command;
 @end

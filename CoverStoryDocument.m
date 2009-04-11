@@ -24,6 +24,7 @@
 #import "GTMScriptRunner.h"
 #import "GTMNSFileManager+Path.h"
 #import "GTMNSEnumerator+Filter.h"
+#import "GTMNSString+HTML.h"
 
 const NSInteger kCoverStorySDKToolbarTag = 1026;
 const NSInteger kCoverStoryUnittestToolbarTag = 1027;
@@ -35,6 +36,11 @@ const NSInteger kCoverStoryUnittestToolbarTag = 1027;
                                     to:(NSString *)transformerName;
 - (void)cs_setHeaderOfColumn:(NSString*)columnName
                           to:(NSString*)name;
+@end
+
+@interface NSWindow (CoverStoryExportToHTML) 
+// Script command that we want NSWindow to handle
+- (id)cs_handleExportHTMLScriptCommand:(NSScriptCommand *)command;
 @end
 
 typedef enum {
@@ -115,8 +121,8 @@ static NSString *const kPrefsToWatch[] = {
     infoIcon_    = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
     
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    hideSDKFiles_ = [ud boolForKey:kCoverStoryHideSystemSourcesKey];
-    hideUnittestFiles_ = [ud boolForKey:kCoverStoryHideUnittestSourcesKey];
+    hideSDKSources_ = [ud boolForKey:kCoverStoryHideSystemSourcesKey];
+    hideUnittestSources_ = [ud boolForKey:kCoverStoryHideUnittestSourcesKey];
     
 #if USE_NSOPERATION
     opQueue_ = [[NSOperationQueue alloc] init];
@@ -162,9 +168,9 @@ static NSString *const kPrefsToWatch[] = {
   // load something, but the annimation is done by a selector invoke on the main
   // thread so it will happen after we've been called.)
   NSRect searchFieldFrame = [searchField_ frame];
-  annimationWidth_ = searchFieldFrame.origin.x - [spinner_ frame].origin.x;
-  searchFieldFrame.origin.x -= annimationWidth_;
-  searchFieldFrame.size.width += annimationWidth_;
+  animationWidth_ = searchFieldFrame.origin.x - [spinner_ frame].origin.x;
+  searchFieldFrame.origin.x -= animationWidth_;
+  searchFieldFrame.size.width += animationWidth_;
   [searchField_ setFrame:searchFieldFrame];
   
   [sourceFilesController_ addObserver:self 
@@ -657,12 +663,12 @@ static NSString *const kPrefsToWatch[] = {
     [self tableView:codeTableView_ handleSelectionKey:NSDownArrowFunctionKey];
   } else if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
     if ([keyPath isEqualToString:[self valuesKey:kCoverStorySystemSourcesPatternsKey]]) {
-      if (hideSDKFiles_) {
+      if (hideSDKSources_) {
         // if we're hiding them then update because the pattern changed
         [sourceFilesController_ rearrangeObjects];
       }
     } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryUnittestSourcesPatternsKey]]) {
-      if (hideUnittestFiles_) {
+      if (hideUnittestSources_) {
         // if we're hiding them then update because the pattern changed
         [sourceFilesController_ rearrangeObjects];
       }
@@ -736,13 +742,13 @@ static NSString *const kPrefsToWatch[] = {
     NSInteger tag = [menuItem tag];
     NSString *label = nil;
     if (tag == kCoverStorySDKToolbarTag) {
-      if (hideSDKFiles_) {
+      if (hideSDKSources_) {
         label = NSLocalizedString(@"Show SDK Source Files", nil);
       } else {
         label = NSLocalizedString(@"Hide SDK Source Files", nil);
       }
     } else if (tag == kCoverStoryUnittestToolbarTag) {
-      if (hideUnittestFiles_) {
+      if (hideUnittestSources_) {
         label = NSLocalizedString(@"Show Unittest Source Files", nil);
       } else {
         label = NSLocalizedString(@"Hide Unittest Source Files", nil);   
@@ -754,7 +760,11 @@ static NSString *const kPrefsToWatch[] = {
     }
   }
   if (!isGood) {
-    isGood = [super validateMenuItem:menuItem];
+    if (action == @selector(saveDocumentTo:)) {
+      isGood = [self completelyOpened];
+    } else {
+      isGood = [super validateMenuItem:menuItem];
+    }
   }
   return isGood;
 }
@@ -918,12 +928,12 @@ static NSString *const kPrefsToWatch[] = {
     NSString *effect;
     NSRect rect = [searchField_ frame];
     if (starting) {
-      rect.origin.x += annimationWidth_;
-      rect.size.width -= annimationWidth_;
+      rect.origin.x += animationWidth_;
+      rect.size.width -= animationWidth_;
       effect = NSViewAnimationFadeInEffect;
     } else {
-      rect.origin.x -= annimationWidth_;
-      rect.size.width += annimationWidth_;
+      rect.origin.x -= animationWidth_;
+      rect.size.width += animationWidth_;
       effect = NSViewAnimationFadeOutEffect;
     }
     NSValue *endFrameRectValue = [NSValue valueWithRect:rect];
@@ -1035,6 +1045,10 @@ static NSString *const kPrefsToWatch[] = {
                       waitUntilDone:NO];
 }
 
+- (BOOL)completelyOpened {
+  return !openingInThread_;
+}
+
 - (void)addMessageFromThread:(NSString *)message
                  messageType:(CSMessageType)msgType {
   NSDictionary *messageInfo =
@@ -1083,22 +1097,30 @@ static NSString *const kPrefsToWatch[] = {
   return documentClosed_;
 }
 
-- (BOOL)hideSDKFiles {
-  return hideSDKFiles_;
+- (void)setHideSDKSources:(BOOL)hide {
+  hideSDKSources_ = hide;
+  [sourceFilesController_ rearrangeObjects];
 }
 
-- (BOOL)hideUnittestFiles {
-  return hideUnittestFiles_;
+- (void)setHideUnittestSources:(BOOL)hide {
+  hideUnittestSources_ = hide;
+  [sourceFilesController_ rearrangeObjects];
+}
+
+- (BOOL)hideSDKSources {
+  return hideSDKSources_;
+}
+
+- (BOOL)hideUnittestSources {
+  return hideUnittestSources_;
 }
 
 - (IBAction)toggleSDKSourcesShown:(id)sender {
-  hideSDKFiles_ = !hideSDKFiles_;
-  [sourceFilesController_ rearrangeObjects];
+  [self setHideSDKSources:![self hideSDKSources]];
 }
 
 - (IBAction)toggleUnittestSourcesShown:(id)sender {
-  hideUnittestFiles_ = !hideUnittestFiles_;
-  [sourceFilesController_ rearrangeObjects];
+  [self setHideUnittestSources:![self hideUnittestSources]];
 }
 
 -(BOOL)validateToolbarItem:(NSToolbarItem *)theItem {
@@ -1107,11 +1129,11 @@ static NSString *const kPrefsToWatch[] = {
   NSString *label = nil;
   NSString *iconName = nil;
   if (tag == kCoverStorySDKToolbarTag) {
-    value = hideSDKFiles_;
+    value = hideSDKSources_;
     label = NSLocalizedString(@"SDK Files", nil);
     iconName = @"SDK";
   } else if (tag == kCoverStoryUnittestToolbarTag) {
-    value = hideUnittestFiles_;
+    value = hideUnittestSources_;
     label = NSLocalizedString(@"Unittest Files", nil);
     iconName = @"UnitTests";
   }
@@ -1195,6 +1217,197 @@ static NSString *const kPrefsToWatch[] = {
   }
 }
 
+- (NSString *)htmlFileListTableData {
+  NSArray *fileDatas = [sourceFilesController_ arrangedObjects];
+  NSMutableString *filesHtml = [NSMutableString string];
+  struct {
+    CGFloat value;
+    NSString *classString;
+  } percentClassMap[] = {
+    { 25., @"filelessthan25percent" },
+    { 35., @"filelessthan35percent" },
+    { 45., @"filelessthan45percent" },
+    { 55., @"filelessthan55percent" },
+    { 65., @"filelessthan65percent" },
+    { 75., @"filelessthan75percent" },
+  };
+  for (CoverStoryCoverageFileData *fileData in fileDatas) {
+    NSString *name 
+      = [[[fileData sourcePath] lastPathComponent] gtm_stringByEscapingForHTML];
+    NSString *link = [name stringByAppendingPathExtension:@"html"];
+    float percent;
+    [fileData coverageTotalLines:NULL
+                       codeLines:NULL
+                    hitCodeLines:NULL
+                nonFeasibleLines:NULL
+                  coverageString:NULL
+                        coverage:&percent];
+    
+    NSString *classString = @"filegoodcoveragepercent";
+    for (size_t i = 0; 
+         i < sizeof(percentClassMap) / sizeof(percentClassMap[0]); 
+         ++i) {
+      if (percent < percentClassMap[i].value) {
+        classString = percentClassMap[i].classString;
+        break;
+      }
+    }
+    [filesHtml appendFormat:
+     @"<tr class='fileline'>\n"
+     @"<td class='filename'><a href='%@'>%@</a></td>\n"
+     @"<td class='filepercent'><span class='%@'>%.2f</span></td>\n"
+     @"</tr>\n", link, name, classString, percent];
+  }
+  return filesHtml;
+}
+
+- (NSString *)htmlSourceTableData:(CoverStoryCoverageFileData*)fileData {
+  unichar nbsp = 0xA0;
+  NSString *tabReplacement = [NSString stringWithFormat:@"%C ", nbsp];
+  NSMutableString *sourceHtml = [NSMutableString string];
+  for (CoverStoryCoverageLineData *line in [fileData lines]) {
+    NSString *lineSource = [line line];
+    lineSource 
+      = [lineSource stringByReplacingOccurrencesOfString:@"\t"
+                                              withString:tabReplacement];
+    lineSource 
+      = [lineSource stringByReplacingOccurrencesOfString:@"  " 
+                                              withString:tabReplacement];
+    lineSource = [lineSource gtm_stringByEscapingForHTML];
+    NSInteger hitCount = [line hitCount];
+    NSString *hitCountString = nil;
+    NSString *hitStyle = @"sourcelinehit";
+    if (hitCount == kCoverStoryNotExecutedMarker) {
+      hitStyle = @"sourcelineskipped";
+      hitCountString = @"";
+    } else if (hitCount == kCoverStoryNonFeasibleMarker) {
+      hitStyle = @"sourcelinenonfeasible";
+      hitCountString = @"";
+    } else if (hitCount == 0) {
+      hitStyle = @"sourcelinemissed";
+    }
+    if (!hitCountString) {
+      hitCountString = [NSString stringWithFormat:@"%d", hitCount];
+    }
+    [sourceHtml appendFormat:
+     @"<tr class='sourceline'>\n"
+     @"<td class='sourcelinehitcount'>%@</td>\n"
+     @"<td class='%@'>%@</td>\n"
+     @"</tr>\n", hitCountString, hitStyle, lineSource];
+  }
+  return sourceHtml;
+}
+  
+- (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName 
+                               error:(NSError **)outError {
+  NSString *fileList = [self htmlFileListTableData];
+  NSString *htmlTemplate 
+    = NSLocalizedStringFromTable(@"HTMLExportTemplate", @"HTMLExport", @"");
+  NSArray *fileDatas = [sourceFilesController_ arrangedObjects];
+  NSValueTransformer *transformer 
+    = [NSValueTransformer valueTransformerForName:@"LineCoverageToCoverageShortSummaryTransformer"];
+  NSString *summary = [transformer transformedValue:fileDatas];
+  summary = [summary gtm_stringByEscapingForHTML];
+  transformer 
+    = [NSValueTransformer valueTransformerForName:@"FileLineCoverageToCoverageSummaryTransformer"];
+  
+  NSFileWrapper *finalWrapper 
+    = [[[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil] autorelease];
+  NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+  [formatter setDateStyle:kCFDateFormatterShortStyle];
+  [formatter setTimeStyle:kCFDateFormatterShortStyle];
+  NSString *date = [formatter stringFromDate:[NSDate date]];
+  date = [date gtm_stringByEscapingForHTML];
+  NSString *redirectURL = nil;
+  for (CoverStoryCoverageFileData *fileData in fileDatas) {
+    NSString *sourcePath = [fileData sourcePath];
+    NSString *fileName = [sourcePath lastPathComponent];
+    NSString *htmlFileName = [fileName stringByAppendingPathExtension:@"html"];
+    NSString *coverageString = [transformer transformedValue:fileData];
+    sourcePath = [sourcePath gtm_stringByEscapingForHTML];
+    fileName = [fileName gtm_stringByEscapingForHTML];
+    coverageString = [coverageString gtm_stringByEscapingForHTML];    
+    NSString *sourceHTML = [self htmlSourceTableData:fileData];
+    NSString *htmlString = [NSString stringWithFormat:htmlTemplate, fileName, 
+                            fileName, sourcePath, date, summary, fileList, 
+                            coverageString, sourceHTML]; 
+    NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
+    [finalWrapper addRegularFileWithContents:data 
+                           preferredFilename:htmlFileName];
+    if (!redirectURL) {
+      redirectURL = [NSString stringWithFormat:@"./%@", htmlFileName];
+    }
+  }
+  if (redirectURL) {
+    NSString *indexTemplate 
+      = NSLocalizedStringFromTable(@"HTMLIndexTemplate", @"HTMLExport", @"");
+    NSString *indexHTML = [NSString stringWithFormat:indexTemplate, 
+                           redirectURL];
+    NSData *indexData = [indexHTML dataUsingEncoding:NSUTF8StringEncoding];
+    [finalWrapper addRegularFileWithContents:indexData 
+                           preferredFilename:@"index.html"];
+  }
+  NSString *cssPath = [[NSBundle mainBundle] pathForResource:@"coverstory" 
+                                                      ofType:@"css"];
+  NSString *cssString = [NSString stringWithContentsOfFile:cssPath];
+  
+  NSUserDefaultsController *defaults
+    = [NSUserDefaultsController sharedUserDefaultsController];
+  id values = [defaults values];
+  struct {
+    NSString *defaultName;
+    NSString *replacee;
+  } sourceLineColorMap[] = {
+    { kCoverStoryMissedLineColorKey, @"$$SOURCE_LINE_MISSED_COLOR$$" },
+    { kCoverStoryUnexecutableLineColorKey, @"$$SOURCE_LINE_SKIPPED_COLOR$$" },
+    { kCoverStoryNonFeasibleLineColorKey, @"$$SOURCE_LINE_NONFEASIBLE_COLOR$$" },
+    { kCoverStoryExecutedLineColorKey, @"$$SOURCE_LINE_HIT_COLOR$$" }
+  };
+    
+  for (size_t i = 0; 
+       i < sizeof(sourceLineColorMap) / sizeof(sourceLineColorMap[0]); 
+       ++i) {
+    
+    NSData *colorData = [values valueForKey:sourceLineColorMap[i].defaultName];
+    NSColor *color = nil;
+    if (colorData) {
+      color = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
+    }
+    if (!color) {
+      color = [NSColor blackColor];
+    }
+    color = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
+    CGFloat components[4];
+    [color getComponents:components];
+    int redInt = components[0] * 255;
+    int greenInt = components[1] * 255;
+    int blueInt = components[2] * 255;
+    NSString *newColor
+      = [NSString stringWithFormat:@"#%02X%02X%02X", redInt, greenInt, blueInt];
+    NSString *replacee = sourceLineColorMap[i].replacee;
+    cssString = [cssString stringByReplacingOccurrencesOfString:replacee 
+                                                     withString:newColor];
+  }
+  NSData *cssData = [cssString dataUsingEncoding:NSUTF8StringEncoding];
+  [finalWrapper addRegularFileWithContents:cssData 
+                         preferredFilename:@"coverstory.css"];
+  NSString *jsPath = [[NSBundle mainBundle] pathForResource:@"coverstory" 
+                                                     ofType:@"js"];
+  NSData *jsData = [NSData dataWithContentsOfFile:jsPath];
+  [finalWrapper addRegularFileWithContents:jsData 
+                         preferredFilename:@"coverstory.js"];
+  return finalWrapper; 
+}
+
+- (id)handleExportHTMLScriptCommand:(NSScriptCommand *)command {
+  NSURL *url = [[command arguments] objectForKey:@"File"];
+  NSError *error = nil;
+  if (![self writeToURL:url ofType:@"Folder" error:&error]) {
+    [command setScriptErrorNumber:[error code]];
+    [command setScriptErrorString:[error localizedDescription]];
+  }
+  return nil;
+}
 @end
 
 @implementation NSTableView (CoverStoryTableView)
@@ -1251,8 +1464,8 @@ static NSString *const kPrefsToWatch[] = {
     
     // start w/ the first path, and now loop throught them all, but give up
     // the moment he only common prefix is "/"
-    NSArray *sourcePathes = [arranged valueForKey:@"sourcePath"];
-    NSEnumerator *enumerator = [sourcePathes objectEnumerator];
+    NSArray *sourcePaths = [arranged valueForKey:@"sourcePath"];
+    NSEnumerator *enumerator = [sourcePaths objectEnumerator];
     newPrefix = [enumerator nextObject];
     NSString *basePath;
     while (([newPrefix length] > 1) &&
@@ -1292,5 +1505,19 @@ static NSString *const kPrefsToWatch[] = {
   // this fires as results are added during a load
   [super setContent:content];
   [self updateCommonPathPrefix];
+}
+@end
+
+@implementation NSWindow (CoverStoryExportToHTML)
+- (id)cs_handleExportHTMLScriptCommand:(NSScriptCommand *)command {
+  id directParameter = [command evaluatedReceivers];
+  CoverStoryDocument *document = (CoverStoryDocument *)[directParameter document];
+  id value = nil;
+  if ([document isMemberOfClass:[CoverStoryDocument class]]) {
+    value = [document handleExportHTMLScriptCommand:command];
+  } else {
+    [command setScriptErrorNumber:errAECantHandleClass];
+  }
+  return value;
 }
 @end
