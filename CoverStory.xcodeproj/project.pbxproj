@@ -90,6 +90,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		8B4097540F91644F00DF540E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8B469EFB0D99C2F70042D75D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -97,15 +106,6 @@
 			dstSubfolderSpec = 16;
 			files = (
 				8B469EF70D99C2AD0042D75D /* mcc.1 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8B469F890D99F14D0042D75D /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 6;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,9 +253,9 @@
 				8B198D2F0C7DF72D002E4E3F /* COPYING */,
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				F426B7F30E0AB70200348386 /* UnitTesting */,
-				F47A7A3D0D748DAC002302AB /* google-toolbox-for-mac */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				8B469EE70D99C2330042D75D /* mcc */,
+				8B4097530F91644F00DF540E /* external */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
@@ -342,6 +342,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		8B4097530F91644F00DF540E /* external */ = {
+			isa = PBXGroup;
+			children = (
+				F47A7A3D0D748DAC002302AB /* google-toolbox-for-mac */,
+			);
+			path = external;
+			sourceTree = "<group>";
+		};
 		8B469EE70D99C2330042D75D /* mcc */ = {
 			isa = PBXGroup;
 			children = (
@@ -422,8 +430,7 @@
 				F426B7990E0A2E9F00348386 /* UnitTesting */,
 				F4138F270D75200B00F72B31 /* XcodeConfig */,
 			);
-			name = "google-toolbox-for-mac";
-			path = "external/google-toolbox-for-mac";
+			path = "google-toolbox-for-mac";
 			sourceTree = "<group>";
 		};
 		F4C187F80DB3CF07009BB8C6 /* DebugUtils */ = {
@@ -463,7 +470,8 @@
 				8D15AC2B0486D014006FF6A4 /* Resources */,
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
-				8B469F890D99F14D0042D75D /* CopyFiles */,
+				8B4097540F91644F00DF540E /* CopyFiles */,
+				8B4097470F91641700DF540E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -562,6 +570,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		8B4097470F91641700DF540E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Remove unnecessary Sparkle stuff\nsparkleDir=\"${BUILD_DIR}/${CONFIGURATION}/${CONTENTS_FOLDER_PATH}/Frameworks/Sparkle.framework\"\nrm -rf \"$sparkleDir/Resources/de.lproj\"\nrm -rf \"$sparkleDir/Resources/es.lproj\"\nrm -rf \"$sparkleDir/Resources/fr.lproj\"\nrm -f \"$sparkleDir/Resources/fr_CA.lproj\"\nrm -rf \"$sparkleDir/Resources/it.lproj\"\nrm -rf \"$sparkleDir/Resources/nl.lproj\"\nrm -rf \"$sparkleDir/Resources/ru.lproj\"\nrm -rf \"$sparkleDir/Resources/sv.lproj\"\nrm -rf \"$sparkleDir/Current/Headers\"\nrm -f \"$sparkleDir/Headers\"";
+		};
 		8B469EF90D99C2BC0042D75D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
