@@ -207,13 +207,16 @@ static NSString *const kPrefsToWatch[] = {
 - (NSString *)windowNibName {
   return @"CoverStoryDocument";
 }
-  
+
+- (NSArray *)fileDatas {
+  return [dataSet_ fileDatas];
+}
+
 // Called as a performSelectorOnMainThread, so must check to make sure
 // we haven't been closed.
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData {
   if ([self isClosed]) return NO;
   ++numFileDatas_;
-  [fileData setUserData:self]; // store us in there for the value transformer
   [self willChangeValueForKey:@"dataSet_"];
   BOOL isGood = [dataSet_ addFileData:fileData messageReceiver:self];
   [self didChangeValueForKey:@"dataSet_"];
@@ -250,6 +253,7 @@ static NSString *const kPrefsToWatch[] = {
     // load it and add it to our set
     CoverStoryCoverageFileData *fileData =
       [CoverStoryCoverageFileData coverageFileDataFromPath:path
+                                                  document:self
                                            messageReceiver:self];
     if (fileData) {
       isGood = [self addFileData:fileData];
@@ -613,6 +617,7 @@ static NSString *const kPrefsToWatch[] = {
         // load it and add it to our set
         CoverStoryCoverageFileData *fileData =
           [CoverStoryCoverageFileData coverageFileDataFromPath:fullPath
+                                                      document:self
                                                messageReceiver:self];
         if (fileData) {
           [self performSelectorOnMainThread:@selector(addFileData:)

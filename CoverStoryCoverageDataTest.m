@@ -31,7 +31,8 @@
   for (size_t x = 0; x < sizeof(testData)/sizeof(struct TestDataRecord); ++x) {
     CoverStoryCoverageLineData *data =
       [CoverStoryCoverageLineData coverageLineDataWithLine:testData[x].line
-                                                  hitCount:testData[x].hitCount];
+                                                  hitCount:testData[x].hitCount
+                                              coverageFile:nil];
     STAssertNotNil(data, nil);
     STAssertEqualObjects([data line], testData[x].line, @"index %u", x);
     STAssertEquals([data hitCount], testData[x].hitCount, @"index %u", x);
@@ -63,7 +64,8 @@
   for (size_t x = 0; x < sizeof(testData)/sizeof(struct TestDataRecord); ++x) {
     CoverStoryCoverageLineData *data =
       [CoverStoryCoverageLineData coverageLineDataWithLine:@"line"
-                                                  hitCount:testData[x].hitCount1];
+                                                  hitCount:testData[x].hitCount1
+                                              coverageFile:nil];
     STAssertNotNil(data, nil);
     [data addHits:testData[x].hitCount2];
     STAssertEquals([data hitCount], testData[x].hitCountSum, @"index %u", x);
@@ -97,6 +99,7 @@
     STAssertNotNil(path, @"index %u", x);
     CoverStoryCoverageFileData *data =
       [CoverStoryCoverageFileData coverageFileDataFromPath:path
+                                                  document:nil
                                            messageReceiver:nil];
     STAssertNotNil(data, @"index %u", x);
     STAssertEquals([[data lines] count],
@@ -162,6 +165,7 @@
     // now process the file
     CoverStoryCoverageFileData *data =
       [CoverStoryCoverageFileData coverageFileDataFromPath:path
+                                                  document:nil
                                            messageReceiver:nil];
     STAssertNotNil(data, @"index %u", x);
     STAssertEquals([[data lines] count],

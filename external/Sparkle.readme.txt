@@ -1,0 +1,5 @@
+Sparkle.framework
+
+Date: 2009-04-15
+Current Version: 1.5b6
+Source: http://sparkle.andymatuschak.org/

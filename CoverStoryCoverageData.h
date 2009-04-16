@@ -19,6 +19,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class CoverStoryDocument;
+
 enum {
   // Value for hitCount for lines that aren't executed
   kCoverStoryNotExecutedMarker = -1,
@@ -63,21 +65,22 @@ enum {
   NSInteger codeLines_;
   NSInteger nonfeasible_;
   NSString *sourcePath_;
-  void *userData_;
   NSMutableArray *warnings_;
+  __weak CoverStoryDocument *document_;
 }
 
 + (id)coverageFileDataFromPath:(NSString *)path
+                      document:(CoverStoryDocument *)document
                messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 - (id)initWithPath:(NSString *)path
+          document:(CoverStoryDocument *)document
    messageReceiver:(id<CoverStoryCoverageProcessingProtocol> )receiver;
 - (NSArray *)lines;
 - (NSNumber *)coverage; // this is only vended for the table to sort with
 - (NSString *)sourcePath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
     messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
-- (void *)userData;
-- (void)setUserData:(void *)userData;
+- (CoverStoryDocument *)document;
 @end
 
 
@@ -86,14 +89,11 @@ enum {
 @interface CoverStoryCoverageSet : NSObject<CoverStoryLineCoverageProtocol> {
 @private
   NSMutableDictionary *fileDatas_;
-  void *userData_;
 }
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
     messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver;
 - (NSArray *)fileDatas;
 - (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path;
-- (void *)userData;
-- (void)setUserData:(void *)userData;
 @end
                     
                      
@@ -104,11 +104,17 @@ enum {
  @private
   NSInteger hitCount_;  // how many times this line has been hit
   NSString *line_;  //  the line
+  __weak CoverStoryCoverageFileData *coverageFile_;
 }
 
-+ (id)coverageLineDataWithLine:(NSString*)line hitCount:(NSInteger)hitCount;
-- (id)initWithLine:(NSString*)line hitCount:(NSInteger)hitCount;
++ (id)coverageLineDataWithLine:(NSString*)line 
+                      hitCount:(NSInteger)hitCount 
+                  coverageFile:(CoverStoryCoverageFileData *)coverageFile;
+- (id)initWithLine:(NSString*)line 
+          hitCount:(NSInteger)hitCount
+      coverageFile:(CoverStoryCoverageFileData *)coverageFile;
 - (NSString*)line;
 - (NSInteger)hitCount;
 - (void)addHits:(NSInteger)newHits;
+- (CoverStoryCoverageFileData *)coverageFile;
 @end

@@ -83,4 +83,5 @@
 - (BOOL)hideUnittestSources;
 - (BOOL)completelyOpened; 
 - (id)handleExportHTMLScriptCommand:(NSScriptCommand *)command;
+- (NSArray *)fileDatas;
 @end

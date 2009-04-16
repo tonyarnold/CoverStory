@@ -30,9 +30,10 @@
 		8B4091020F8E6B4900DF540E /* CoverStory.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 8B4091010F8E6B4900DF540E /* CoverStory.sdef */; };
 		8B4091140F8E733D00DF540E /* CoverStoryApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4091130F8E733D00DF540E /* CoverStoryApplication.m */; };
 		8B4094C00F8EC70300DF540E /* NSColor+Scripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4094BF0F8EC70300DF540E /* NSColor+Scripting.m */; };
+		8B4097650F92A32700DF540E /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 8B4097600F92A32700DF540E /* dsa_pub.pem */; };
+		8B4097690F92A37D00DF540E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B4097680F92A37D00DF540E /* Sparkle.framework */; };
+		8B40977F0F92A3C300DF540E /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8B4097680F92A37D00DF540E /* Sparkle.framework */; };
 		8B41D4BE0D85CAB000E60DA4 /* CoverStoryValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */; };
-		8B469EF20D99C25A0042D75D /* mcc.l in Sources */ = {isa = PBXBuildFile; fileRef = 8B469EF10D99C25A0042D75D /* mcc.l */; };
-		8B469EF70D99C2AD0042D75D /* mcc.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8B469EF50D99C2630042D75D /* mcc.1 */; };
 		8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */; };
 		8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */; };
 		8BAAA3E60F7D614F00DF4F12 /* SDKHide.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BAAA3E40F7D614F00DF4F12 /* SDKHide.png */; };
@@ -96,16 +97,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8B469EFB0D99C2F70042D75D /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-				8B469EF70D99C2AD0042D75D /* mcc.1 in CopyFiles */,
+				8B40977F0F92A3C300DF540E /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,16 +120,14 @@
 		8B408E7F0F8E347200DF540E /* GTMNSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSString+HTML.m"; sourceTree = "<group>"; };
 		8B408E800F8E347200DF540E /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+HTML.h"; sourceTree = "<group>"; };
 		8B408E820F8E37BE00DF540E /* HTMLExport.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = HTMLExport.strings; sourceTree = "<group>"; };
-		8B4091010F8E6B4900DF540E /* CoverStory.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.sdef; path = CoverStory.sdef; sourceTree = "<group>"; };
+		8B4091010F8E6B4900DF540E /* CoverStory.sdef */ = {isa = PBXFileReference; explicitFileType = text.xml; fileEncoding = 4; path = CoverStory.sdef; sourceTree = "<group>"; };
 		8B4091130F8E733D00DF540E /* CoverStoryApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryApplication.m; sourceTree = "<group>"; };
 		8B4094BF0F8EC70300DF540E /* NSColor+Scripting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSColor+Scripting.m"; sourceTree = "<group>"; };
+		8B4097600F92A32700DF540E /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
+		8B4097680F92A37D00DF540E /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		8B40A3B30F96756900DF540E /* CoverStoryAppcast.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = CoverStoryAppcast.xml; sourceTree = "<group>"; };
 		8B41D3930D857F1200E60DA4 /* CoverStoryDocumentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryDocumentTypes.h; sourceTree = "<group>"; };
 		8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryValueTransformers.m; sourceTree = "<group>"; };
-		8B469ED60D99C2160042D75D /* mcc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mcc; sourceTree = BUILT_PRODUCTS_DIR; };
-		8B469EF10D99C25A0042D75D /* mcc.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; path = mcc.l; sourceTree = "<group>"; };
-		8B469EF30D99C2630042D75D /* mcctestmaster.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mcctestmaster.txt; sourceTree = "<group>"; };
-		8B469EF40D99C2630042D75D /* mcctest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mcctest.c; sourceTree = "<group>"; };
-		8B469EF50D99C2630042D75D /* mcc.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = mcc.1; sourceTree = "<group>"; };
 		8B726FFF0D92B6EB0090C251 /* CoverStoryFilePredicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryFilePredicate.h; sourceTree = "<group>"; };
 		8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryFilePredicate.m; sourceTree = "<group>"; };
 		8B7271230D92CD920090C251 /* CoverStoryPreferenceKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryPreferenceKeys.h; sourceTree = "<group>"; };
@@ -200,19 +190,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		8B469ED40D99C2160042D75D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8D15AC330486D014006FF6A4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				8BFE723D0B46FE3400A3C7DD /* Carbon.framework in Frameworks */,
+				8B4097690F92A37D00DF540E /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +225,6 @@
 			isa = PBXGroup;
 			children = (
 				8D15AC370486D014006FF6A4 /* CoverStory.app */,
-				8B469ED60D99C2160042D75D /* mcc */,
 				F426B70E0E0A24AE00348386 /* UnitTests.octest */,
 			);
 			name = Products;
@@ -254,8 +237,8 @@
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				F426B7F30E0AB70200348386 /* UnitTesting */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
-				8B469EE70D99C2330042D75D /* mcc */,
 				8B4097530F91644F00DF540E /* external */,
+				8B40975E0F92A32700DF540E /* SparkleData */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
@@ -345,20 +328,19 @@
 		8B4097530F91644F00DF540E /* external */ = {
 			isa = PBXGroup;
 			children = (
+				8B4097680F92A37D00DF540E /* Sparkle.framework */,
 				F47A7A3D0D748DAC002302AB /* google-toolbox-for-mac */,
 			);
 			path = external;
 			sourceTree = "<group>";
 		};
-		8B469EE70D99C2330042D75D /* mcc */ = {
+		8B40975E0F92A32700DF540E /* SparkleData */ = {
 			isa = PBXGroup;
 			children = (
-				8B469EF10D99C25A0042D75D /* mcc.l */,
-				8B469EF30D99C2630042D75D /* mcctestmaster.txt */,
-				8B469EF40D99C2630042D75D /* mcctest.c */,
-				8B469EF50D99C2630042D75D /* mcc.1 */,
+				8B40A3B30F96756900DF540E /* CoverStoryAppcast.xml */,
+				8B4097600F92A32700DF540E /* dsa_pub.pem */,
 			);
-			path = mcc;
+			path = SparkleData;
 			sourceTree = "<group>";
 		};
 		F4138F240D751FCF00F72B31 /* Foundation */ = {
@@ -444,24 +426,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8B469ED50D99C2160042D75D /* mcc */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8B469EE20D99C21D0042D75D /* Build configuration list for PBXNativeTarget "mcc" */;
-			buildPhases = (
-				8B469ED30D99C2160042D75D /* Sources */,
-				8B469ED40D99C2160042D75D /* Frameworks */,
-				8B469EFB0D99C2F70042D75D /* CopyFiles */,
-				8B469EF90D99C2BC0042D75D /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = mcc;
-			productName = mcc;
-			productReference = 8B469ED60D99C2160042D75D /* mcc */;
-			productType = "com.apple.product-type.tool";
-		};
 		8D15AC270486D014006FF6A4 /* CoverStory */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "CoverStory" */;
@@ -472,6 +436,7 @@
 				8D15AC330486D014006FF6A4 /* Frameworks */,
 				8B4097540F91644F00DF540E /* CopyFiles */,
 				8B4097470F91641700DF540E /* ShellScript */,
+				8B40A3A40F96754500DF540E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -515,7 +480,6 @@
 			projectRoot = "";
 			targets = (
 				8D15AC270486D014006FF6A4 /* CoverStory */,
-				8B469ED50D99C2160042D75D /* mcc */,
 				F426B70D0E0A24AE00348386 /* UnitTests */,
 			);
 		};
@@ -549,6 +513,7 @@
 				8BD8C47C0F8D534D00320FAB /* coverstory.css in Resources */,
 				8B408E830F8E37BE00DF540E /* HTMLExport.strings in Resources */,
 				8B4091020F8E6B4900DF540E /* CoverStory.sdef in Resources */,
+				8B4097650F92A32700DF540E /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -581,23 +546,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Remove unnecessary Sparkle stuff\nsparkleDir=\"${BUILD_DIR}/${CONFIGURATION}/${CONTENTS_FOLDER_PATH}/Frameworks/Sparkle.framework\"\nrm -rf \"$sparkleDir/Resources/de.lproj\"\nrm -rf \"$sparkleDir/Resources/es.lproj\"\nrm -rf \"$sparkleDir/Resources/fr.lproj\"\nrm -f \"$sparkleDir/Resources/fr_CA.lproj\"\nrm -rf \"$sparkleDir/Resources/it.lproj\"\nrm -rf \"$sparkleDir/Resources/nl.lproj\"\nrm -rf \"$sparkleDir/Resources/ru.lproj\"\nrm -rf \"$sparkleDir/Resources/sv.lproj\"\nrm -rf \"$sparkleDir/Current/Headers\"\nrm -f \"$sparkleDir/Headers\"";
+			shellScript = "# Remove unnecessary Sparkle stuff\nsparkleDir=\"${BUILD_DIR}/${CONFIGURATION}/${CONTENTS_FOLDER_PATH}/Frameworks/Sparkle.framework\"\necho $sparkleDir\nrm -Rf \"$sparkleDir/Resources/de.lproj\"\nrm -Rf \"$sparkleDir/Resources/es.lproj\"\nrm -Rf \"$sparkleDir/Resources/fr.lproj\"\nrm -Rf \"$sparkleDir/Resources/fr_CA.lproj\"\nrm -Rf \"$sparkleDir/Resources/it.lproj\"\nrm -Rf \"$sparkleDir/Resources/nl.lproj\"\nrm -Rf \"$sparkleDir/Resources/ru.lproj\"\nrm -Rf \"$sparkleDir/Resources/sv.lproj\"\nrm -Rf \"$sparkleDir/Versions/Current/Headers\"\nrm -Rf \"$sparkleDir/Headers\"";
 		};
-		8B469EF90D99C2BC0042D75D /* ShellScript */ = {
+		8B40A3A40F96754500DF540E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/mcc/mcctestmaster.txt",
-				"$(SRCROOT)/mcc/mcctest.c",
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#\n# Runs a unittest against mcc\n#\n\nif [ -f ${TEMP_FILES_DIR}/mcctest.out ]; then\n\trm ${TEMP_FILES_DIR}/mcctest.out\nfi\n\n\"${TARGET_BUILD_DIR}/${EXECUTABLE_NAME}\" mcc/mcctest.c > \"${TEMP_FILES_DIR}/mcctest.out\"\ncmp \"${TEMP_FILES_DIR}/mcctest.out\" \"${SRCROOT}/mcc/mcctestmaster.txt\"\nif [ $? -ne 0 ]; then\n\techo ${TEMP_FILES_DIR}/mcctest.out:0: error: Test Failed\n\texit 1\nfi\nexit 0";
-			showEnvVarsInLog = 0;
+			shellScript = "set -o errexit\n\nPRIVKEY_FILE=\"$SRCROOT/SparkleData/dsa_priv.pem\"\nif [ ! -f \"$PRIVKEY_FILE\" ];\nthen\n\techo \"Not generating Sparkle Data\"\n\treturn 0\nfi\n\nVERSION=$(defaults read \"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.app/Contents/Info\" CFBundleVersion)\nDOWNLOAD_BASE_URL=\"http://coverstory.googlecode.com/files\"\nRELEASENOTES_URL=\"http://coverstory.googlecode.com/svn/trunk/SparkleData/releaseNotes.html#version-$VERSION\"\n\nARCHIVE_FILENAME=\"$PROJECT_NAME-$VERSION.zip\"\nDOWNLOAD_URL=\"$DOWNLOAD_BASE_URL/$ARCHIVE_FILENAME\"\n\nWD=$PWD\ncd \"$BUILT_PRODUCTS_DIR\"\nrm -f \"$PROJECT_NAME\"*.zip\nzip -qry \"$ARCHIVE_FILENAME\" \"$PROJECT_NAME.app\"\n\nSIZE=$(stat -f %z \"$ARCHIVE_FILENAME\")\nPUBDATE=$(date +\"%a, %d %b %G %T %z\")\nSIGNATURE=$(/usr/bin/ruby \"$SRCROOT/SparkleData/Signing Tools/sign_update.rb\" \"$ARCHIVE_FILENAME\" \"$PRIVKEY_FILE\")\n\n[ $SIGNATURE ] || { echo Unable to sign; false; }\n\ncat <<EOF\n\t\t<item>\n\t\t\t<title>Version $VERSION</title>\n\t\t\t<sparkle:releaseNotesLink>$RELEASENOTES_URL</sparkle:releaseNotesLink>\n\t\t\t<pubDate>$PUBDATE</pubDate>\n\t\t\t<enclosure\n\t\t\t\turl=\"$DOWNLOAD_URL\"\n\t\t\t\tsparkle:version=\"$VERSION\"\n\t\t\t\ttype=\"application/octet-stream\"\n\t\t\t\tlength=\"$SIZE\"\n\t\t\t\tsparkle:dsaSignature=\"$SIGNATURE\"\n\t\t\t/>\n\t\t</item>\nEOF";
 		};
 		F426B70C0E0A24AE00348386 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -615,14 +577,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		8B469ED30D99C2160042D75D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8B469EF20D99C25A0042D75D /* mcc.l in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8D15AC300486D014006FF6A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -710,28 +664,17 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		8B469ED80D99C2170042D75D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				LEXFLAGS = "$(inherited) --noyy_top_state";
-				PRODUCT_NAME = mcc;
-			};
-			name = Debug;
-		};
-		8B469ED90D99C2170042D75D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				LEXFLAGS = "$(inherited) --noyy_top_state";
-				PRODUCT_NAME = mcc;
-			};
-			name = Release;
-		};
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/external\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CoverStory.pch;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = CoverStory;
@@ -742,9 +685,14 @@
 		C05733C908A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/external\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CoverStory.pch;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = CoverStory;
@@ -814,15 +762,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8B469EE20D99C21D0042D75D /* Build configuration list for PBXNativeTarget "mcc" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8B469ED80D99C2170042D75D /* Debug */,
-				8B469ED90D99C2170042D75D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "CoverStory" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

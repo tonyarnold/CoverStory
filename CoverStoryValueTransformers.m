@@ -159,7 +159,7 @@
            @"Only handle CoverStoryCoverageFileData");
   CoverStoryCoverageFileData *data = (CoverStoryCoverageFileData *)value;
   NSString *sourcePath = [data sourcePath];
-  CoverStoryDocument *owningDoc = [data userData];
+  CoverStoryDocument *owningDoc = [data document];
   NSString *commonPrefix = nil;
   if (owningDoc) {
     commonPrefix = [owningDoc commonPathPrefix];
