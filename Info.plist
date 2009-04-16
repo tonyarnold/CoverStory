@@ -88,18 +88,18 @@
 	<key>CFBundleSignature</key>
 	<string>Coß†</string>
 	<key>CFBundleVersion</key>
-	<string>4.0</string>
+	<string>4.0.1</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>CoverStoryApplication</string>
-    <key>NSAppleScriptEnabled</key>
-    <string>YES</string>
-    <key>OSAScriptingDefinition</key>
-    <string>CoverStory.sdef</string>
-    <key>SUPublicDSAKeyFile</key>
-    <string>dsa_pub.pem</string>
-    <key>SUFeedURL</key>
-    <string>http:\/\/coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml</string>
+	<key>NSAppleScriptEnabled</key>
+	<string>YES</string>
+	<key>OSAScriptingDefinition</key>
+	<string>CoverStory.sdef</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>dsa_pub.pem</string>
+	<key>SUFeedURL</key>
+	<string>${COVERSTORY_SUFEEDURL}</string>
 </dict>
 </plist>
