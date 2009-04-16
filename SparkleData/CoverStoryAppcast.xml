@@ -5,5 +5,17 @@
       <link>http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml</link>
       <description>Most recent changes with links to updates.</description>
       <language>en</language>
+      <item>
+			<title>Version 4.0</title>
+			<sparkle:releaseNotesLink>http://coverstory.googlecode.com/svn/trunk/SparkleData/releaseNotes.html#version-4.0</sparkle:releaseNotesLink>
+			<pubDate>Wed, 15 Apr 2009 22:11:53 -0700</pubDate>
+			<enclosure
+				url="http://coverstory.googlecode.com/files/CoverStory-4.0.zip"
+				sparkle:version="4.0"
+				type="application/octet-stream"
+				length="485450"
+				sparkle:dsaSignature="MC0CFQCtjmTbxJoiJ/lr6ZGZ1h1wH5owhAIUP5h6m4QSC3TdZ/kEuCfpjh77TvM="
+			/>
+		</item>
    </channel>
 </rss>
