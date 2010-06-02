@@ -7,9 +7,9 @@
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
-// 
+//
 //  http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 //  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -21,6 +21,7 @@
 #import "CoverStoryCoverageData.h"
 #import "CoverStoryDocumentTypes.h"
 #import "CoverStoryPreferenceKeys.h"
+#import "GCovVersionManager.h"
 #import "GTMScriptRunner.h"
 #import "GTMNSFileManager+Path.h"
 #import "GTMNSEnumerator+Filter.h"
@@ -39,7 +40,7 @@ const NSInteger kCoverStoryUnittestToolbarTag = 1027;
                           to:(NSString*)name;
 @end
 
-@interface NSWindow (CoverStoryExportToHTML) 
+@interface NSWindow (CoverStoryExportToHTML)
 // Script command that we want NSWindow to handle
 - (id)cs_handleExportHTMLScriptCommand:(NSScriptCommand *)command;
 @end
@@ -62,8 +63,8 @@ typedef enum {
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
-- (void)addMessageFromThread:(NSString *)message 
-                        path:(NSString*)path 
+- (void)addMessageFromThread:(NSString *)message
+                        path:(NSString*)path
                  messageType:(CSMessageType)msgType;
 - (void)addMessageFromThread:(NSString *)message
                  messageType:(CSMessageType)msgType;
@@ -72,7 +73,7 @@ typedef enum {
 - (void)moveSelection:(NSUInteger)offset;
 @end
 
-static NSString *const kPrefsToWatch[] = { 
+static NSString *const kPrefsToWatch[] = {
   kCoverStorySystemSourcesPatternsKey,
   kCoverStoryUnittestSourcesPatternsKey,
   kCoverStoryRemoveCommonSourcePrefix,
@@ -93,7 +94,7 @@ static NSString *const kPrefsToWatch[] = {
      [NSNumber numberWithBool:YES],
      kCoverStoryRemoveCommonSourcePrefix,
      nil];
-  
+
   [defaults registerDefaults:documentDefaults];
 }
 
@@ -103,13 +104,13 @@ static NSString *const kPrefsToWatch[] = {
 
 - (id)init {
   if ((self = [super init])) {
-    
+
     dataSet_ = [[CoverStoryCoverageSet alloc] init];
 
     NSString *path;
     NSFileWrapper *wrapper;
     NSBundle *mainBundle = [NSBundle mainBundle];
-    
+
     path        = [mainBundle pathForResource:@"error" ofType:@"png"];
     wrapper     = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
     errorIcon_  = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
@@ -117,29 +118,18 @@ static NSString *const kPrefsToWatch[] = {
     path         = [mainBundle pathForResource:@"warning" ofType:@"png"];
     wrapper      = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
     warningIcon_ = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
-    
+
     path         = [mainBundle pathForResource:@"info" ofType:@"png"];
     wrapper      = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
     infoIcon_    = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
-    
+
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     hideSDKSources_ = [ud boolForKey:kCoverStoryHideSystemSourcesKey];
     hideUnittestSources_ = [ud boolForKey:kCoverStoryHideUnittestSourcesKey];
-    
+
 #if USE_NSOPERATION
     opQueue_ = [[NSOperationQueue alloc] init];
 #endif
-    
-    // Find gcov. Might want to support a default for this, but this should
-    // cover most users.
-    NSString *gcovPath = nil;
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm isExecutableFileAtPath:@"/usr/bin/gcov"]) {
-      gcovPath = @"/usr/bin/gcov";
-    } else if ([fm isExecutableFileAtPath:@"/Developer/usr/bin/gcov"]) {
-      gcovPath = @"/Developer/usr/bin/gcov";
-    }
-    gcovPath_ = [gcovPath retain];
   }
   return self;
 }
@@ -147,9 +137,9 @@ static NSString *const kPrefsToWatch[] = {
 - (void)dealloc {
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
   for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
-    [defaults removeObserver:self 
+    [defaults removeObserver:self
                   forKeyPath:[self valuesKey:kPrefsToWatch[i]]];
-  }  
+  }
   [dataSet_ release];
   [filterString_ release];
   [currentAnimation_ release];
@@ -157,7 +147,6 @@ static NSString *const kPrefsToWatch[] = {
 #if USE_NSOPERATION
   [opQueue_ release];
 #endif
-  [gcovPath_ release];
 #if DEBUG
   [startDate_ release];
 #endif
@@ -174,25 +163,25 @@ static NSString *const kPrefsToWatch[] = {
   searchFieldFrame.origin.x -= animationWidth_;
   searchFieldFrame.size.width += animationWidth_;
   [searchField_ setFrame:searchFieldFrame];
-  
-  [sourceFilesController_ addObserver:self 
-                           forKeyPath:NSSelectionIndexesBinding 
+
+  [sourceFilesController_ addObserver:self
+                           forKeyPath:NSSelectionIndexesBinding
                               options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
                               context:nil];
 
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
   for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
-    [defaults addObserver:self 
+    [defaults addObserver:self
                forKeyPath:[self valuesKey:kPrefsToWatch[i]]
                   options:NSKeyValueObservingOptionNew
                   context:nil];
   }
-  
+
   [self observeValueForKeyPath:NSSelectionIndexesBinding
                       ofObject:sourceFilesController_
                         change:nil
                        context:nil];
-  
+
   NSSortDescriptor *ascending = [[[NSSortDescriptor alloc] initWithKey:@"coverage"
                                                              ascending:YES] autorelease];
   [sourceFilesController_ setSortDescriptors:[NSArray arrayWithObject:ascending]];
@@ -277,7 +266,7 @@ static NSString *const kPrefsToWatch[] = {
 
 - (void)openSelectedSource {
   BOOL didOpen = NO;
-  NSArray *fileSelection = [sourceFilesController_ selectedObjects];      
+  NSArray *fileSelection = [sourceFilesController_ selectedObjects];
   CoverStoryCoverageFileData *fileData = [fileSelection objectAtIndex:0];
   NSString *path = [fileData sourcePath];
   NSIndexSet *selectedRows = [codeTableView_ selectedRowIndexes];
@@ -293,7 +282,7 @@ static NSString *const kPrefsToWatch[] = {
                          [NSString stringWithFormat:@"%d", [selectedRows firstIndex] + 1],
                          [NSString stringWithFormat:@"%d", [selectedRows lastIndex] + 1],
                          nil]];
-    }                         
+    }
   }
   if (!didOpen) {
     [[NSWorkspace sharedWorkspace] openFile:path];
@@ -326,7 +315,7 @@ static NSString *const kPrefsToWatch[] = {
                          withObject:@"ignored"
                       waitUntilDone:NO];
   [self setOpenThreadState:NO];
-  
+
   // Clean up NSTask Zombies.
   [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
   [pool release];
@@ -351,13 +340,13 @@ static NSString *const kPrefsToWatch[] = {
   // wait for all the operations to finish
   [opQueue_ waitUntilAllOperationsAreFinished];
 #endif
-  
+
   // signal that we're done
   [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
                          withObject:@"ignored"
                       waitUntilDone:NO];
   [self setOpenThreadState:NO];
-  
+
   // Clean up NSTask Zombies.
   [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
   [pool release];
@@ -390,7 +379,7 @@ static NSString *const kPrefsToWatch[] = {
     [self addMessageFromThread:message
                    messageType:kCSMessageTypeInfo];
   }
-  
+
   // we want to batch process them by chunks w/in a given directory.  so sort
   // and then break them off into chunks.
   allFilePaths = [allFilePaths sortedArrayUsingSelector:@selector(compare:)];
@@ -401,7 +390,7 @@ static NSString *const kPrefsToWatch[] = {
     NSString *currentFolder = [filename stringByDeletingLastPathComponent];
     NSMutableArray *currentFileList =
       [NSMutableArray arrayWithObject:[filename lastPathComponent]];
-    
+
     // now spin the loop
     while ((filename = [pathEnum nextObject])) {
       // see if it has the same parent folder
@@ -424,7 +413,7 @@ static NSString *const kPrefsToWatch[] = {
         [currentFileList removeAllObjects];
         [currentFileList addObject:[filename lastPathComponent]];
       }
-      
+
       // Bail if we get closed
       if ([self isClosed]) return YES;
     }
@@ -432,7 +421,7 @@ static NSString *const kPrefsToWatch[] = {
     if (![self processCoverageForFiles:currentFileList
                               inFolder:currentFolder]) {
       NSString *message =
-        [NSString stringWithFormat:@"failed to process files: %@", 
+        [NSString stringWithFormat:@"failed to process files: %@",
          currentFileList];
       [self addMessageFromThread:message
                             path:currentFolder
@@ -505,11 +494,11 @@ static NSString *const kPrefsToWatch[] = {
 
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath {
-  
+
   if (([filenames count] == 0) || ([folderPath length] == 0)) {
     return NO;
   }
-  
+
   NSString *tempDir = [self tempDirName];
   NSEnumerator *fileNamesEnum = [filenames objectEnumerator];
   NSString *filename;
@@ -523,12 +512,22 @@ static NSString *const kPrefsToWatch[] = {
       return NO;
     }
   }
-  
+
   // make sure it ends in a slash
   if (![folderPath hasSuffix:@"/"]) {
     folderPath = [folderPath stringByAppendingString:@"/"];
   }
-  
+
+  // Figure out what version of gcov to use.
+  // NOTE: To be 100% correct, we should check *each* file and split them into
+  // sets based on what version of gcov will be invoked.  But we're assuming
+  // most people will only set the gcc version of a per Xcode target level (at
+  // the lowest).
+  GCovVersionManager *gcovVerMgr = [GCovVersionManager defaultManager];
+  NSString *aFullPath =
+    [folderPath stringByAppendingPathComponent:[filenames objectAtIndex:0]];
+  NSString *gcovPath = [gcovVerMgr gcovForGCovFile:aFullPath];
+
   // we write all the full file paths into a file w/ null chars after each
   // so we can feed it into xargs -0
   NSMutableData *fileList = [NSMutableData data];
@@ -543,12 +542,12 @@ static NSString *const kPrefsToWatch[] = {
     [fileList appendData:filenameUTF8];
     [fileList appendBytes:&nullByte length:1];
   }
-  
+
   GTMScriptRunner *runner = [GTMScriptRunner runnerWithBash];
   if (!runner) return NO;
 
   BOOL result = NO;
-  
+
   // make a scratch directory
   NSFileManager *fm = [NSFileManager defaultManager];
   if ([fm createDirectoryAtPath:tempDir
@@ -562,7 +561,7 @@ static NSString *const kPrefsToWatch[] = {
                                               selector:@selector(cleanupTempDir:)
                                                 object:tempDir] autorelease];
 #endif
-    
+
     // now write out our file
     NSString *fileListPath = [tempDir stringByAppendingPathComponent:@"filelists.txt"];
     if (fileListPath && [fileList writeToFile:fileListPath atomically:YES]) {
@@ -570,9 +569,9 @@ static NSString *const kPrefsToWatch[] = {
       // we use xargs to batch up the files into as few of runs of gcov as
       // possible.  (we could use -P [num_cpus] to do things in parallell)
       NSString *script
-        = [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/xargs -0 %@ -l -o \"%@\" < \"%@\"",
-           tempDir, gcovPath_, folderPath, fileListPath];
-      
+        = [NSString stringWithFormat:@"cd \"%@\" && /usr/bin/xargs -0 \"%@\" -l -o \"%@\" < \"%@\"",
+           tempDir, gcovPath, folderPath, fileListPath];
+
       NSString *stdErr = nil;
       NSString *stdOut = [runner run:script standardError:&stdErr];
       if (([stdOut length] == 0) || ([stdErr length] > 0)) {
@@ -591,11 +590,11 @@ static NSString *const kPrefsToWatch[] = {
                                 path:path
                          messageType:kCSMessageTypeError];
         }
-      } 
-      
+      }
+
       // since we batch process, we might have gotten some data even w/ an error
       // so we check anyways for data
-      
+
       // collect the gcov files
       NSArray *resultPaths = [fm gtm_filePathsWithExtension:@"gcov"
                                                 inDirectory:tempDir];
@@ -609,7 +608,7 @@ static NSString *const kPrefsToWatch[] = {
                                                     object:fullPath] autorelease];
         // cleanup can't be done until all our other ops are done
         [cleanupOp addDependency:op];
-        
+
         // queue it up
         [opQueue_ addOperation:op];
         result = YES;
@@ -628,12 +627,12 @@ static NSString *const kPrefsToWatch[] = {
 #endif
       }
     } else {
-      
+
       [self addMessageFromThread:@"failed to write out the file lists"
                             path:fileListPath
                      messageType:kCSMessageTypeError];
     }
-    
+
 #if USE_NSOPERATION
     // now put in the cleanup operation
     [opQueue_ addOperation:cleanupOp];
@@ -641,8 +640,8 @@ static NSString *const kPrefsToWatch[] = {
     // nuke our temp dir tree
     NSError *error = nil;
     if (![fm removeItemAtPath:tempDir error:&error]) {
-      NSString *message 
-        = [NSString stringWithFormat:@"failed to remove our tempdir (%@)", 
+      NSString *message
+        = [NSString stringWithFormat:@"failed to remove our tempdir (%@)",
            error];
       [self addMessageFromThread:message
                             path:tempDir
@@ -650,13 +649,13 @@ static NSString *const kPrefsToWatch[] = {
     }
 #endif
   }
-  
+
   return result;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath 
-                      ofObject:(id)object 
-                        change:(NSDictionary *)change 
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
                        context:(void *)context {
   if ([object isEqualTo:sourceFilesController_] &&
       [keyPath isEqualToString:NSSelectionIndexesBinding]) {
@@ -668,7 +667,7 @@ static NSString *const kPrefsToWatch[] = {
     if (data) {
       // Update our scroll bar
       [codeTableView_ setCoverageData:[data lines]];
-    
+
       // Jump to first missing code block
       [self moveSelection:1];
     }
@@ -687,7 +686,7 @@ static NSString *const kPrefsToWatch[] = {
       // we to recalc the common prefix, so trigger a rearrange
       [sourceFilesController_ rearrangeObjects];
     } else {
-      NSString *const kColorsToWatch[] = { 
+      NSString *const kColorsToWatch[] = {
         kCoverStoryMissedLineColorKey,
         kCoverStoryUnexecutableLineColorKey,
         kCoverStoryNonFeasibleLineColorKey,
@@ -715,7 +714,7 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 - (void)setFilterStringType:(CoverStoryFilterStringType)type {
-  [[NSUserDefaults standardUserDefaults] setInteger:type 
+  [[NSUserDefaults standardUserDefaults] setInteger:type
                                              forKey:kCoverStoryFilterStringTypeKey];
   [sourceFilesController_ rearrangeObjects];
 }
@@ -737,7 +736,7 @@ static NSString *const kPrefsToWatch[] = {
     { kCoverStoryFilterStringTypeWildcardPattern, @selector(setUseWildcardPattern:) },
     { kCoverStoryFilterStringTypeRegularExpression, @selector(setUseRegularExpression:) },
   };
-  
+
   CoverStoryFilterStringType type;
   type = [[NSUserDefaults standardUserDefaults] integerForKey:kCoverStoryFilterStringTypeKey];
   BOOL isGood = NO;
@@ -762,7 +761,7 @@ static NSString *const kPrefsToWatch[] = {
       if (hideUnittestSources_) {
         label = NSLocalizedString(@"Show Unittest Source Files", nil);
       } else {
-        label = NSLocalizedString(@"Hide Unittest Source Files", nil);   
+        label = NSLocalizedString(@"Hide Unittest Source Files", nil);
       }
     }
     if (label) {
@@ -797,21 +796,21 @@ static NSString *const kPrefsToWatch[] = {
 // On up or down key we want to select the next block of code that has
 // zero coverage.
 - (void)moveSelection:(NSUInteger)offset {
-  
+
   // If no source, bail
   NSArray *selection = [sourceFilesController_ selectedObjects];
   if (![selection count]) return;
-  
+
   // Start with the current selection
   CoverStoryCoverageFileData *fileData = [selection objectAtIndex:0];
   NSArray *lines = [fileData lines];
   NSIndexSet *currentSel = [codeTableView_ selectedRowIndexes];
-  
+
   // Choose direction based on key and set offset and stopping conditions
   // as well as start.
   NSUInteger stoppingCond = 0;
   NSRange range = NSMakeRange(0, 0);
-  
+
   if (offset > 0) {
     stoppingCond = [lines count] - 1;
     if ([lines count] == 0) {
@@ -825,7 +824,7 @@ static NSString *const kPrefsToWatch[] = {
     range = NSMakeRange(first, last - first);
     startLine = offset == 1 ? last : first;
   }
-  
+
   // From start, look for first line in our given direction that has
   // zero hits
   NSUInteger i;
@@ -835,7 +834,7 @@ static NSString *const kPrefsToWatch[] = {
       break;
     }
   }
-  
+
   // Check to see if we hit end of page (or beginning depending which way
   // we went
   if (i != stoppingCond) {
@@ -847,7 +846,7 @@ static NSString *const kPrefsToWatch[] = {
         break;
       }
     }
-    
+
     // Now if we started in a block, select "backwards"
     NSUInteger k;
     stoppingCond = offset == 1 ? 0 : [lines count] - 1;
@@ -859,10 +858,10 @@ static NSString *const kPrefsToWatch[] = {
         break;
       }
     }
-    
+
     // Update our selection
     range = k > j ? NSMakeRange(j + 1, k - j) : NSMakeRange(k, j - k);
-    
+
     [codeTableView_ selectRowIndexes:[NSIndexSet indexSetWithIndexesInRange:range]
                 byExtendingSelection:NO];
   }
@@ -871,13 +870,13 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 
-- (void)setSortKeyOfTableView:(NSTableView *)tableView 
+- (void)setSortKeyOfTableView:(NSTableView *)tableView
                        column:(NSString *)columnName
                            to:(NSString *)sortKeyName {
   NSTableColumn *column = [tableView tableColumnWithIdentifier:columnName];
   NSSortDescriptor *oldDesc = [column sortDescriptorPrototype];
-  NSSortDescriptor *descriptor 
-    = [[[NSSortDescriptor alloc] initWithKey:sortKeyName 
+  NSSortDescriptor *descriptor
+    = [[[NSSortDescriptor alloc] initWithKey:sortKeyName
                                    ascending:[oldDesc ascending]] autorelease];
   [column setSortDescriptorPrototype:descriptor];
 }
@@ -886,7 +885,7 @@ static NSString *const kPrefsToWatch[] = {
   if (openingInThread_) {
     // starting a reload keeps pushing to the existing data, so block it until
     // we're done.
-    [self addMessageFromThread:@"Still loading data, can't start a reload." 
+    [self addMessageFromThread:@"Still loading data, can't start a reload."
                    messageType:kCSMessageTypeWarning];
     return;
   }
@@ -903,7 +902,7 @@ static NSString *const kPrefsToWatch[] = {
   if (![self readFromURL:[self fileURL]
                   ofType:[self fileType]
                    error:&error]) {
-    [self addMessageFromThread:@"couldn't reload file" 
+    [self addMessageFromThread:@"couldn't reload file"
                           path:[[self fileURL] path]
                    messageType:kCSMessageTypeError];
   }
@@ -960,19 +959,19 @@ static NSString *const kPrefsToWatch[] = {
                                       spinner_, NSViewAnimationTargetKey,
                                       effect, NSViewAnimationEffectKey,
                                       nil];
-    
+
     NSArray *animations;
     if (starting) {
       animations = [NSArray arrayWithObjects:
-                    searchAnimation, 
-                    spinnerAnimation, 
+                    searchAnimation,
+                    spinnerAnimation,
                     nil];
     } else {
       animations = [NSArray arrayWithObjects:
                     spinnerAnimation,
                     searchAnimation,
                     nil];
-    }               
+    }
     currentAnimation_ =
       [[NSViewAnimation alloc] initWithViewAnimations:animations];
     [currentAnimation_ setDelegate:self];
@@ -980,10 +979,10 @@ static NSString *const kPrefsToWatch[] = {
     if (starting) {
       [spinner_ startAnimation:self];
     } else {
-      
+
       [spinner_ stopAnimation:self];
     }
-  } 
+  }
 }
 
 - (void)animationDidEnd:(NSAnimation *)animation {
@@ -1055,7 +1054,7 @@ static NSString *const kPrefsToWatch[] = {
 
 - (void)setOpenThreadState:(BOOL)threadRunning {
   openingInThread_ = threadRunning;
-  [self performSelectorOnMainThread:@selector(displayAndAnimateSpinner:) 
+  [self performSelectorOnMainThread:@selector(displayAndAnimateSpinner:)
                          withObject:[NSNumber numberWithBool:openingInThread_]
                       waitUntilDone:NO];
 }
@@ -1095,7 +1094,7 @@ static NSString *const kPrefsToWatch[] = {
 
 - (void)coverageWarningForPath:(NSString*)path message:(NSString *)format, ... {
   // we use the data objects on other threads, so bounce to the main thread
-  
+
   va_list list;
   va_start(list, format);
   NSString *message = [[NSString alloc] initWithFormat:format arguments:list];
@@ -1156,13 +1155,13 @@ static NSString *const kPrefsToWatch[] = {
     NSString *fullLabel = nil;
     NSString *fullIcon = nil;
     if (value) {
-      fullLabel 
-        = [NSString stringWithFormat:GTMLocalizedString(@"Show %@", nil), 
+      fullLabel
+        = [NSString stringWithFormat:GTMLocalizedString(@"Show %@", nil),
            label];
       fullIcon = [NSString stringWithFormat:@"%@", iconName];
     } else {
-      fullLabel 
-        = [NSString stringWithFormat:GTMLocalizedString(@"Hide %@", nil), 
+      fullLabel
+        = [NSString stringWithFormat:GTMLocalizedString(@"Hide %@", nil),
            label];
       fullIcon = [NSString stringWithFormat:@"%@Hide", iconName];
     }
@@ -1185,12 +1184,12 @@ static NSString *const kPrefsToWatch[] = {
     if (msgType != kCSMessageTypeInfo) {
       [drawer_ open];
     }
-    
+
     // make sure it ends in a newline
     if (![message hasSuffix:@"\n"]) {
       message = [message stringByAppendingString:@"\n"];
     }
-    
+
     // add the message, color, and scroll
     size_t length = [[messageView_ string] length];
     NSRange appendRange = NSMakeRange(length, 0);
@@ -1214,7 +1213,7 @@ static NSString *const kPrefsToWatch[] = {
       = [[[NSAttributedString attributedStringWithAttachment:icon] mutableCopy] autorelease];
     NSAttributedString *attrMessage = [[[NSAttributedString alloc] initWithString:message] autorelease];
     [attrIconAndMessage appendAttributedString:attrMessage];
-    
+
     NSMutableParagraphStyle *paraStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
     [paraStyle setFirstLineHeadIndent:0];
     [paraStyle setHeadIndent:12];
@@ -1222,7 +1221,7 @@ static NSString *const kPrefsToWatch[] = {
                            textColor, NSForegroundColorAttributeName,
                            paraStyle, NSParagraphStyleAttributeName,
                            nil];
-    
+
     [attrIconAndMessage addAttributes:attrs range:NSMakeRange(0, [attrMessage length])];
     NSTextStorage *storage = [messageView_ textStorage];
     [storage replaceCharactersInRange:appendRange withAttributedString:attrIconAndMessage];
@@ -1249,7 +1248,7 @@ static NSString *const kPrefsToWatch[] = {
     { 75., @"filelessthan75percent" },
   };
   for (CoverStoryCoverageFileData *fileData in fileDatas) {
-    NSString *name 
+    NSString *name
       = [[[fileData sourcePath] lastPathComponent] gtm_stringByEscapingForHTML];
     NSString *link = [name stringByAppendingPathExtension:@"html"];
     float percent;
@@ -1259,10 +1258,10 @@ static NSString *const kPrefsToWatch[] = {
                 nonFeasibleLines:NULL
                   coverageString:NULL
                         coverage:&percent];
-    
+
     NSString *classString = @"filegoodcoveragepercent";
-    for (size_t i = 0; 
-         i < sizeof(percentClassMap) / sizeof(percentClassMap[0]); 
+    for (size_t i = 0;
+         i < sizeof(percentClassMap) / sizeof(percentClassMap[0]);
          ++i) {
       if (percent < percentClassMap[i].value) {
         classString = percentClassMap[i].classString;
@@ -1284,11 +1283,11 @@ static NSString *const kPrefsToWatch[] = {
   NSMutableString *sourceHtml = [NSMutableString string];
   for (CoverStoryCoverageLineData *line in [fileData lines]) {
     NSString *lineSource = [line line];
-    lineSource 
+    lineSource
       = [lineSource stringByReplacingOccurrencesOfString:@"\t"
                                               withString:tabReplacement];
-    lineSource 
-      = [lineSource stringByReplacingOccurrencesOfString:@"  " 
+    lineSource
+      = [lineSource stringByReplacingOccurrencesOfString:@"  "
                                               withString:tabReplacement];
     lineSource = [lineSource gtm_stringByEscapingForHTML];
     NSInteger hitCount = [line hitCount];
@@ -1314,19 +1313,19 @@ static NSString *const kPrefsToWatch[] = {
   }
   return sourceHtml;
 }
-  
-- (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName 
+
+- (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName
                                error:(NSError **)outError {
   NSString *fileList = [self htmlFileListTableData];
   NSArray *fileDatas = [sourceFilesController_ arrangedObjects];
-  NSValueTransformer *transformer 
+  NSValueTransformer *transformer
     = [NSValueTransformer valueTransformerForName:@"LineCoverageToCoverageShortSummaryTransformer"];
   NSString *summary = [transformer transformedValue:fileDatas];
   summary = [summary gtm_stringByEscapingForHTML];
-  transformer 
+  transformer
     = [NSValueTransformer valueTransformerForName:@"FileLineCoverageToCoverageSummaryTransformer"];
-  
-  NSFileWrapper *finalWrapper 
+
+  NSFileWrapper *finalWrapper
     = [[[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil] autorelease];
   NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
   [formatter setDateStyle:kCFDateFormatterShortStyle];
@@ -1341,30 +1340,30 @@ static NSString *const kPrefsToWatch[] = {
     NSString *coverageString = [transformer transformedValue:fileData];
     sourcePath = [sourcePath gtm_stringByEscapingForHTML];
     fileName = [fileName gtm_stringByEscapingForHTML];
-    coverageString = [coverageString gtm_stringByEscapingForHTML];    
+    coverageString = [coverageString gtm_stringByEscapingForHTML];
     NSString *sourceHTML = [self htmlSourceTableData:fileData];
-    NSString *htmlString 
-      = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLExportTemplate", 
-                                                               @"HTMLExport", @""), 
-         fileName, fileName, sourcePath, date, summary, fileList, 
-         coverageString, sourceHTML]; 
+    NSString *htmlString
+      = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLExportTemplate",
+                                                               @"HTMLExport", @""),
+         fileName, fileName, sourcePath, date, summary, fileList,
+         coverageString, sourceHTML];
     NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
-    [finalWrapper addRegularFileWithContents:data 
+    [finalWrapper addRegularFileWithContents:data
                            preferredFilename:htmlFileName];
     if (!redirectURL) {
       redirectURL = [NSString stringWithFormat:@"./%@", htmlFileName];
     }
   }
   if (redirectURL) {
-    NSString *indexHTML 
-      = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLIndexTemplate", 
-                                                               @"HTMLIndex", @""), 
+    NSString *indexHTML
+      = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLIndexTemplate",
+                                                               @"HTMLIndex", @""),
          redirectURL];
     NSData *indexData = [indexHTML dataUsingEncoding:NSUTF8StringEncoding];
-    [finalWrapper addRegularFileWithContents:indexData 
+    [finalWrapper addRegularFileWithContents:indexData
                            preferredFilename:@"index.html"];
   }
-  NSString *cssPath = [[NSBundle mainBundle] pathForResource:@"coverstory" 
+  NSString *cssPath = [[NSBundle mainBundle] pathForResource:@"coverstory"
                                                       ofType:@"css"];
   NSError *error = nil;
   NSString *cssString = [NSString stringWithContentsOfFile:cssPath
@@ -1387,10 +1386,10 @@ static NSString *const kPrefsToWatch[] = {
       { kCoverStoryExecutedLineColorKey, @"$$SOURCE_LINE_HIT_COLOR$$" }
     };
 
-    for (size_t i = 0; 
-         i < sizeof(sourceLineColorMap) / sizeof(sourceLineColorMap[0]); 
+    for (size_t i = 0;
+         i < sizeof(sourceLineColorMap) / sizeof(sourceLineColorMap[0]);
          ++i) {
-      NSData *colorData 
+      NSData *colorData
         = [values valueForKey:sourceLineColorMap[i].defaultName];
       NSColor *color = nil;
       if (colorData) {
@@ -1408,19 +1407,19 @@ static NSString *const kPrefsToWatch[] = {
       NSString *newColor
         = [NSString stringWithFormat:@"#%02X%02X%02X", redInt, greenInt, blueInt];
       NSString *replacee = sourceLineColorMap[i].replacee;
-      cssString = [cssString stringByReplacingOccurrencesOfString:replacee 
+      cssString = [cssString stringByReplacingOccurrencesOfString:replacee
                                                        withString:newColor];
     }
     NSData *cssData = [cssString dataUsingEncoding:NSUTF8StringEncoding];
-    [finalWrapper addRegularFileWithContents:cssData 
+    [finalWrapper addRegularFileWithContents:cssData
                            preferredFilename:@"coverstory.css"];
   }
-  NSString *jsPath = [[NSBundle mainBundle] pathForResource:@"coverstory" 
+  NSString *jsPath = [[NSBundle mainBundle] pathForResource:@"coverstory"
                                                      ofType:@"js"];
   NSData *jsData = [NSData dataWithContentsOfFile:jsPath];
-  [finalWrapper addRegularFileWithContents:jsData 
+  [finalWrapper addRegularFileWithContents:jsData
                          preferredFilename:@"coverstory.js"];
-  return finalWrapper; 
+  return finalWrapper;
 }
 
 - (id)handleExportHTMLScriptCommand:(NSScriptCommand *)command {
@@ -1443,13 +1442,13 @@ static NSString *const kPrefsToWatch[] = {
   NSAssert1(bindingInfo, @"No binding Info for column %@", columnName);
   [column unbind:NSValueBinding];
   NSMutableDictionary *bindingOptions = [[[bindingInfo objectForKey:NSOptionsKey] mutableCopy] autorelease];
-  [bindingOptions setObject:transformerName 
+  [bindingOptions setObject:transformerName
                      forKey:NSValueTransformerNameBindingOption];
   [bindingOptions setObject:[NSValueTransformer valueTransformerForName:transformerName]
                      forKey:NSValueTransformerBindingOption];
-  [column bind:NSValueBinding 
+  [column bind:NSValueBinding
       toObject:[bindingInfo objectForKey:NSObservedObjectKey]
-   withKeyPath:[bindingInfo objectForKey:NSObservedKeyPathKey] 
+   withKeyPath:[bindingInfo objectForKey:NSObservedKeyPathKey]
        options:bindingOptions];
 }
 
@@ -1459,7 +1458,7 @@ static NSString *const kPrefsToWatch[] = {
   NSAssert1(column, @"No %@ column?", columnName);
   NSSortDescriptor *oldDesc = [column sortDescriptorPrototype];
   BOOL ascending = oldDesc ? [oldDesc ascending] : YES;
-  NSSortDescriptor *descriptor = [[[NSSortDescriptor alloc] initWithKey:sortKeyName 
+  NSSortDescriptor *descriptor = [[[NSSortDescriptor alloc] initWithKey:sortKeyName
                                                               ascending:ascending]  autorelease];
   [column setSortDescriptorPrototype:descriptor];
 }
@@ -1475,9 +1474,9 @@ static NSString *const kPrefsToWatch[] = {
 @implementation CoverStoryArrayController
 - (void)updateCommonPathPrefix {
   if (!owningDocument_) return;
-  
+
   NSString *newPrefix = nil;
-  
+
   // now figure out a new prefix
   NSArray *arranged = [self arrangedObjects];
   if ([arranged count] == 0) {
@@ -1485,7 +1484,7 @@ static NSString *const kPrefsToWatch[] = {
     newPrefix = @"";
   } else {
     // process the list to find the common prefix
-    
+
     // start w/ the first path, and now loop throught them all, but give up
     // the moment he only common prefix is "/"
     NSArray *sourcePaths = [arranged valueForKey:@"sourcePath"];
