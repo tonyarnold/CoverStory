@@ -1,9 +1,8 @@
 //
-//  CoverStoryCodeViewTableView.h
+//  fdopen2003.c
 //  CoverStory
 //
-//  Created by Dave MacLachlan on 2008/03/21.
-//  Copyright 2008 Google Inc.
+//  Copyright 2010 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
@@ -17,17 +16,18 @@
 //  the License.
 //
 
-#import <Cocoa/Cocoa.h>
+#if GTM_CODE_COVERAGE_ON
 
-@protocol CoverStoryCodeViewTableViewDelegateProtocol
+// This file exists because when you build with your SDK set to 10.5 and
+// and compiler version set to gcc 4.0 on using Xcode 3.2.2 on Snow Leopard
+// you will receive a link error for missing the _fdopen$UNIX2003 symbol.
+// See http://code.google.com/p/coverstory/wiki/SnowLeopardGCov
+// for more details.
 
-// Handle when the user hits return or enter
-- (void)tableViewHandleEnter:(NSTableView *)tableView;
+#include <stdio.h>
 
-@end
+FILE *fdopen$UNIX2003(int fildes, const char *mode) {
+  return fdopen(fildes, mode);
+}
 
-@interface CoverStoryCodeViewTableView : NSTableView
-
-- (void)setCoverageData:(NSArray*)coverageData;
-
-@end
+#endif  // GTM_CODE_COVERAGE_ON

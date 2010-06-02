@@ -18,6 +18,7 @@
 
 #import "CoverStoryCodeViewTableView.h"
 #import "CoverStoryScroller.h"
+#import "GTMDefines.h"
 
 @implementation CoverStoryCodeViewTableView
 - (void)awakeFromNib {
@@ -34,22 +35,37 @@
   [scroller setEnabled:coverageData ? YES : NO];
   [scroller setCoverageData:coverageData];
 }
+  
+- (void)insertNewline:(id)sender {
+  [NSApp sendAction:@selector(openSelectedSource:) 
+                 to:[self delegate] 
+               from:self];
+} 
 
 - (void)keyDown:(NSEvent *)event {
   NSString *chars = [event characters];
   if ([chars length]) {
     unichar keyCode = [chars characterAtIndex:0];
-    switch (keyCode) {
-      case NSUpArrowFunctionKey:
-      case NSDownArrowFunctionKey:
-        [[self delegate] tableView:self handleSelectionKey:keyCode];
-        break;
-        
+    switch (keyCode) {        
       case '\r':
       case '\n':
-        [[self delegate] tableViewHandleEnter:self];
+        [NSApp sendAction:@selector(openSelectedSource:) 
+                       to:nil 
+                     from:self];
         break;
       
+      case NSDownArrowFunctionKey:
+        [NSApp sendAction:@selector(moveDownAndModifySelection:) 
+                       to:nil 
+                     from:self];
+        break;
+
+      case NSUpArrowFunctionKey:
+        [NSApp sendAction:@selector(moveUpAndModifySelection:) 
+                       to:nil 
+                     from:self];
+        break;
+        
       default:
         [super keyDown:event];
         break;

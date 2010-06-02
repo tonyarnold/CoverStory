@@ -38,6 +38,8 @@
 		8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */; };
 		8BAAA3E60F7D614F00DF4F12 /* SDKHide.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BAAA3E40F7D614F00DF4F12 /* SDKHide.png */; };
 		8BAAA3E70F7D614F00DF4F12 /* UnitTestsHide.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BAAA3E50F7D614F00DF4F12 /* UnitTestsHide.png */; };
+		8BB77C8511B5D0D100AB31AF /* fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */; };
+		8BB77C8811B5D0DC00AB31AF /* fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */; };
 		8BC04E2C0DB0459100C2D1CA /* info.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E290DB0459100C2D1CA /* info.png */; };
 		8BC04E2D0DB0459100C2D1CA /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E2A0DB0459100C2D1CA /* error.png */; };
 		8BC04E2E0DB0459100C2D1CA /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E2B0DB0459100C2D1CA /* warning.png */; };
@@ -136,6 +138,8 @@
 		8BAAA3E40F7D614F00DF4F12 /* SDKHide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SDKHide.png; sourceTree = "<group>"; };
 		8BAAA3E50F7D614F00DF4F12 /* UnitTestsHide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnitTestsHide.png; sourceTree = "<group>"; };
 		8BAAA4EB0F7DA25200DF4F12 /* CoverStoryValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryValueTransformers.h; sourceTree = "<group>"; };
+		8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fdopen2003.c; sourceTree = "<group>"; };
+		8BB77D0011B5D7D100AB31AF /* GTMLocalizedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMLocalizedString.h; sourceTree = "<group>"; };
 		8BBEC3630DD0E02400E5D45D /* openscript.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = openscript.applescript; sourceTree = "<group>"; };
 		8BC04E290DB0459100C2D1CA /* info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = info.png; sourceTree = SOURCE_ROOT; };
 		8BC04E2A0DB0459100C2D1CA /* error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = error.png; sourceTree = SOURCE_ROOT; };
@@ -277,6 +281,7 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */,
 				32DBCF750370BD2300C91783 /* CoverStory.pch */,
 				2A37F4B0FDCFA73011CA2CEA /* main.m */,
 			);
@@ -346,6 +351,7 @@
 		F4138F240D751FCF00F72B31 /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
+				8BB77D0011B5D7D100AB31AF /* GTMLocalizedString.h */,
 				F4E280D20D81F38700DD304F /* GTMRegex.h */,
 				F4E280D30D81F38700DD304F /* GTMRegex.m */,
 				F41390F30D771A5400F72B31 /* GTMNSEnumerator+Filter.h */,
@@ -597,6 +603,7 @@
 				8B408E810F8E347200DF540E /* GTMNSString+HTML.m in Sources */,
 				8B4091140F8E733D00DF540E /* CoverStoryApplication.m in Sources */,
 				8B4094C00F8EC70300DF540E /* NSColor+Scripting.m in Sources */,
+				8BB77C8811B5D0DC00AB31AF /* fdopen2003.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -607,6 +614,7 @@
 				F426B71A0E0A254100348386 /* CoverStoryCoverageData.m in Sources */,
 				F426B7210E0A25AE00348386 /* GTMRegex.m in Sources */,
 				F426B7510E0A275300348386 /* CoverStoryCoverageDataTest.m in Sources */,
+				8BB77C8511B5D0D100AB31AF /* fdopen2003.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -712,6 +720,7 @@
 				);
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GTM_HOST_GCC_PREPROCESSOR_DEFINITIONS = "GTM_CODE_COVERAGE_ON=1";
 				OTHER_LDFLAGS = "-lgcov";
 			};
 			name = Debug;

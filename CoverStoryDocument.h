@@ -21,6 +21,7 @@
 #import <Cocoa/Cocoa.h>
 #import "CoverStoryCodeViewTableView.h"
 #import "CoverStoryCoverageData.h"
+#import "GTMDefines.h"
 
 #ifndef USE_NSOPERATION
   #define USE_NSOPERATION 0
@@ -34,7 +35,8 @@
 @end
 
 @interface CoverStoryDocument : NSDocument<CoverStoryCodeViewTableViewDelegateProtocol,
-                                           CoverStoryCoverageProcessingProtocol> {
+                                           CoverStoryCoverageProcessingProtocol,
+                                           NSAnimationDelegate> {
  @private
   IBOutlet CoverStoryCodeViewTableView *codeTableView_;  // the code table
   IBOutlet NSTableView *sourceFilesTableView_;

@@ -25,6 +25,7 @@
 #import "GTMNSFileManager+Path.h"
 #import "GTMNSEnumerator+Filter.h"
 #import "GTMNSString+HTML.h"
+#import "GTMLocalizedString.h"
 
 const NSInteger kCoverStorySDKToolbarTag = 1026;
 const NSInteger kCoverStoryUnittestToolbarTag = 1027;
@@ -68,6 +69,7 @@ typedef enum {
                  messageType:(CSMessageType)msgType;
 - (void)addMessage:(NSDictionary *)msgInfo;
 - (BOOL)isClosed;
+- (void)moveSelection:(NSUInteger)offset;
 @end
 
 static NSString *const kPrefsToWatch[] = { 
@@ -174,8 +176,8 @@ static NSString *const kPrefsToWatch[] = {
   [searchField_ setFrame:searchFieldFrame];
   
   [sourceFilesController_ addObserver:self 
-                           forKeyPath:@"selectedObjects" 
-                              options:NSKeyValueObservingOptionNew
+                           forKeyPath:NSSelectionIndexesBinding 
+                              options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
                               context:nil];
 
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
@@ -186,7 +188,7 @@ static NSString *const kPrefsToWatch[] = {
                   context:nil];
   }
   
-  [self observeValueForKeyPath:@"selectedObjects"
+  [self observeValueForKeyPath:NSSelectionIndexesBinding
                       ofObject:sourceFilesController_
                         change:nil
                        context:nil];
@@ -217,9 +219,7 @@ static NSString *const kPrefsToWatch[] = {
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData {
   if ([self isClosed]) return NO;
   ++numFileDatas_;
-  [self willChangeValueForKey:@"dataSet_"];
   BOOL isGood = [dataSet_ addFileData:fileData messageReceiver:self];
-  [self didChangeValueForKey:@"dataSet_"];
   return isGood;
 }
 
@@ -235,7 +235,7 @@ static NSString *const kPrefsToWatch[] = {
 
   // the wrapper doesn't have the full path, but it's already set on us, so
   // use that instead.
-  NSString *path = [self fileName];
+  NSString *path = [[self fileURL] path];
   if ([fileWrapper isDirectory]) {
     NSString *message =
       [NSString stringWithFormat:@"Scanning for coverage data in '%@'",
@@ -639,8 +639,12 @@ static NSString *const kPrefsToWatch[] = {
     [opQueue_ addOperation:cleanupOp];
 #else
     // nuke our temp dir tree
-    if (![fm removeFileAtPath:tempDir handler:nil]) {
-      [self addMessageFromThread:@"failed to remove our tempdir"
+    NSError *error = nil;
+    if (![fm removeItemAtPath:tempDir error:&error]) {
+      NSString *message 
+        = [NSString stringWithFormat:@"failed to remove our tempdir (%@)", 
+           error];
+      [self addMessageFromThread:message
                             path:tempDir
                      messageType:kCSMessageTypeError];
     }
@@ -655,17 +659,19 @@ static NSString *const kPrefsToWatch[] = {
                         change:(NSDictionary *)change 
                        context:(void *)context {
   if ([object isEqualTo:sourceFilesController_] &&
-      [keyPath isEqualToString:@"selectedObjects"]) {
+      [keyPath isEqualToString:NSSelectionIndexesBinding]) {
     NSArray *selectedObjects = [object selectedObjects];
     CoverStoryCoverageFileData *data = nil;
     if ([selectedObjects count]) {
       data = (CoverStoryCoverageFileData*)[selectedObjects objectAtIndex:0];
     }
-    // Update our scroll bar
-    [codeTableView_ setCoverageData:[data lines]];
+    if (data) {
+      // Update our scroll bar
+      [codeTableView_ setCoverageData:[data lines]];
     
-    // Jump to first missing code block
-    [self tableView:codeTableView_ handleSelectionKey:NSDownArrowFunctionKey];
+      // Jump to first missing code block
+      [self moveSelection:1];
+    }
   } else if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
     if ([keyPath isEqualToString:[self valuesKey:kCoverStorySystemSourcesPatternsKey]]) {
       if (hideSDKSources_) {
@@ -780,12 +786,17 @@ static NSString *const kPrefsToWatch[] = {
   [self openSelectedSource];
 }
 
+- (void)moveUpAndModifySelection:(id)sender {
+  [self moveSelection:-1];
+}
+
+- (void)moveDownAndModifySelection:(id)sender {
+  [self moveSelection:1];
+}
+
 // On up or down key we want to select the next block of code that has
 // zero coverage.
-- (void)tableView:(NSTableView *)tableView handleSelectionKey:(unichar)keyCode {
-  NSAssert(tableView == codeTableView_, @"Unexpected key");
-  NSAssert(keyCode == NSUpArrowFunctionKey || keyCode == NSDownArrowFunctionKey,
-           @"Unexpected key");
+- (void)moveSelection:(NSUInteger)offset {
   
   // If no source, bail
   NSArray *selection = [sourceFilesController_ selectedObjects];
@@ -794,16 +805,14 @@ static NSString *const kPrefsToWatch[] = {
   // Start with the current selection
   CoverStoryCoverageFileData *fileData = [selection objectAtIndex:0];
   NSArray *lines = [fileData lines];
-  NSIndexSet *currentSel = [tableView selectedRowIndexes];
+  NSIndexSet *currentSel = [codeTableView_ selectedRowIndexes];
   
   // Choose direction based on key and set offset and stopping conditions
   // as well as start.
-  NSInteger offset = -1;
   NSUInteger stoppingCond = 0;
   NSRange range = NSMakeRange(0, 0);
   
-  if (keyCode == NSDownArrowFunctionKey) {
-    offset = 1;
+  if (offset > 0) {
     stoppingCond = [lines count] - 1;
     if ([lines count] == 0) {
       stoppingCond = 0;
@@ -854,11 +863,11 @@ static NSString *const kPrefsToWatch[] = {
     // Update our selection
     range = k > j ? NSMakeRange(j + 1, k - j) : NSMakeRange(k, j - k);
     
-    [tableView selectRowIndexes:[NSIndexSet indexSetWithIndexesInRange:range]
-           byExtendingSelection:NO];
+    [codeTableView_ selectRowIndexes:[NSIndexSet indexSetWithIndexesInRange:range]
+                byExtendingSelection:NO];
   }
-  [tableView scrollRowToVisible:NSMaxRange(range)];
-  [tableView scrollRowToVisible:range.location];
+  [codeTableView_ scrollRowToVisible:NSMaxRange(range)];
+  [codeTableView_ scrollRowToVisible:range.location];
 }
 
 
@@ -867,8 +876,9 @@ static NSString *const kPrefsToWatch[] = {
                            to:(NSString *)sortKeyName {
   NSTableColumn *column = [tableView tableColumnWithIdentifier:columnName];
   NSSortDescriptor *oldDesc = [column sortDescriptorPrototype];
-  NSSortDescriptor *descriptor = [[[NSSortDescriptor alloc] initWithKey:sortKeyName 
-                                                              ascending:[oldDesc ascending]]  autorelease];
+  NSSortDescriptor *descriptor 
+    = [[[NSSortDescriptor alloc] initWithKey:sortKeyName 
+                                   ascending:[oldDesc ascending]] autorelease];
   [column setSortDescriptorPrototype:descriptor];
 }
 
@@ -890,11 +900,11 @@ static NSString *const kPrefsToWatch[] = {
   [messageView_ setString:@""];
 
   NSError *error = nil;
-  if (![self readFromURL:[NSURL fileURLWithPath:[self fileName]]
+  if (![self readFromURL:[self fileURL]
                   ofType:[self fileType]
                    error:&error]) {
     [self addMessageFromThread:@"couldn't reload file" 
-                          path:[self fileName]
+                          path:[[self fileURL] path]
                    messageType:kCSMessageTypeError];
   }
 }
@@ -1143,17 +1153,19 @@ static NSString *const kPrefsToWatch[] = {
     iconName = @"UnitTests";
   }
   if (label) {
-    NSString *labelFormat = nil;
-    NSString *iconFormat = nil;
+    NSString *fullLabel = nil;
+    NSString *fullIcon = nil;
     if (value) {
-      labelFormat = NSLocalizedString(@"Show %@", nil); 
-      iconFormat = @"%@";
+      fullLabel 
+        = [NSString stringWithFormat:GTMLocalizedString(@"Show %@", nil), 
+           label];
+      fullIcon = [NSString stringWithFormat:@"%@", iconName];
     } else {
-      labelFormat = NSLocalizedString(@"Hide %@", nil); 
-      iconFormat = @"%@Hide";
+      fullLabel 
+        = [NSString stringWithFormat:GTMLocalizedString(@"Hide %@", nil), 
+           label];
+      fullIcon = [NSString stringWithFormat:@"%@Hide", iconName];
     }
-    NSString *fullLabel = [NSString stringWithFormat:labelFormat, label];
-    NSString *fullIcon = [NSString stringWithFormat:iconFormat, iconName];
     [theItem setLabel:fullLabel];
     NSImage *image = [NSImage imageNamed:fullIcon];
     [theItem setImage:image];
@@ -1306,8 +1318,6 @@ static NSString *const kPrefsToWatch[] = {
 - (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName 
                                error:(NSError **)outError {
   NSString *fileList = [self htmlFileListTableData];
-  NSString *htmlTemplate 
-    = NSLocalizedStringFromTable(@"HTMLExportTemplate", @"HTMLExport", @"");
   NSArray *fileDatas = [sourceFilesController_ arrangedObjects];
   NSValueTransformer *transformer 
     = [NSValueTransformer valueTransformerForName:@"LineCoverageToCoverageShortSummaryTransformer"];
@@ -1333,9 +1343,11 @@ static NSString *const kPrefsToWatch[] = {
     fileName = [fileName gtm_stringByEscapingForHTML];
     coverageString = [coverageString gtm_stringByEscapingForHTML];    
     NSString *sourceHTML = [self htmlSourceTableData:fileData];
-    NSString *htmlString = [NSString stringWithFormat:htmlTemplate, fileName, 
-                            fileName, sourcePath, date, summary, fileList, 
-                            coverageString, sourceHTML]; 
+    NSString *htmlString 
+      = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLExportTemplate", 
+                                                               @"HTMLExport", @""), 
+         fileName, fileName, sourcePath, date, summary, fileList, 
+         coverageString, sourceHTML]; 
     NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
     [finalWrapper addRegularFileWithContents:data 
                            preferredFilename:htmlFileName];
@@ -1344,58 +1356,65 @@ static NSString *const kPrefsToWatch[] = {
     }
   }
   if (redirectURL) {
-    NSString *indexTemplate 
-      = NSLocalizedStringFromTable(@"HTMLIndexTemplate", @"HTMLExport", @"");
-    NSString *indexHTML = [NSString stringWithFormat:indexTemplate, 
-                           redirectURL];
+    NSString *indexHTML 
+      = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLIndexTemplate", 
+                                                               @"HTMLIndex", @""), 
+         redirectURL];
     NSData *indexData = [indexHTML dataUsingEncoding:NSUTF8StringEncoding];
     [finalWrapper addRegularFileWithContents:indexData 
                            preferredFilename:@"index.html"];
   }
   NSString *cssPath = [[NSBundle mainBundle] pathForResource:@"coverstory" 
                                                       ofType:@"css"];
-  NSString *cssString = [NSString stringWithContentsOfFile:cssPath];
-  
-  NSUserDefaultsController *defaults
-    = [NSUserDefaultsController sharedUserDefaultsController];
-  id values = [defaults values];
-  struct {
-    NSString *defaultName;
-    NSString *replacee;
-  } sourceLineColorMap[] = {
-    { kCoverStoryMissedLineColorKey, @"$$SOURCE_LINE_MISSED_COLOR$$" },
-    { kCoverStoryUnexecutableLineColorKey, @"$$SOURCE_LINE_SKIPPED_COLOR$$" },
-    { kCoverStoryNonFeasibleLineColorKey, @"$$SOURCE_LINE_NONFEASIBLE_COLOR$$" },
-    { kCoverStoryExecutedLineColorKey, @"$$SOURCE_LINE_HIT_COLOR$$" }
-  };
-    
-  for (size_t i = 0; 
-       i < sizeof(sourceLineColorMap) / sizeof(sourceLineColorMap[0]); 
-       ++i) {
-    
-    NSData *colorData = [values valueForKey:sourceLineColorMap[i].defaultName];
-    NSColor *color = nil;
-    if (colorData) {
-      color = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
-    }
-    if (!color) {
-      color = [NSColor blackColor];
-    }
-    color = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
-    CGFloat components[4];
-    [color getComponents:components];
-    int redInt = components[0] * 255;
-    int greenInt = components[1] * 255;
-    int blueInt = components[2] * 255;
-    NSString *newColor
-      = [NSString stringWithFormat:@"#%02X%02X%02X", redInt, greenInt, blueInt];
-    NSString *replacee = sourceLineColorMap[i].replacee;
-    cssString = [cssString stringByReplacingOccurrencesOfString:replacee 
-                                                     withString:newColor];
+  NSError *error = nil;
+  NSString *cssString = [NSString stringWithContentsOfFile:cssPath
+                                                  encoding:NSUTF8StringEncoding
+                                                     error:&error];
+  if (error) {
+    [NSApp presentError:error];
   }
-  NSData *cssData = [cssString dataUsingEncoding:NSUTF8StringEncoding];
-  [finalWrapper addRegularFileWithContents:cssData 
-                         preferredFilename:@"coverstory.css"];
+  if (cssString) {
+    NSUserDefaultsController *defaults
+      = [NSUserDefaultsController sharedUserDefaultsController];
+    id values = [defaults values];
+    struct {
+      NSString *defaultName;
+      NSString *replacee;
+    } sourceLineColorMap[] = {
+      { kCoverStoryMissedLineColorKey, @"$$SOURCE_LINE_MISSED_COLOR$$" },
+      { kCoverStoryUnexecutableLineColorKey, @"$$SOURCE_LINE_SKIPPED_COLOR$$" },
+      { kCoverStoryNonFeasibleLineColorKey, @"$$SOURCE_LINE_NONFEASIBLE_COLOR$$" },
+      { kCoverStoryExecutedLineColorKey, @"$$SOURCE_LINE_HIT_COLOR$$" }
+    };
+
+    for (size_t i = 0; 
+         i < sizeof(sourceLineColorMap) / sizeof(sourceLineColorMap[0]); 
+         ++i) {
+      NSData *colorData 
+        = [values valueForKey:sourceLineColorMap[i].defaultName];
+      NSColor *color = nil;
+      if (colorData) {
+        color = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
+      }
+      if (!color) {
+        color = [NSColor blackColor];
+      }
+      color = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
+      CGFloat components[4];
+      [color getComponents:components];
+      int redInt = (int)(components[0] * 255);
+      int greenInt = (int)(components[1] * 255);
+      int blueInt = (int)(components[2] * 255);
+      NSString *newColor
+        = [NSString stringWithFormat:@"#%02X%02X%02X", redInt, greenInt, blueInt];
+      NSString *replacee = sourceLineColorMap[i].replacee;
+      cssString = [cssString stringByReplacingOccurrencesOfString:replacee 
+                                                       withString:newColor];
+    }
+    NSData *cssData = [cssString dataUsingEncoding:NSUTF8StringEncoding];
+    [finalWrapper addRegularFileWithContents:cssData 
+                           preferredFilename:@"coverstory.css"];
+  }
   NSString *jsPath = [[NSBundle mainBundle] pathForResource:@"coverstory" 
                                                      ofType:@"js"];
   NSData *jsData = [NSData dataWithContentsOfFile:jsPath];
@@ -1408,7 +1427,7 @@ static NSString *const kPrefsToWatch[] = {
   NSURL *url = [[command arguments] objectForKey:@"File"];
   NSError *error = nil;
   if (![self writeToURL:url ofType:@"Folder" error:&error]) {
-    [command setScriptErrorNumber:[error code]];
+    [command setScriptErrorNumber:(int)[error code]];
     [command setScriptErrorString:[error localizedDescription]];
   }
   return nil;

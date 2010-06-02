@@ -41,13 +41,13 @@
     kThemeBottomOutsideArrowPressed, 
     0
   };
-
+  CGFloat height = NSHeight(rect);
   HIThemeTrackDrawInfo drawInfo = {
     0,
     kThemeScrollBarMedium,
     {{NSMinX(bounds), NSMinY(bounds)}, {NSWidth(bounds), NSHeight(bounds)}},
     0,
-    NSHeight(rect),
+    (SInt32)height,
     0,
     0,
     0,

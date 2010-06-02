@@ -37,7 +37,7 @@
     STAssertEqualObjects([data line], testData[x].line, @"index %u", x);
     STAssertEquals([data hitCount], testData[x].hitCount, @"index %u", x);
     
-    STAssertGreaterThan([[data description] length], 5U, @"index %u", x);
+    STAssertGreaterThan([[data description] length], (NSUInteger)5, @"index %u", x);
     
   }
 }
@@ -103,7 +103,7 @@
                                            messageReceiver:nil];
     STAssertNotNil(data, @"index %u", x);
     STAssertEquals([[data lines] count],
-                   (unsigned)testData[x].numberTotalLines,
+                   (NSUInteger)testData[x].numberTotalLines,
                    @"index %u", x);
     STAssertEqualObjects([data sourcePath],
                    testData[x].sourcePath,
@@ -127,7 +127,7 @@
     STAssertEqualsWithAccuracy(coverage, testData[x].coverage, 0x001f, @"index %u", x);
     STAssertNotNil(coverageString, @"index %u", x);
     
-    STAssertGreaterThan([[data description] length], 5U, @"index %u", x);
+    STAssertGreaterThan([[data description] length], (NSUInteger)5, @"index %u", x);
   }
 }
 
@@ -160,7 +160,7 @@
     NSData *fileContents = [NSData dataWithContentsOfFile:path];
     STAssertNotNil(fileContents, @"index %u", x);
     [fileContentsSet addObject:fileContents];
-    STAssertEquals([fileContentsSet count], (unsigned)(x + 1),
+    STAssertEquals([fileContentsSet count], (NSUInteger)(x + 1),
                    @"failed to get a uniq file contents at index %u", x);
     // now process the file
     CoverStoryCoverageFileData *data =
@@ -169,7 +169,7 @@
                                            messageReceiver:nil];
     STAssertNotNil(data, @"index %u", x);
     STAssertEquals([[data lines] count],
-                   (unsigned)testData[x].numberTotalLines,
+                   (NSUInteger)testData[x].numberTotalLines,
                    @"index %u", x);
     STAssertEqualObjects([data sourcePath],
                          testData[x].sourcePath,

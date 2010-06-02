@@ -39,7 +39,7 @@
                                              display:YES 
                                                error:&error];
     if (error) {
-      [command setScriptErrorNumber:[error code]];
+      [command setScriptErrorNumber:(int)[error code]];
       [command setScriptErrorString:[error localizedDescription]];
       break;
     }

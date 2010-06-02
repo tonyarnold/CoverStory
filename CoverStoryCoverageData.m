@@ -432,36 +432,40 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
     messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
+  BOOL wasGood = NO;
+  [self willChangeValueForKey:@"fileDatas"];
   CoverStoryCoverageFileData *currentData =
     [fileDatas_ objectForKey:[fileData sourcePath]];
   if (currentData) {
     // we need to merge them
     // (this is needed for headers w/ inlines where if you process >1 gcno/gcda
     // then you could get that header reported >1 time)
-    return [currentData addFileData:fileData messageReceiver:receiver];
+    wasGood = [currentData addFileData:fileData messageReceiver:receiver];
+  } else {
+    // it's new, save it
+    [fileDatas_ setObject:fileData forKey:[fileData sourcePath]];
+
+    // send the queued up warnings since this is the first time we've seen the
+    // file.  
+    // TODO: this is really a hack, we would be better (since these currently
+    // are line specific) is to extend the structure to allow warnings to be
+    // hung on the line data along w/ the hit counts.  Then w/in the UI indicate
+    // how many warnings are on a file in the files list, and in the source
+    // display show the warnings inline (sorta like Xcode 3).  The other option
+    // would be to keep this basic structure, but be able to relay info w/ the
+    // warning so our warning/error ui could take clicks and open to the right
+    // file/line so the user can take action on the message.
+    NSEnumerator *enumerator = [[fileData queuedWarnings] objectEnumerator];
+    NSString *warning;
+    while ((warning = [enumerator nextObject])) {
+      [receiver coverageWarningForPath:[fileData sourcePath]
+                               message:@"%@", warning];
+    }
+    wasGood = YES;
   }
+  [self didChangeValueForKey:@"fileDatas"];
 
-  // it's new, save it
-  [fileDatas_ setObject:fileData forKey:[fileData sourcePath]];
-
-  // send the queued up warnings since this is the first time we've seen the
-  // file.
-  // TODO: this is really a hack, we would be better (since these currently are
-  // line specific) is to extend the structure to allow warnings to be hung on
-  // the line data along w/ the hit counts.  Then w/in the UI indicate how many
-  // warnings are on a file in the files list, and in the source display show
-  // the warnings inline (sorta like Xcode 3).  The other option would be to
-  // keep this basic structure, but be able to relay info w/ the warning so our
-  // warning/error ui coul take clicks and open to the right file/line so the
-  // user can take action on the message.
-  NSEnumerator *enumerator = [[fileData queuedWarnings] objectEnumerator];
-  NSString *warning;
-  while ((warning = [enumerator nextObject])) {
-    [receiver coverageWarningForPath:[fileData sourcePath]
-                             message:@"%@", warning];
-  }
-
-  return YES;
+  return wasGood;
 }
 
 - (NSArray *)fileDatas {

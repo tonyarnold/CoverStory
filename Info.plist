@@ -23,14 +23,14 @@
 			<string>CoverStoryDocument</string>
 		</dict>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 			<key>CFBundleTypeName</key>
 			<string>Folder</string>
-			<key>CFBundleTypeOSTypes</key>
+			<key>LSItemContentTypes</key>
 			<array>
-				<string>fold</string>
+				<string>public.folder</string>
 			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
 			<key>NSDocumentClass</key>
 			<string>CoverStoryDocument</string>
 		</dict>
@@ -88,13 +88,13 @@
 	<key>CFBundleSignature</key>
 	<string>Coß†</string>
 	<key>CFBundleVersion</key>
-	<string>4.0.1</string>
+	<string>4.1</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>CoverStoryApplication</string>
 	<key>NSAppleScriptEnabled</key>
-	<string>YES</string>
+	<true/>
 	<key>OSAScriptingDefinition</key>
 	<string>CoverStory.sdef</string>
 	<key>SUPublicDSAKeyFile</key>
