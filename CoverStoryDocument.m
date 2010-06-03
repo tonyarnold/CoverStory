@@ -353,6 +353,8 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 - (BOOL)processCoverageForFolder:(NSString *)path {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
   // cycle through the directory...
   NSFileManager *fm = [NSFileManager defaultManager];
   NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
@@ -415,7 +417,10 @@ static NSString *const kPrefsToWatch[] = {
       }
 
       // Bail if we get closed
-      if ([self isClosed]) return YES;
+      if ([self isClosed]) {
+        [pool release];
+        return YES;
+      }
     }
     // process whatever what we were collecting when we hit the end
     if (![self processCoverageForFiles:currentFileList
@@ -428,6 +433,7 @@ static NSString *const kPrefsToWatch[] = {
                      messageType:kCSMessageTypeError];
     }
   }
+  [pool release];
   return YES;
 }
 
@@ -499,6 +505,8 @@ static NSString *const kPrefsToWatch[] = {
     return NO;
   }
 
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
   NSString *tempDir = [self tempDirName];
   NSEnumerator *fileNamesEnum = [filenames objectEnumerator];
   NSString *filename;
@@ -509,6 +517,7 @@ static NSString *const kPrefsToWatch[] = {
       [self addMessageFromThread:@"skipped because filename had a slash"
                             path:[folderPath stringByAppendingPathComponent:filename]
                      messageType:kCSMessageTypeError];
+      [pool release];
       return NO;
     }
   }
@@ -532,22 +541,30 @@ static NSString *const kPrefsToWatch[] = {
   // so we can feed it into xargs -0
   NSMutableData *fileList = [NSMutableData data];
   NSData *folderPathUTF8 = [folderPath dataUsingEncoding:NSUTF8StringEncoding];
-  if (!folderPathUTF8 || !fileList) return NO;
+  if (!folderPathUTF8 || !fileList) {
+    [pool release];
+    return NO;
+  }
   char nullByte = 0;
   fileNamesEnum = [filenames objectEnumerator];
   while ((filename = [fileNamesEnum nextObject])) {
     NSData *filenameUTF8 = [filename dataUsingEncoding:NSUTF8StringEncoding];
-    if (!filenameUTF8) return NO;
+    if (!filenameUTF8) {
+      [pool release];
+      return NO;
+    }
     [fileList appendData:folderPathUTF8];
     [fileList appendData:filenameUTF8];
     [fileList appendBytes:&nullByte length:1];
   }
 
   GTMScriptRunner *runner = [GTMScriptRunner runnerWithBash];
-  if (!runner) return NO;
+  if (!runner) {
+    [pool release];
+    return NO;
+  }
 
   BOOL result = NO;
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   
   // make a scratch directory
   NSFileManager *fm = [NSFileManager defaultManager];
