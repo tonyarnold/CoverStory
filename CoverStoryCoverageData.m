@@ -544,9 +544,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   // a not hit line, we just take the new hits, otherwise we add any real hits
   // to our count.
   if (hitCount_ == kCoverStoryNotExecutedMarker) {
-    NSAssert1((newHits == kCoverStoryNotExecutedMarker) || (newHits >= 0),
-              @"how was it not feasible in only one version? (newHits = %d)",
-              newHits);
     hitCount_ = newHits;
   } else if (newHits > 0) {
     NSAssert1(hitCount_ >= 0,
