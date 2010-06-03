@@ -22,8 +22,10 @@
 @class CoverStoryDocument;
 
 @interface CoverStoryFilePredicate : NSPredicate {
+ @private
   IBOutlet NSSearchField *searchField_;
   IBOutlet CoverStoryDocument *document_;
 }
+
 + (void)registerDefaults;
 @end

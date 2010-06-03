@@ -92,19 +92,40 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 }
 @end
 
-@interface CoverStoryCoverageFileData (PrivateMethods)
+@interface CoverStoryCoverageFileData ()
+@property (readwrite, nonatomic, assign) NSInteger hitLines;
+@property (readwrite, nonatomic, assign) NSInteger codeLines;
+@property (readwrite, nonatomic, assign) NSInteger nonfeasible;
+
 - (void)updateCounts;
 - (NSArray *)queuedWarnings;
+@end
+
+@interface CoverStoryCoverageSet ()
+@property (readonly, nonatomic, retain) NSMutableArray *fileDatas;
 @end
 
 @interface CoverStoryCoverageFileData (ScriptingMethods)
 - (NSScriptObjectSpecifier *)objectSpecifierForLineData:(CoverStoryCoverageLineData*)data;
 @end
 
+@interface CoverStoryCoverageLineData ()
+@property (readwrite, nonatomic, assign) NSInteger hitCount;
+@end
+
 @interface CoverStoryCoverageLineData (ScriptingMethods)
 @end
 
 @implementation CoverStoryCoverageFileData
+
+@synthesize document = document_;
+@synthesize sourcePath = sourcePath_;
+@synthesize lines = lines_;
+@synthesize hitLines = hitLines_;
+@synthesize codeLines = codeLines_;
+@synthesize nonfeasible = nonfeasible_;
+@dynamic coverage;
+
 
 + (id)coverageFileDataFromPath:(NSString *)path
                       document:(CoverStoryDocument *)document
@@ -176,10 +197,12 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
         }
         // scan in line number
         goodScan = [scanner scanUpToString:@":" intoString:&segment];
-        [scanner setScanLocation:[scanner scanLocation] + 1];
-        // scan in the code line
-        goodScan = [scanner scanUpToCharactersFromSet:linefeeds
-                                           intoString:&segment];
+        if (goodScan) {
+          [scanner setScanLocation:[scanner scanLocation] + 1];
+          // scan in the code line
+          goodScan = [scanner scanUpToCharactersFromSet:linefeeds
+                                             intoString:&segment];
+        }
         if (!goodScan) {
           segment = @"";
         }
@@ -272,44 +295,49 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   [super dealloc];
 }
 
+- (BOOL)isEqual:(id)object {
+  BOOL equal = NO;
+  if ([object isKindOfClass:[self class]]) {
+    equal = [[object sourcePath] isEqual:[self sourcePath]];
+  }
+  return equal;
+}
+
+- (NSUInteger)hash {
+  return [sourcePath_ hash];
+}
+
 - (void)updateCounts {
-  hitLines_ = 0;
-  codeLines_ = 0;
-  nonfeasible_ = 0;
-  NSEnumerator *dataEnum = [lines_ objectEnumerator];
-  CoverStoryCoverageLineData* dataPoint;
-  while ((dataPoint = [dataEnum nextObject]) != nil) {
+  NSInteger hitLines = 0;
+  NSInteger codeLines = 0;
+  NSInteger nonfeasible = 0;
+  for (CoverStoryCoverageLineData *dataPoint in lines_) {
     NSInteger hitCount = [dataPoint hitCount];
     switch (hitCount) {
       case kCoverStoryNonFeasibleMarker:
-        ++nonfeasible_;
+        ++nonfeasible;
         break;
       case kCoverStoryNotExecutedMarker:
         // doesn't count;
         break;
       case 0:
         // line of code that wasn't hit
-        ++codeLines_;
+        ++codeLines;
         break;
       default:
         // line of code w/ hits
-        ++hitLines_;
-        ++codeLines_;
+        ++hitLines;
+        ++codeLines;
         break;
     }
   }
+  [self setCodeLines:codeLines];
+  [self setHitLines:hitLines];
+  [self setNonfeasible:nonfeasible];
 }
 
 - (NSArray *)queuedWarnings {
   return warnings_;
-}
-
-- (NSArray *)lines {
-  return lines_;
-}
-
-- (NSString *)sourcePath {
-  return sourcePath_;
 }
 
 - (NSNumber *)coverage {
@@ -333,13 +361,13 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
     *outTotal = [lines_ count];
   }
   if (outCode) {
-    *outCode = codeLines_;
+    *outCode = [self codeLines];
   }
   if (outHitCode) {
-    *outHitCode = hitLines_;
+    *outHitCode = [self hitLines];
   }
   if (outNonFeasible) {
-    *outNonFeasible = nonfeasible_;
+    *outNonFeasible = [self nonfeasible];
   }
   if (outCoverageString || outCoverage) {
     float coverage = codeCoverage(codeLines_, hitLines_, outCoverageString);
@@ -409,44 +437,48 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
           sourcePath_, [lines_ count], nonfeasible_, codeLines_, hitLines_];
 }
 
-- (CoverStoryDocument *)document {
-  return document_;
-}
+
 @end
 
 @implementation CoverStoryCoverageSet
 
+@synthesize fileDatas = fileDatas_;
+
 - (id)init {
-  self = [super init];
-  if (self != nil) {
-    fileDatas_ = [[NSMutableDictionary alloc] init];
+  if ((self = [super init])) {
+    fileDatas_ = [[NSMutableArray alloc] init];
   }
   return self;
 }
 
 - (void)dealloc {
   [fileDatas_ release];
-
   [super dealloc];
 }
 
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
     messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
   BOOL wasGood = NO;
-  [self willChangeValueForKey:@"fileDatas"];
-  CoverStoryCoverageFileData *currentData =
-    [fileDatas_ objectForKey:[fileData sourcePath]];
-  if (currentData) {
+  NSUInteger idx = [fileDatas_ indexOfObject:fileData];
+  if (idx != NSNotFound) {
+    CoverStoryCoverageFileData *currentData = [fileDatas_ objectAtIndex:idx];
     // we need to merge them
     // (this is needed for headers w/ inlines where if you process >1 gcno/gcda
     // then you could get that header reported >1 time)
     wasGood = [currentData addFileData:fileData messageReceiver:receiver];
   } else {
     // it's new, save it
-    [fileDatas_ setObject:fileData forKey:[fileData sourcePath]];
+    NSUInteger index = [fileDatas_ count];
+    [self willChange:NSKeyValueChangeInsertion
+     valuesAtIndexes:[NSIndexSet indexSetWithIndex:index]
+              forKey:@"fileDatas"];
+    [fileDatas_ insertObject:fileData atIndex:index];
+    [self didChange:NSKeyValueChangeInsertion
+     valuesAtIndexes:[NSIndexSet indexSetWithIndex:index]
+              forKey:@"fileDatas"];
 
     // send the queued up warnings since this is the first time we've seen the
-    // file.  
+    // file.
     // TODO: this is really a hack, we would be better (since these currently
     // are line specific) is to extend the structure to allow warnings to be
     // hung on the line data along w/ the hit counts.  Then w/in the UI indicate
@@ -463,17 +495,7 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
     }
     wasGood = YES;
   }
-  [self didChangeValueForKey:@"fileDatas"];
-
   return wasGood;
-}
-
-- (NSArray *)fileDatas {
-  return [fileDatas_ allValues];
-}
-
-- (CoverStoryCoverageFileData *)fileDataForSourcePath:(NSString *)path {
-  return [fileDatas_ objectForKey:path];
 }
 
 - (void)coverageTotalLines:(NSInteger *)outTotal
@@ -492,6 +514,18 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
                         coverage:outCoverage];
 }
 
+- (void)removeAllData {
+  NSRange fullRange = NSMakeRange(0, [fileDatas_ count]);
+  NSIndexSet *fullSet = [NSIndexSet indexSetWithIndexesInRange:fullRange];
+  [self willChange:NSKeyValueChangeRemoval
+   valuesAtIndexes:fullSet
+            forKey:@"fileDatas"];
+  [fileDatas_ removeAllObjects];
+  [self didChange:NSKeyValueChangeRemoval
+   valuesAtIndexes:fullSet
+            forKey:@"fileDatas"];
+}
+
 - (NSString *)description {
   return [NSString stringWithFormat:@"%@ <%p>: %u items in set",
           [self class], self, [fileDatas_ count]];
@@ -502,16 +536,20 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 
 @implementation CoverStoryCoverageLineData
 
-+ (id)coverageLineDataWithLine:(NSString*)line 
-                      hitCount:(NSInteger)hitCount 
+@synthesize hitCount = hitCount_;
+@synthesize line = line_;
+@synthesize coverageFile = coverageFile_;
+
++ (id)coverageLineDataWithLine:(NSString*)line
+                      hitCount:(NSInteger)hitCount
                   coverageFile:(CoverStoryCoverageFileData *)coverageFile {
-  return [[[self alloc] initWithLine:line 
-                            hitCount:hitCount 
+  return [[[self alloc] initWithLine:line
+                            hitCount:hitCount
                         coverageFile:coverageFile] autorelease];
 }
 
-- (id)initWithLine:(NSString*)line 
-          hitCount:(NSInteger)hitCount 
+- (id)initWithLine:(NSString*)line
+          hitCount:(NSInteger)hitCount
       coverageFile:(CoverStoryCoverageFileData *)coverageFile {
   if ((self = [super init])) {
     hitCount_ = hitCount;
@@ -526,35 +564,23 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   [super dealloc];
 }
 
-- (CoverStoryCoverageFileData *)coverageFile {
-  return coverageFile_;
-}
-
-- (NSString*)line {
-  return line_;
-}
-
-- (NSInteger)hitCount {
-  return hitCount_;
-}
-
 - (void)addHits:(NSInteger)newHits {
   // we could be processing big and little endian runs, and w/ ifdefs one set of
   // lines would be ignored in one run, but not in the other. so...  if we were
   // a not hit line, we just take the new hits, otherwise we add any real hits
   // to our count.
-  if (hitCount_ == kCoverStoryNotExecutedMarker) {
-    hitCount_ = newHits;
+  if (self.hitCount == kCoverStoryNotExecutedMarker) {
+    self.hitCount = newHits;
   } else if (newHits > 0) {
-    NSAssert1(hitCount_ >= 0,
+    NSAssert1(self.hitCount >= 0,
               @"how was it not feasible in only one version? (hitCount_ = %d)",
               hitCount_);
-    hitCount_ += newHits;
+    self.hitCount += newHits;
   }
 }
 
 - (NSString*)description {
-  return [NSString stringWithFormat:@"%d %@", hitCount_, line_];
+  return [NSString stringWithFormat:@"%d %@", self.hitCount, self.line];
 }
 
 @end
@@ -562,24 +588,24 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 @implementation CoverStoryCoverageFileData (ScriptingMethods)
 - (NSScriptObjectSpecifier *)objectSpecifier {
   NSScriptObjectSpecifier *containerSpec = [[self document] objectSpecifier];
-  NSScriptClassDescription *containterClassDesc 
+  NSScriptClassDescription *containterClassDesc
     = [containerSpec keyClassDescription];
   NSString *name = [self sourcePath];
-  return [[[NSNameSpecifier alloc] initWithContainerClassDescription:containterClassDesc 
+  return [[[NSNameSpecifier alloc] initWithContainerClassDescription:containterClassDesc
                                                   containerSpecifier:containerSpec
-                                                                 key:@"fileDatas" 
+                                                                 key:@"fileDatas"
                                                                 name:name]
           autorelease];
 }
 
 - (NSScriptObjectSpecifier *)objectSpecifierForLineData:(CoverStoryCoverageLineData*)data {
   NSScriptObjectSpecifier *containerSpec = [self objectSpecifier];
-  NSScriptClassDescription *containterClassDesc 
+  NSScriptClassDescription *containterClassDesc
     = [containerSpec keyClassDescription];
   NSInteger index = [[self lines] indexOfObject:data];
-  return [[[NSIndexSpecifier alloc] initWithContainerClassDescription:containterClassDesc 
+  return [[[NSIndexSpecifier alloc] initWithContainerClassDescription:containterClassDesc
                                                    containerSpecifier:containerSpec
-                                                                  key:@"lines" 
+                                                                  key:@"lines"
                                                                 index:index]
           autorelease];
 }
@@ -616,5 +642,5 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   }
   return type;
 }
-    
+
 @end

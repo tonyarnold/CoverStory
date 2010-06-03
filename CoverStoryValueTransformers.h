@@ -16,10 +16,20 @@
 //  the License.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 // Transformer for changing Line Data to source lines.
 // Used for second column of source code table.
 @interface CoverageLineDataToSourceLineTransformer : NSValueTransformer
 + (void)registerDefaults;
+@end
+
+// Transformer for changing line coverage to short summaries.
+// Used at top of file list.
+@interface LineCoverageToCoverageShortSummaryTransformer : NSValueTransformer
+@end
+
+// Transformer for changing line coverage to summaries.
+// Used for top of code window summaries.
+@interface FileLineCoverageToCoverageSummaryTransformer : NSValueTransformer
 @end

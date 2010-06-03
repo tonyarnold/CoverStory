@@ -40,6 +40,8 @@
 		8BAAA3E70F7D614F00DF4F12 /* UnitTestsHide.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BAAA3E50F7D614F00DF4F12 /* UnitTestsHide.png */; };
 		8BB77C8511B5D0D100AB31AF /* fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */; };
 		8BB77C8811B5D0DC00AB31AF /* fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */; };
+		8BB788F811B8467800AB31AF /* CoverStoryArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BB788F711B8467800AB31AF /* CoverStoryArrayController.m */; };
+		8BB7893111B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BB7893011B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m */; };
 		8BC04E2C0DB0459100C2D1CA /* info.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E290DB0459100C2D1CA /* info.png */; };
 		8BC04E2D0DB0459100C2D1CA /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E2A0DB0459100C2D1CA /* error.png */; };
 		8BC04E2E0DB0459100C2D1CA /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E2B0DB0459100C2D1CA /* warning.png */; };
@@ -156,6 +158,10 @@
 		8BAAA4EB0F7DA25200DF4F12 /* CoverStoryValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryValueTransformers.h; sourceTree = "<group>"; };
 		8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fdopen2003.c; sourceTree = "<group>"; };
 		8BB77D0011B5D7D100AB31AF /* GTMLocalizedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMLocalizedString.h; sourceTree = "<group>"; };
+		8BB788F611B8467800AB31AF /* CoverStoryArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryArrayController.h; sourceTree = "<group>"; };
+		8BB788F711B8467800AB31AF /* CoverStoryArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryArrayController.m; sourceTree = "<group>"; };
+		8BB7892F11B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUserDefaultsController+KeyValues.h"; sourceTree = "<group>"; };
+		8BB7893011B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaultsController+KeyValues.m"; sourceTree = "<group>"; };
 		8BBEC3630DD0E02400E5D45D /* openscript.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = openscript.applescript; sourceTree = "<group>"; };
 		8BC04E290DB0459100C2D1CA /* info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = info.png; sourceTree = SOURCE_ROOT; };
 		8BC04E2A0DB0459100C2D1CA /* error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = error.png; sourceTree = SOURCE_ROOT; };
@@ -287,6 +293,8 @@
 			isa = PBXGroup;
 			children = (
 				8B4094BF0F8EC70300DF540E /* NSColor+Scripting.m */,
+				8BB7892F11B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.h */,
+				8BB7893011B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m */,
 				8B4091130F8E733D00DF540E /* CoverStoryApplication.m */,
 				8BFD613E0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.h */,
 				8BFD613F0B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.m */,
@@ -306,6 +314,8 @@
 				8BAAA4EB0F7DA25200DF4F12 /* CoverStoryValueTransformers.h */,
 				8B726FFF0D92B6EB0090C251 /* CoverStoryFilePredicate.h */,
 				8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */,
+				8BB788F611B8467800AB31AF /* CoverStoryArrayController.h */,
+				8BB788F711B8467800AB31AF /* CoverStoryArrayController.m */,
 				F41A325111B6BA1A00176CCC /* GCovVersionManager.h */,
 				F41A325211B6BA1A00176CCC /* GCovVersionManager.m */,
 			);
@@ -665,6 +675,8 @@
 				8B4094C00F8EC70300DF540E /* NSColor+Scripting.m in Sources */,
 				F41A325311B6BA1A00176CCC /* GCovVersionManager.m in Sources */,
 				8BB77C8811B5D0DC00AB31AF /* fdopen2003.c in Sources */,
+				8BB788F811B8467800AB31AF /* CoverStoryArrayController.m in Sources */,
+				8BB7893111B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

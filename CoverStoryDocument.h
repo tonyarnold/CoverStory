@@ -19,28 +19,22 @@
 
 
 #import <Cocoa/Cocoa.h>
-#import "CoverStoryCodeViewTableView.h"
-#import "CoverStoryCoverageData.h"
 #import "GTMDefines.h"
+#import "CoverStoryCoverageData.h"
 
 #ifndef USE_NSOPERATION
-  #define USE_NSOPERATION 0
+  #define USE_NSOPERATION 1
 #endif
 
-@class CoverStoryDocument;
+@class CoverStoryArrayController;
+@class CoverStoryCodeViewTableView;
 
-@interface CoverStoryArrayController : NSArrayController {
-  IBOutlet CoverStoryDocument *owningDocument_;
-}
-@end
-
-@interface CoverStoryDocument : NSDocument<CoverStoryCodeViewTableViewDelegateProtocol,
-                                           CoverStoryCoverageProcessingProtocol,
+@interface CoverStoryDocument : NSDocument<CoverStoryCoverageProcessingProtocol,
                                            NSAnimationDelegate> {
  @private
   IBOutlet CoverStoryCodeViewTableView *codeTableView_;  // the code table
   IBOutlet NSTableView *sourceFilesTableView_;
-  IBOutlet NSArrayController *sourceFilesController_;
+  IBOutlet CoverStoryArrayController *sourceFilesController_;
   IBOutlet NSProgressIndicator *spinner_;
   IBOutlet NSDrawer *drawer_;
   IBOutlet NSTextView *messageView_;
@@ -84,5 +78,5 @@
 - (BOOL)hideUnittestSources;
 - (BOOL)completelyOpened;
 - (id)handleExportHTMLScriptCommand:(NSScriptCommand *)command;
-- (NSArray *)fileDatas;
+- (CoverStoryCoverageSet *)dataSet;
 @end

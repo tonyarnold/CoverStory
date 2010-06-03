@@ -6,7 +6,8 @@
 //  Copyright 2008 Google Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "CoverStoryValueTransformers.h"
+
 #import "CoverStoryCoverageData.h"
 #import "CoverStoryPreferenceKeys.h"
 #import "CoverStoryDocument.h"
@@ -64,11 +65,6 @@
                                           attributes:attributes] autorelease];
 }
 
-@end
-
-// Transformer for changing Line Data to source lines.
-// Used for second column of source code table.
-@interface CoverageLineDataToSourceLineTransformer : NSValueTransformer
 @end
 
 @implementation CoverageLineDataToSourceLineTransformer
@@ -228,11 +224,6 @@ const float kGoodCoverage = 75.0f;
 
 @end
 
-// Transformer for changing line coverage to summaries.
-// Used for top of code window summaries.
-@interface FileLineCoverageToCoverageSummaryTransformer : NSValueTransformer
-@end
-
 @implementation FileLineCoverageToCoverageSummaryTransformer
 
 + (Class)transformedValueClass {
@@ -324,11 +315,6 @@ const float kGoodCoverage = 75.0f;
   return statString;
 }
 
-@end
-
-// Transformer for changing line coverage to short summaries.
-// Used at top of file list.
-@interface LineCoverageToCoverageShortSummaryTransformer : NSValueTransformer
 @end
 
 @implementation LineCoverageToCoverageShortSummaryTransformer

@@ -21,24 +21,18 @@
 #import "CoverStoryCoverageData.h"
 #import "CoverStoryDocumentTypes.h"
 #import "CoverStoryPreferenceKeys.h"
-#import "GCovVersionManager.h"
+#import "CoverStoryCodeViewTableView.h"
+#import "CoverStoryArrayController.h"
 #import "GTMScriptRunner.h"
 #import "GTMNSFileManager+Path.h"
 #import "GTMNSEnumerator+Filter.h"
 #import "GTMNSString+HTML.h"
 #import "GTMLocalizedString.h"
+#import "CoverStoryValueTransformers.h"
+#import "GCovVersionManager.h"
 
 const NSInteger kCoverStorySDKToolbarTag = 1026;
 const NSInteger kCoverStoryUnittestToolbarTag = 1027;
-
-@interface NSTableView (CoverStoryTableView)
-- (void)cs_setSortKeyOfColumn:(NSString *)columnName
-                           to:(NSString *)sortKeyName;
-- (void)cs_setValueTransformerOfColumn:(NSString *)columnName
-                                    to:(NSString *)transformerName;
-- (void)cs_setHeaderOfColumn:(NSString*)columnName
-                          to:(NSString*)name;
-@end
 
 @interface NSWindow (CoverStoryExportToHTML)
 // Script command that we want NSWindow to handle
@@ -73,16 +67,6 @@ typedef enum {
 - (void)moveSelection:(NSUInteger)offset;
 @end
 
-static NSString *const kPrefsToWatch[] = {
-  kCoverStorySystemSourcesPatternsKey,
-  kCoverStoryUnittestSourcesPatternsKey,
-  kCoverStoryRemoveCommonSourcePrefix,
-  kCoverStoryMissedLineColorKey,
-  kCoverStoryUnexecutableLineColorKey,
-  kCoverStoryNonFeasibleLineColorKey,
-  kCoverStoryExecutedLineColorKey
-};
-
 @implementation CoverStoryDocument
 
 + (void)registerDefaults {
@@ -96,10 +80,6 @@ static NSString *const kPrefsToWatch[] = {
      nil];
 
   [defaults registerDefaults:documentDefaults];
-}
-
-- (NSString*)valuesKey:(NSString*)key {
-  return [NSString stringWithFormat:@"values.%@", key];
 }
 
 - (id)init {
@@ -135,11 +115,6 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 - (void)dealloc {
-  NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
-  for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
-    [defaults removeObserver:self
-                  forKeyPath:[self valuesKey:kPrefsToWatch[i]]];
-  }
   [dataSet_ release];
   [filterString_ release];
   [currentAnimation_ release];
@@ -163,44 +138,21 @@ static NSString *const kPrefsToWatch[] = {
   searchFieldFrame.origin.x -= animationWidth_;
   searchFieldFrame.size.width += animationWidth_;
   [searchField_ setFrame:searchFieldFrame];
-
   [sourceFilesController_ addObserver:self
                            forKeyPath:NSSelectionIndexesBinding
-                              options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+                              options:0
                               context:nil];
-
-  NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
-  for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
-    [defaults addObserver:self
-               forKeyPath:[self valuesKey:kPrefsToWatch[i]]
-                  options:NSKeyValueObservingOptionNew
-                  context:nil];
-  }
-
-  [self observeValueForKeyPath:NSSelectionIndexesBinding
-                      ofObject:sourceFilesController_
-                        change:nil
-                       context:nil];
-
   NSSortDescriptor *ascending = [[[NSSortDescriptor alloc] initWithKey:@"coverage"
                                                              ascending:YES] autorelease];
   [sourceFilesController_ setSortDescriptors:[NSArray arrayWithObject:ascending]];
-
-  // TODO(dmaclach): move this into the xib since we don't have a toggle anymore
-  [codeTableView_ cs_setValueTransformerOfColumn:@"hitCount"
-                                              to:@"CoverageLineDataToHitCountTransformer"];
-  [sourceFilesTableView_ cs_setValueTransformerOfColumn:@"coverage"
-                                                     to:@"CoverageFileDataToCoveragePercentageTransformer"];
-  [sourceFilesTableView_ cs_setSortKeyOfColumn:@"coverage" to:@"coverage"];
-  [sourceFilesTableView_ cs_setHeaderOfColumn:@"coverage" to:@"%"];
 }
 
 - (NSString *)windowNibName {
   return @"CoverStoryDocument";
 }
 
-- (NSArray *)fileDatas {
-  return [dataSet_ fileDatas];
+- (CoverStoryCoverageSet *)dataSet {
+  return dataSet_;
 }
 
 // Called as a performSelectorOnMainThread, so must check to make sure
@@ -208,7 +160,7 @@ static NSString *const kPrefsToWatch[] = {
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData {
   if ([self isClosed]) return NO;
   ++numFileDatas_;
-  BOOL isGood = [dataSet_ addFileData:fileData messageReceiver:self];
+  BOOL isGood = [[self dataSet] addFileData:fileData messageReceiver:self];
   return isGood;
 }
 
@@ -354,7 +306,7 @@ static NSString *const kPrefsToWatch[] = {
 
 - (BOOL)processCoverageForFolder:(NSString *)path {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  
+
   // cycle through the directory...
   NSFileManager *fm = [NSFileManager defaultManager];
   NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
@@ -482,6 +434,7 @@ static NSString *const kPrefsToWatch[] = {
     // load it and add it to our set
     CoverStoryCoverageFileData *fileData
       = [CoverStoryCoverageFileData coverageFileDataFromPath:fullPath
+                                                    document:self
                                              messageReceiver:self];
     if (fileData) {
       [self performSelectorOnMainThread:@selector(addFileData:)
@@ -526,7 +479,7 @@ static NSString *const kPrefsToWatch[] = {
   if (![folderPath hasSuffix:@"/"]) {
     folderPath = [folderPath stringByAppendingString:@"/"];
   }
-  
+
   // Figure out what version of gcov to use.
   // NOTE: To be 100% correct, we should check *each* file and split them into
   // sets based on what version of gcov will be invoked.  But we're assuming
@@ -565,7 +518,7 @@ static NSString *const kPrefsToWatch[] = {
   }
 
   BOOL result = NO;
-  
+
   // make a scratch directory
   NSFileManager *fm = [NSFileManager defaultManager];
   if ([fm createDirectoryAtPath:tempDir
@@ -676,6 +629,7 @@ static NSString *const kPrefsToWatch[] = {
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
+  BOOL handled = NO;
   if ([object isEqualTo:sourceFilesController_] &&
       [keyPath isEqualToString:NSSelectionIndexesBinding]) {
     NSArray *selectedObjects = [object selectedObjects];
@@ -690,33 +644,10 @@ static NSString *const kPrefsToWatch[] = {
       // Jump to first missing code block
       [self moveSelection:1];
     }
-  } else if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
-    if ([keyPath isEqualToString:[self valuesKey:kCoverStorySystemSourcesPatternsKey]]) {
-      if (hideSDKSources_) {
-        // if we're hiding them then update because the pattern changed
-        [sourceFilesController_ rearrangeObjects];
-      }
-    } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryUnittestSourcesPatternsKey]]) {
-      if (hideUnittestSources_) {
-        // if we're hiding them then update because the pattern changed
-        [sourceFilesController_ rearrangeObjects];
-      }
-    } else if ([keyPath isEqualToString:[self valuesKey:kCoverStoryRemoveCommonSourcePrefix]]) {
-      // we to recalc the common prefix, so trigger a rearrange
-      [sourceFilesController_ rearrangeObjects];
-    } else {
-      NSString *const kColorsToWatch[] = {
-        kCoverStoryMissedLineColorKey,
-        kCoverStoryUnexecutableLineColorKey,
-        kCoverStoryNonFeasibleLineColorKey,
-        kCoverStoryExecutedLineColorKey
-      };
-      for (size_t i = 0; i < sizeof(kColorsToWatch) / sizeof(NSString*); ++i) {
-        if ([keyPath isEqualToString:[self valuesKey:kColorsToWatch[i]]]) {
-          [codeTableView_ reloadData];
-        }
-      }
-    }
+    handled = YES;
+  }
+  if (!handled) {
+    _GTMDevLog(@"Unexpected observance of %@ of %@ (%@)", keyPath, object, change);
   }
 }
 
@@ -796,12 +727,6 @@ static NSString *const kPrefsToWatch[] = {
     }
   }
   return isGood;
-}
-
-// On enter we just want to open the selected lines of source
-- (void)tableViewHandleEnter:(NSTableView *)tableView {
-  NSAssert(tableView == codeTableView_, @"Unexpected tableView");
-  [self openSelectedSource];
 }
 
 - (void)moveUpAndModifySelection:(id)sender {
@@ -908,10 +833,8 @@ static NSString *const kPrefsToWatch[] = {
                    messageType:kCSMessageTypeWarning];
     return;
   }
-  [self willChangeValueForKey:@"dataSet_"];
-  [dataSet_ release];
-  dataSet_ = [[CoverStoryCoverageSet alloc] init];
-  [self didChangeValueForKey:@"dataSet_"];
+
+  [dataSet_ removeAllData];
 
   // clear the message view before we start
   // add the message, color, and scroll
@@ -1337,12 +1260,14 @@ static NSString *const kPrefsToWatch[] = {
                                error:(NSError **)outError {
   NSString *fileList = [self htmlFileListTableData];
   NSArray *fileDatas = [sourceFilesController_ arrangedObjects];
+  NSString *name
+    = NSStringFromClass([LineCoverageToCoverageShortSummaryTransformer class]);
   NSValueTransformer *transformer
-    = [NSValueTransformer valueTransformerForName:@"LineCoverageToCoverageShortSummaryTransformer"];
+    = [NSValueTransformer valueTransformerForName:name];
   NSString *summary = [transformer transformedValue:fileDatas];
   summary = [summary gtm_stringByEscapingForHTML];
-  transformer
-    = [NSValueTransformer valueTransformerForName:@"FileLineCoverageToCoverageSummaryTransformer"];
+  name = NSStringFromClass([FileLineCoverageToCoverageSummaryTransformer class]);
+  transformer = [NSValueTransformer valueTransformerForName:name];
 
   NSFileWrapper *finalWrapper
     = [[[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil] autorelease];
@@ -1452,108 +1377,12 @@ static NSString *const kPrefsToWatch[] = {
 }
 @end
 
-@implementation NSTableView (CoverStoryTableView)
-- (void)cs_setValueTransformerOfColumn:(NSString *)columnName
-                                    to:(NSString *)transformerName {
-  NSTableColumn *column = [self tableColumnWithIdentifier:columnName];
-  NSAssert1(column, @"No %@ column?", columnName);
-  NSDictionary *bindingInfo = [column infoForBinding:NSValueBinding];
-  NSAssert1(bindingInfo, @"No binding Info for column %@", columnName);
-  [column unbind:NSValueBinding];
-  NSMutableDictionary *bindingOptions = [[[bindingInfo objectForKey:NSOptionsKey] mutableCopy] autorelease];
-  [bindingOptions setObject:transformerName
-                     forKey:NSValueTransformerNameBindingOption];
-  [bindingOptions setObject:[NSValueTransformer valueTransformerForName:transformerName]
-                     forKey:NSValueTransformerBindingOption];
-  [column bind:NSValueBinding
-      toObject:[bindingInfo objectForKey:NSObservedObjectKey]
-   withKeyPath:[bindingInfo objectForKey:NSObservedKeyPathKey]
-       options:bindingOptions];
-}
-
-- (void)cs_setSortKeyOfColumn:(NSString *)columnName
-                           to:(NSString *)sortKeyName {
-  NSTableColumn *column = [self tableColumnWithIdentifier:columnName];
-  NSAssert1(column, @"No %@ column?", columnName);
-  NSSortDescriptor *oldDesc = [column sortDescriptorPrototype];
-  BOOL ascending = oldDesc ? [oldDesc ascending] : YES;
-  NSSortDescriptor *descriptor = [[[NSSortDescriptor alloc] initWithKey:sortKeyName
-                                                              ascending:ascending]  autorelease];
-  [column setSortDescriptorPrototype:descriptor];
-}
-
-- (void)cs_setHeaderOfColumn:(NSString*)columnName
-                          to:(NSString*)name {
-  NSTableColumn *column = [self tableColumnWithIdentifier:columnName];
-  NSAssert1(column, @"No %@ column?", columnName);
-  [[column headerCell] setTitle:name];
-}
-@end
-
-@implementation CoverStoryArrayController
-- (void)updateCommonPathPrefix {
-  if (!owningDocument_) return;
-
-  NSString *newPrefix = nil;
-
-  // now figure out a new prefix
-  NSArray *arranged = [self arrangedObjects];
-  if ([arranged count] == 0) {
-    // empty string
-    newPrefix = @"";
-  } else {
-    // process the list to find the common prefix
-
-    // start w/ the first path, and now loop throught them all, but give up
-    // the moment he only common prefix is "/"
-    NSArray *sourcePaths = [arranged valueForKey:@"sourcePath"];
-    NSEnumerator *enumerator = [sourcePaths objectEnumerator];
-    newPrefix = [enumerator nextObject];
-    NSString *basePath;
-    while (([newPrefix length] > 1) &&
-           (basePath = [enumerator nextObject])) {
-      newPrefix = [newPrefix commonPrefixWithString:basePath
-                                            options:NSLiteralSearch];
-    }
-    // if you have two files of:
-    //   /Foo/bar/spam.m
-    //   /Foo/baz/wee.m
-    // we end up here w/ "/Foo/ba" as the common prefix, but we don't want
-    // to do that, so we make sure we end in a slash
-    if (![newPrefix hasSuffix:@"/"]) {
-      NSRange lastSlash = [newPrefix rangeOfString:@"/"
-                                           options:NSBackwardsSearch];
-      if (lastSlash.location == NSNotFound) {
-        newPrefix = @"";
-      } else {
-        newPrefix = [newPrefix substringToIndex:NSMaxRange(lastSlash)];
-      }
-    }
-    // if we just have the leading "/", use no prefix
-    if ([newPrefix length] <= 1) {
-      newPrefix = @"";
-    }
-  }
-  // send it back to the document
-  [owningDocument_ setCommonPathPrefix:newPrefix];
-}
-
-- (void)rearrangeObjects {
-  // this fires when the filtering changes
-  [super rearrangeObjects];
-  [self updateCommonPathPrefix];
-}
-- (void)setContent:(id)content {
-  // this fires as results are added during a load
-  [super setContent:content];
-  [self updateCommonPathPrefix];
-}
-@end
 
 @implementation NSWindow (CoverStoryExportToHTML)
 - (id)cs_handleExportHTMLScriptCommand:(NSScriptCommand *)command {
   id directParameter = [command evaluatedReceivers];
-  CoverStoryDocument *document = (CoverStoryDocument *)[directParameter document];
+  CoverStoryDocument *document
+    = (CoverStoryDocument *)[directParameter document];
   id value = nil;
   if ([document isMemberOfClass:[CoverStoryDocument class]]) {
     value = [document handleExportHTMLScriptCommand:command];

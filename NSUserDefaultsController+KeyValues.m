@@ -1,9 +1,8 @@
 //
-//  CoverStoryCodeViewTableView.h
+//  NSUserDefaultsController+KeyValues.m
 //  CoverStory
 //
-//  Created by Dave MacLachlan on 2008/03/21.
-//  Copyright 2008 Google Inc.
+//  Copyright 2010 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
@@ -17,10 +16,12 @@
 //  the License.
 //
 
-#import <Cocoa/Cocoa.h>
+#import "NSUserDefaultsController+KeyValues.h"
 
-@interface CoverStoryCodeViewTableView : NSTableView
+@implementation NSUserDefaultsController (CoverStoryMethods)
 
-- (void)setCoverageData:(NSArray*)coverageData;
++ (NSString*)cs_valuesKey:(NSString*)key {
+  return [NSString stringWithFormat:@"values.%@", key];
+}
 
 @end
