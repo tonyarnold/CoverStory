@@ -82,6 +82,7 @@ GTMOBJECT_SINGLETON_BOILERPLATE(GCovVersionManager, defaultManager);
             result = [NSString stringWithFormat:@"%u.%u", major, minor];
           }
         }
+        fclose(aFile);
       }
     }
   }
