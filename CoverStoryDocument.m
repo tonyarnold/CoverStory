@@ -294,7 +294,7 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 - (void)openFolderInThread:(NSString*)path {
-  NSAutoreleasePool *pool = [NSAutoreleasePool new];
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   [self setOpenThreadState:YES];
   @try {
     [self processCoverageForFolder:path];
@@ -322,7 +322,7 @@ static NSString *const kPrefsToWatch[] = {
 }
 
 - (void)openFileInThread:(NSString*)path {
-  NSAutoreleasePool *pool = [NSAutoreleasePool new];
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   [self setOpenThreadState:YES];
   NSString *folderPath = [path stringByDeletingLastPathComponent];
   NSString *filename = [path lastPathComponent];
@@ -517,7 +517,7 @@ static NSString *const kPrefsToWatch[] = {
   if (![folderPath hasSuffix:@"/"]) {
     folderPath = [folderPath stringByAppendingString:@"/"];
   }
-
+  
   // Figure out what version of gcov to use.
   // NOTE: To be 100% correct, we should check *each* file and split them into
   // sets based on what version of gcov will be invoked.  But we're assuming
@@ -547,7 +547,8 @@ static NSString *const kPrefsToWatch[] = {
   if (!runner) return NO;
 
   BOOL result = NO;
-
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
   // make a scratch directory
   NSFileManager *fm = [NSFileManager defaultManager];
   if ([fm createDirectoryAtPath:tempDir
@@ -650,6 +651,7 @@ static NSString *const kPrefsToWatch[] = {
 #endif
   }
 
+  [pool release];
   return result;
 }
 
