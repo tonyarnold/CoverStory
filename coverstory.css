@@ -8,7 +8,7 @@
   padding: 0;
   color: #000;
 }
-  
+
 #filelistcontainer {
   border-style: none;
   float: left;
@@ -33,7 +33,7 @@
 }
 
 #filelistheaderpercent {
-  text-align: right;  
+  text-align: right;
   width: 5%;
 }
 
@@ -56,7 +56,7 @@
 }
 
 .filelessthan35percent {
-  color: #BF3300; 
+  color: #BF3300;
 }
 
 .filelessthan45percent {
@@ -82,6 +82,7 @@
 #sourcecontainer {
   border-style: none;
   width: 80%;
+  float: right;
 }
 
 #sourcepath {

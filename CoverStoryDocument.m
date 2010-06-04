@@ -73,6 +73,7 @@ typedef enum {
 - (void)addMessage:(NSDictionary *)msgInfo;
 - (BOOL)isClosed;
 - (void)moveSelection:(NSUInteger)offset;
+- (void)finishedLoadingFileDatas:(id)ignored;
 @end
 
 @implementation CoverStoryDocument
@@ -220,7 +221,7 @@ typedef enum {
   return isGood;
 }
 
-- (void)openSelectedSource {
+- (IBAction)openSelectedSource:(id)sender {
   BOOL didOpen = NO;
   NSArray *fileSelection = [sourceFilesController_ selectedObjects];
   CoverStoryCoverageFileData *fileData = [fileSelection objectAtIndex:0];

@@ -12,50 +12,22 @@
 <p>Issues can be filed on our issues list at <a href="http://code.google.com/p/coverstory/issues/list">http://code.google.com/p/coverstory/issues/list</a>.</p>
 </div>
 
-<h3><a name="version-4.0">Version 4.2</a></h3>
+<h3><a name="version-4.2">Version 4.2</a></h3>
 <ul>
     <li>
-        <div class="title">Sparkle Integration</div>
-        We now should be autoupdating with Sparkle.
+        <div class="title">Fixed up opening folders on 10.6</div>
+        You can now open folders as expected on Snow Leopard.
     </li>
     <li>
         <div class="title">Export To HTML</div>
-        You can now export your data out to HTML, using the "Export To HTML"
-        command from the File menu. The HTML is quite customisable by supplying
-        your own coverstory.css file, and coverstory.js files.
+        The exported html didn't look right with the default css on newer
+        browsers. The column view didn't look right, and the code would wrap
+        around.
     </li>
     <li>
-       <div class="title">AppleScript</div>
-       We have added comprehensive AppleScript support that should allow you
-       to easily extract any coverage information you want out of CoverStory.
-       Using AppleScript it is easy to create an Xcode build step that will take
-       your gcov files and generate HTML to post to a website, or to keep track
-       of coverage from build to build. Take a look at our AppleScript
-       dictionary for complete details.
-    </li>
-    <li>
-        <div class="title">Removed Code Complexity</div>
-        We removed the code complexity feature as it seemed to be muddying up
-        the interface, and wasn't being used very much.
-    </li>
-    <li>
-        <div class="title">Added Toolbar</div>
-        We added a pretty toolbar. What more can we say?
-    </li>
-    <li>
-        <div class="title">Warns About Non-feasible Markers on Executed Lines</div>
-        You now get warnings if you execute lines that you have marked as
-        non-feasible. If you marked them as non-feasible, we assume you didn't
-        expect them to be executed.
-    </li>
-    <li>
-        <div class="title">Fixed Up Document vs. Application Preferences</div>
-        Several preferences that were previously application wide are now
-        document settings as they should be.
-    </li>
-    <li>
-        <div class="title">Many bug fixes</div>
-        Many other little bug fixes and features have been added.
+       <div class="title">Performance Enhancements</div>
+       You should find loading performance enhanced on multi processor
+       machines.
     </li>
 </ul>
 </body>

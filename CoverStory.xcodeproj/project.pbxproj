@@ -120,7 +120,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8D15AC270486D014006FF6A4 /* CoverStory */;
+			remoteGlobalIDString = 8D15AC270486D014006FF6A4;
 			remoteInfo = CoverStory;
 		};
 		F426B7180E0A252E00348386 /* PBXContainerItemProxy */ = {
@@ -152,7 +152,6 @@
 		2A37F4AEFDCFA73011CA2CEA /* CoverStoryDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryDocument.h; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
-		32DBCF750370BD2300C91783 /* CoverStory.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStory.pch; sourceTree = "<group>"; };
 		63BC85EA0B4D863400CDC9E5 /* main.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = main.css; sourceTree = "<group>"; };
 		8B198D2F0C7DF72D002E4E3F /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		8B2A9C6A0D84F84600599386 /* gcov.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gcov.icns; sourceTree = "<group>"; };
@@ -350,7 +349,6 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				32DBCF750370BD2300C91783 /* CoverStory.pch */,
 				2A37F4B0FDCFA73011CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -577,6 +575,9 @@
 /* Begin PBXProject section */
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "Google Inc.";
+			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "CoverStory" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
@@ -825,12 +826,10 @@
 					"\"$(SRCROOT)/external\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = CoverStory.pch;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
@@ -845,12 +844,10 @@
 					"\"$(SRCROOT)/external\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = CoverStory.pch;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
@@ -871,6 +868,8 @@
 				COVERSTORY_VERSION_MINOR = 2;
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_VERSION = "";
+				LIBRARY_SEARCH_PATHS = "external/google-toolbox-for-mac/SnowLeopardGcov";
 				OTHER_LDFLAGS = "-lgcov";
 			};
 			name = Debug;
@@ -892,6 +891,7 @@
 					"$(inherited)",
 					NS_BLOCK_ASSERTIONS,
 				);
+				GCC_VERSION = "";
 				INFOPLIST_PREPROCESS = YES;
 			};
 			name = Release;
@@ -905,7 +905,6 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = CoverStory.pch;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = UnitTests;
@@ -922,7 +921,6 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = CoverStory.pch;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = UnitTests;

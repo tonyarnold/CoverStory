@@ -64,7 +64,7 @@
 + (void)registerDefaults;
 
 // Opens up the source code file in Xcode.
-- (void)openSelectedSource;
+- (IBAction)openSelectedSource:(id)sender;
 - (NSString *)filterString;
 - (void)setFilterString:(NSString *)string;
 - (IBAction)setUseWildcardPattern:(id)sender;

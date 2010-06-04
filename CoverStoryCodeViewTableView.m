@@ -21,6 +21,7 @@
 #import "CoverStoryPreferenceKeys.h"
 #import "GTMDefines.h"
 #import "NSUserDefaultsController+KeyValues.h"
+#import "CoverStoryDocument.h"
 
 static NSString *const kPrefsToWatch[] = {
   kCoverStoryMissedLineColorKey,
