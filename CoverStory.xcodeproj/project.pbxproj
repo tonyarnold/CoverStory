@@ -830,10 +830,7 @@
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/external/google-toolbox-for-mac/SnowLeopardGcov\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
@@ -853,10 +850,7 @@
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/external/google-toolbox-for-mac/SnowLeopardGcov\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};

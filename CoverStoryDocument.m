@@ -1332,7 +1332,7 @@ typedef enum {
   if (redirectURL) {
     NSString *indexHTML
       = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLIndexTemplate",
-                                                               @"HTMLIndex", @""),
+                                                               @"HTMLExport", @""),
          redirectURL];
     NSData *indexData = [indexHTML dataUsingEncoding:NSUTF8StringEncoding];
     [finalWrapper addRegularFileWithContents:indexData
