@@ -39,21 +39,29 @@ const NSInteger kCoverStoryUnittestToolbarTag = 1027;
 - (id)cs_handleExportHTMLScriptCommand:(NSScriptCommand *)command;
 @end
 
+#if USE_NSOPERATION
+@interface NSOperationQueue (CoverStorySharedOpQueue)
++ (NSOperationQueue*)cs_sharedOperationQueue;
+@end
+#endif  // USE_NSOPERATION
+
+
 typedef enum {
   kCSMessageTypeError,
   kCSMessageTypeWarning,
   kCSMessageTypeInfo
 } CSMessageType;
 
-@interface CoverStoryDocument (PrivateMethods)
+@interface CoverStoryDocument ()
 - (void)openFolderInThread:(NSString*)path;
 - (void)openFileInThread:(NSString*)path;
+- (void)backgroundWorkDone:(id)sender;
 - (void)setOpenThreadState:(BOOL)threadRunning;
 - (BOOL)processCoverageForFolder:(NSString *)path;
 #if USE_NSOPERATION
 - (void)cleanupTempDir:(NSString *)tempDir;
 - (void)loadCoveragePath:(NSString *)fullPath;
-#endif
+#endif  // USE_NSOPERATION
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
@@ -106,10 +114,6 @@ typedef enum {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     hideSDKSources_ = [ud boolForKey:kCoverStoryHideSystemSourcesKey];
     hideUnittestSources_ = [ud boolForKey:kCoverStoryHideUnittestSourcesKey];
-
-#if USE_NSOPERATION
-    opQueue_ = [[NSOperationQueue alloc] init];
-#endif
   }
   return self;
 }
@@ -120,8 +124,8 @@ typedef enum {
   [currentAnimation_ release];
   [commonPathPrefix_ release];
 #if USE_NSOPERATION
-  [opQueue_ release];
-#endif
+  [doneOperation_ release];
+#endif  // USE_NSOPERATION
 #if DEBUG
   [startDate_ release];
 #endif
@@ -248,6 +252,14 @@ typedef enum {
 - (void)openFolderInThread:(NSString*)path {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   [self setOpenThreadState:YES];
+#if USE_NSOPERATION
+  // We'll use this to know when we're done.
+  [doneOperation_ release];
+  doneOperation_ =
+    [[NSInvocationOperation alloc] initWithTarget:self
+                                         selector:@selector(backgroundWorkDone:)
+                                           object:@"ignored"];
+#endif  // USE_NSOPERATION
   @try {
     [self processCoverageForFolder:path];
   }
@@ -257,16 +269,17 @@ typedef enum {
                                  [e name], [e reason]];
     [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
   }
-#if USE_NSOPERATION
-  // wait for all the operations to finish
-  [opQueue_ waitUntilAllOperationsAreFinished];
-#endif
 
-  // signal that we're done
-  [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
-                         withObject:@"ignored"
-                      waitUntilDone:NO];
-  [self setOpenThreadState:NO];
+#if USE_NSOPERATION
+  // By now all the cleanup ops that got created are dependents of the done
+  // operation, so let it go.
+  [[NSOperationQueue cs_sharedOperationQueue] addOperation:doneOperation_];
+  [doneOperation_ autorelease];
+  doneOperation_ = nil;
+#else  // USE_NSOPERATION
+  // Signal that we're done.
+  [self backgroundWorkDone:nil];
+#endif  // USE_NSOPERATION
 
   // Clean up NSTask Zombies.
   [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
@@ -276,6 +289,14 @@ typedef enum {
 - (void)openFileInThread:(NSString*)path {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   [self setOpenThreadState:YES];
+#if USE_NSOPERATION
+  // We'll use this to know when we're done.
+  [doneOperation_ release];
+  doneOperation_ =
+    [[NSInvocationOperation alloc] initWithTarget:self
+                                         selector:@selector(backgroundWorkDone:)
+                                           object:@"ignored"];
+#endif  // USE_NSOPERATION
   NSString *folderPath = [path stringByDeletingLastPathComponent];
   NSString *filename = [path lastPathComponent];
   @try {
@@ -288,20 +309,29 @@ typedef enum {
      [e name], [e reason]];
     [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
   }
-#if USE_NSOPERATION
-  // wait for all the operations to finish
-  [opQueue_ waitUntilAllOperationsAreFinished];
-#endif
 
+#if USE_NSOPERATION
+  // By now all the cleanup ops that got created are dependents of the done
+  // operation, so let it go.
+  [[NSOperationQueue cs_sharedOperationQueue] addOperation:doneOperation_];
+  [doneOperation_ autorelease];
+  doneOperation_ = nil;
+#else  // USE_NSOPERATION
+  // Signal that we're done.
+  [self backgroundWorkDone:nil];
+#endif  // USE_NSOPERATION
+
+  // Clean up NSTask Zombies.
+  [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+  [pool release];
+}
+
+- (void)backgroundWorkDone:(id)sender {
   // signal that we're done
   [self performSelectorOnMainThread:@selector(finishedLoadingFileDatas:)
                          withObject:@"ignored"
                       waitUntilDone:NO];
   [self setOpenThreadState:NO];
-
-  // Clean up NSTask Zombies.
-  [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-  [pool release];
 }
 
 - (BOOL)processCoverageForFolder:(NSString *)path {
@@ -449,7 +479,7 @@ typedef enum {
     [self addMessageFromThread:msg messageType:kCSMessageTypeError];
   }
 }
-#endif
+#endif  // USE_NSOPERATION
 
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath {
@@ -523,12 +553,16 @@ typedef enum {
                      attributes:nil
                           error:NULL]) {
 #if USE_NSOPERATION
+    NSOperationQueue *opQueue = [NSOperationQueue cs_sharedOperationQueue];
     // create our cleanup op since it will use the other ops as dependencies
     NSInvocationOperation *cleanupOp
       = [[[NSInvocationOperation alloc] initWithTarget:self
                                               selector:@selector(cleanupTempDir:)
                                                 object:tempDir] autorelease];
-#endif
+    // The done operation will depend on this cleanup op to know when things
+    // finish.
+    [doneOperation_ addDependency:cleanupOp];
+#endif  // USE_NSOPERATION
 
     // now write out our file
     NSString *fileListPath = [tempDir stringByAppendingPathComponent:@"filelists.txt"];
@@ -578,9 +612,9 @@ typedef enum {
         [cleanupOp addDependency:op];
 
         // queue it up
-        [opQueue_ addOperation:op];
+        [opQueue addOperation:op];
         result = YES;
-#else
+#else  // USE_NSOPERATION
         // load it and add it to our set
         CoverStoryCoverageFileData *fileData =
           [CoverStoryCoverageFileData coverageFileDataFromPath:fullPath
@@ -592,7 +626,7 @@ typedef enum {
                               waitUntilDone:NO];
           result = YES;
         }
-#endif
+#endif  // USE_NSOPERATION
       }
     } else {
 
@@ -603,8 +637,8 @@ typedef enum {
 
 #if USE_NSOPERATION
     // now put in the cleanup operation
-    [opQueue_ addOperation:cleanupOp];
-#else
+    [opQueue addOperation:cleanupOp];
+#else  // USE_NSOPERATION
     // nuke our temp dir tree
     NSError *error = nil;
     if (![fm removeItemAtPath:tempDir error:&error]) {
@@ -615,7 +649,7 @@ typedef enum {
                             path:tempDir
                      messageType:kCSMessageTypeError];
     }
-#endif
+#endif  // USE_NSOPERATION
   }
 
   [pool release];
@@ -1389,3 +1423,22 @@ typedef enum {
   return value;
 }
 @end
+
+#if USE_NSOPERATION
+
+@implementation NSOperationQueue (CoverStorySharedOpQueue)
+
++ (NSOperationQueue*)cs_sharedOperationQueue {
+  // GrandCentral on 10.6+ means all the queues work together, but on 10.5, they
+  // don't, so without a shared queue, multiple windows would really hammer the
+  // machine.
+  static NSOperationQueue *s_sharedQueue;
+  if (!s_sharedQueue) {
+    s_sharedQueue = [[NSOperationQueue alloc] init];
+  }
+  return s_sharedQueue;
+}
+
+@end
+
+#endif  // USE_NSOPERATION

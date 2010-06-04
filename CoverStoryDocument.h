@@ -54,8 +54,8 @@
   NSViewAnimation *currentAnimation_;
   NSString *commonPathPrefix_;
 #if USE_NSOPERATION
-  NSOperationQueue *opQueue_;
-#endif
+  NSOperation *doneOperation_;
+#endif  // USE_NSOPERATION
 
 #if DEBUG
   NSDate *startDate_;
