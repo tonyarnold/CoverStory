@@ -111,8 +111,7 @@ GTMOBJECT_SINGLETON_BOILERPLATE(GCovVersionManager, defaultManager);
     [enumerator2 gtm_enumeratorByTarget:path
                   performOnEachSelector:@selector(stringByAppendingPathComponent:)];
   // ...walk over them validating they are good to use.
-  NSString *gcovPath;
-  while ((gcovPath = [enumerator3 nextObject])) {
+  for (NSString *gcovPath in enumerator3) {
     // Must be executable.
     if (![fm isExecutableFileAtPath:gcovPath]) {
       continue;

@@ -461,10 +461,8 @@ typedef enum {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSString *tempDir = [self tempDirName];
-  NSEnumerator *fileNamesEnum = [filenames objectEnumerator];
-  NSString *filename;
   // make sure all the filenames are just leaves
-  while ((filename = [fileNamesEnum nextObject])) {
+  for (NSString *filename in filenames) {
     NSRange range = [filename rangeOfString:@"/"];
     if (range.location != NSNotFound) {
       [self addMessageFromThread:@"skipped because filename had a slash"
@@ -499,8 +497,7 @@ typedef enum {
     return NO;
   }
   char nullByte = 0;
-  fileNamesEnum = [filenames objectEnumerator];
-  while ((filename = [fileNamesEnum nextObject])) {
+  for (NSString *filename in filenames) {
     NSData *filenameUTF8 = [filename dataUsingEncoding:NSUTF8StringEncoding];
     if (!filenameUTF8) {
       [pool release];

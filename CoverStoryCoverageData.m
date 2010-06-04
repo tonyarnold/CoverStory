@@ -487,9 +487,7 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
     // would be to keep this basic structure, but be able to relay info w/ the
     // warning so our warning/error ui could take clicks and open to the right
     // file/line so the user can take action on the message.
-    NSEnumerator *enumerator = [[fileData queuedWarnings] objectEnumerator];
-    NSString *warning;
-    while ((warning = [enumerator nextObject])) {
+    for (NSString *warning in [fileData queuedWarnings]) {
       [receiver coverageWarningForPath:[fileData sourcePath]
                                message:@"%@", warning];
     }

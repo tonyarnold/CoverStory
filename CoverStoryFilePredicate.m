@@ -130,9 +130,7 @@ static NSString * const kFilter = @"filter";
 
 - (BOOL)cs_isMatchForPatternArray:(NSArray *)patterns {
   const char *utf8Self = [self UTF8String];
-  NSEnumerator *patternEnum = [patterns objectEnumerator];
-  NSDictionary *patternDict;
-  while ((patternDict = [patternEnum nextObject])) {
+  for (NSDictionary *patternDict in patterns) {
     NSString *pattern = [patternDict objectForKey:kFilter];
     if (([pattern length] > 0) &&
         (fnmatch([pattern UTF8String], utf8Self, 0) == 0)) {
