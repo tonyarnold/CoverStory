@@ -6,6 +6,21 @@
 	objectVersion = 45;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		8B67E07511B97A09000DB052 /* Create Appcast */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 8B67E07F11B97A36000DB052 /* Build configuration list for PBXAggregateTarget "Create Appcast" */;
+			buildPhases = (
+				8B67E07411B97A09000DB052 /* ShellScript */,
+			);
+			dependencies = (
+				8B67E07911B97A0E000DB052 /* PBXTargetDependency */,
+			);
+			name = "Create Appcast";
+			productName = "Create Appcast";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXAppleScriptBuildPhase section */
 		8BE1A2080DD0E11A008455E6 /* AppleScript */ = {
 			isa = PBXAppleScriptBuildPhase;
@@ -34,12 +49,12 @@
 		8B4097690F92A37D00DF540E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B4097680F92A37D00DF540E /* Sparkle.framework */; };
 		8B40977F0F92A3C300DF540E /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8B4097680F92A37D00DF540E /* Sparkle.framework */; };
 		8B41D4BE0D85CAB000E60DA4 /* CoverStoryValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */; };
+		8B67DFB811B96599000DB052 /* GTM_fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8B67DFB411B96599000DB052 /* GTM_fdopen2003.c */; };
+		8B67DFBB11B965A5000DB052 /* GTM_fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8B67DFB411B96599000DB052 /* GTM_fdopen2003.c */; };
 		8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */; };
 		8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */; };
 		8BAAA3E60F7D614F00DF4F12 /* SDKHide.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BAAA3E40F7D614F00DF4F12 /* SDKHide.png */; };
 		8BAAA3E70F7D614F00DF4F12 /* UnitTestsHide.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BAAA3E50F7D614F00DF4F12 /* UnitTestsHide.png */; };
-		8BB77C8511B5D0D100AB31AF /* fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */; };
-		8BB77C8811B5D0DC00AB31AF /* fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */; };
 		8BB788F811B8467800AB31AF /* CoverStoryArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BB788F711B8467800AB31AF /* CoverStoryArrayController.m */; };
 		8BB7893111B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BB7893011B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m */; };
 		8BC04E2C0DB0459100C2D1CA /* info.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BC04E290DB0459100C2D1CA /* info.png */; };
@@ -101,6 +116,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8B67E07811B97A0E000DB052 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D15AC270486D014006FF6A4 /* CoverStory */;
+			remoteInfo = CoverStory;
+		};
 		F426B7180E0A252E00348386 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
@@ -148,6 +170,9 @@
 		8B40A3B30F96756900DF540E /* CoverStoryAppcast.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = CoverStoryAppcast.xml; sourceTree = "<group>"; };
 		8B41D3930D857F1200E60DA4 /* CoverStoryDocumentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryDocumentTypes.h; sourceTree = "<group>"; };
 		8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryValueTransformers.m; sourceTree = "<group>"; };
+		8B67DEDB11B9626B000DB052 /* releaseNotes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = releaseNotes.html; sourceTree = "<group>"; };
+		8B67DF8311B96380000DB052 /* CreateAppcast.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = CreateAppcast.sh; sourceTree = "<group>"; };
+		8B67DFB411B96599000DB052 /* GTM_fdopen2003.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GTM_fdopen2003.c; sourceTree = "<group>"; };
 		8B726FFF0D92B6EB0090C251 /* CoverStoryFilePredicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryFilePredicate.h; sourceTree = "<group>"; };
 		8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryFilePredicate.m; sourceTree = "<group>"; };
 		8B7271230D92CD920090C251 /* CoverStoryPreferenceKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryPreferenceKeys.h; sourceTree = "<group>"; };
@@ -156,7 +181,6 @@
 		8BAAA3E40F7D614F00DF4F12 /* SDKHide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SDKHide.png; sourceTree = "<group>"; };
 		8BAAA3E50F7D614F00DF4F12 /* UnitTestsHide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnitTestsHide.png; sourceTree = "<group>"; };
 		8BAAA4EB0F7DA25200DF4F12 /* CoverStoryValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryValueTransformers.h; sourceTree = "<group>"; };
-		8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fdopen2003.c; sourceTree = "<group>"; };
 		8BB77D0011B5D7D100AB31AF /* GTMLocalizedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMLocalizedString.h; sourceTree = "<group>"; };
 		8BB788F611B8467800AB31AF /* CoverStoryArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryArrayController.h; sourceTree = "<group>"; };
 		8BB788F711B8467800AB31AF /* CoverStoryArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryArrayController.m; sourceTree = "<group>"; };
@@ -276,6 +300,7 @@
 			isa = PBXGroup;
 			children = (
 				8B198D2F0C7DF72D002E4E3F /* COPYING */,
+				8B67DF8211B96380000DB052 /* BuildScripts */,
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				F426B7F30E0AB70200348386 /* UnitTesting */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
@@ -325,7 +350,6 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				8BB77C7A11B5CFC100AB31AF /* fdopen2003.c */,
 				32DBCF750370BD2300C91783 /* CoverStory.pch */,
 				2A37F4B0FDCFA73011CA2CEA /* main.m */,
 			);
@@ -386,10 +410,27 @@
 		8B40975E0F92A32700DF540E /* SparkleData */ = {
 			isa = PBXGroup;
 			children = (
+				8B67DEDB11B9626B000DB052 /* releaseNotes.html */,
 				8B40A3B30F96756900DF540E /* CoverStoryAppcast.xml */,
 				8B4097600F92A32700DF540E /* dsa_pub.pem */,
 			);
 			path = SparkleData;
+			sourceTree = "<group>";
+		};
+		8B67DF8211B96380000DB052 /* BuildScripts */ = {
+			isa = PBXGroup;
+			children = (
+				8B67DF8311B96380000DB052 /* CreateAppcast.sh */,
+			);
+			path = BuildScripts;
+			sourceTree = "<group>";
+		};
+		8B67DFB211B96599000DB052 /* SnowLeopardGcov */ = {
+			isa = PBXGroup;
+			children = (
+				8B67DFB411B96599000DB052 /* GTM_fdopen2003.c */,
+			);
+			path = SnowLeopardGcov;
 			sourceTree = "<group>";
 		};
 		F4138F240D751FCF00F72B31 /* Foundation */ = {
@@ -471,6 +512,7 @@
 			isa = PBXGroup;
 			children = (
 				F4C187F60DB3CEED009BB8C6 /* GTMDefines.h */,
+				8B67DFB211B96599000DB052 /* SnowLeopardGcov */,
 				F4138F240D751FCF00F72B31 /* Foundation */,
 				F4C187F80DB3CF07009BB8C6 /* DebugUtils */,
 				F426B7990E0A2E9F00348386 /* UnitTesting */,
@@ -500,7 +542,6 @@
 				8D15AC330486D014006FF6A4 /* Frameworks */,
 				8B4097540F91644F00DF540E /* CopyFiles */,
 				8B4097470F91641700DF540E /* ShellScript */,
-				8B40A3A40F96754500DF540E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -545,6 +586,7 @@
 			targets = (
 				8D15AC270486D014006FF6A4 /* CoverStory */,
 				F426B70D0E0A24AE00348386 /* UnitTests */,
+				8B67E07511B97A09000DB052 /* Create Appcast */,
 			);
 		};
 /* End PBXProject section */
@@ -624,7 +666,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Remove unnecessary Sparkle stuff\nsparkleDir=\"${BUILD_DIR}/${CONFIGURATION}/${CONTENTS_FOLDER_PATH}/Frameworks/Sparkle.framework\"\necho $sparkleDir\nrm -Rf \"$sparkleDir/Resources/de.lproj\"\nrm -Rf \"$sparkleDir/Resources/es.lproj\"\nrm -Rf \"$sparkleDir/Resources/fr.lproj\"\nrm -Rf \"$sparkleDir/Resources/fr_CA.lproj\"\nrm -Rf \"$sparkleDir/Resources/it.lproj\"\nrm -Rf \"$sparkleDir/Resources/nl.lproj\"\nrm -Rf \"$sparkleDir/Resources/ru.lproj\"\nrm -Rf \"$sparkleDir/Resources/sv.lproj\"\nrm -Rf \"$sparkleDir/Versions/Current/Headers\"\nrm -Rf \"$sparkleDir/Headers\"";
 		};
-		8B40A3A40F96754500DF540E /* ShellScript */ = {
+		8B67E07411B97A09000DB052 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -635,7 +677,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -o errexit\n\nPRIVKEY_FILE=\"$SRCROOT/SparkleData/dsa_priv.pem\"\nif [ ! -f \"$PRIVKEY_FILE\" ];\nthen\n\techo \"Not generating Sparkle Data\"\n\texit 0\nfi\n\nVERSION=$(defaults read \"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.app/Contents/Info\" CFBundleVersion)\nDOWNLOAD_BASE_URL=\"http://coverstory.googlecode.com/files\"\nRELEASENOTES_URL=\"http://coverstory.googlecode.com/svn/trunk/SparkleData/releaseNotes.html#version-$VERSION\"\n\nARCHIVE_FILENAME=\"$PROJECT_NAME-$VERSION.zip\"\nDOWNLOAD_URL=\"$DOWNLOAD_BASE_URL/$ARCHIVE_FILENAME\"\n\nWD=$PWD\ncd \"$BUILT_PRODUCTS_DIR\"\nrm -f \"$PROJECT_NAME\"*.zip\nzip -qry \"$ARCHIVE_FILENAME\" \"$PROJECT_NAME.app\"\n\nSIZE=$(stat -f %z \"$ARCHIVE_FILENAME\")\nPUBDATE=$(date +\"%a, %d %b %G %T %z\")\nSIGNATURE=$(/usr/bin/ruby \"$SRCROOT/SparkleData/Signing Tools/sign_update.rb\" \"$ARCHIVE_FILENAME\" \"$PRIVKEY_FILE\")\n\n[ $SIGNATURE ] || { echo Unable to sign; false; }\n\ncat <<EOF\n\t\t<item>\n\t\t\t<title>Version $VERSION</title>\n              <sparkle:minimumSystemVersion>10.5.0</sparkle:minimumSystemVersion>\n\t\t\t<sparkle:releaseNotesLink>$RELEASENOTES_URL</sparkle:releaseNotesLink>\n\t\t\t<pubDate>$PUBDATE</pubDate>\n\t\t\t<enclosure\n\t\t\t\turl=\"$DOWNLOAD_URL\"\n\t\t\t\tsparkle:version=\"$VERSION\"\n\t\t\t\ttype=\"application/octet-stream\"\n\t\t\t\tlength=\"$SIZE\"\n\t\t\t\tsparkle:dsaSignature=\"$SIGNATURE\"\n\t\t\t/>\n\t\t</item>\nEOF";
+			shellScript = ./BuildScripts/CreateAppcast.sh;
 		};
 		F426B70C0E0A24AE00348386 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -674,9 +716,9 @@
 				8B4091140F8E733D00DF540E /* CoverStoryApplication.m in Sources */,
 				8B4094C00F8EC70300DF540E /* NSColor+Scripting.m in Sources */,
 				F41A325311B6BA1A00176CCC /* GCovVersionManager.m in Sources */,
-				8BB77C8811B5D0DC00AB31AF /* fdopen2003.c in Sources */,
 				8BB788F811B8467800AB31AF /* CoverStoryArrayController.m in Sources */,
 				8BB7893111B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m in Sources */,
+				8B67DFB811B96599000DB052 /* GTM_fdopen2003.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -690,13 +732,18 @@
 				F487520811B6CA8800774A63 /* GCovVersionManagerTest.m in Sources */,
 				F487520911B6CA9E00774A63 /* GCovVersionManager.m in Sources */,
 				F487523211B6CEAE00774A63 /* GTMNSEnumerator+Filter.m in Sources */,
-				8BB77C8511B5D0D100AB31AF /* fdopen2003.c in Sources */,
+				8B67DFBB11B965A5000DB052 /* GTM_fdopen2003.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8B67E07911B97A0E000DB052 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D15AC270486D014006FF6A4 /* CoverStory */;
+			targetProxy = 8B67E07811B97A0E000DB052 /* PBXContainerItemProxy */;
+		};
 		F426B7190E0A252E00348386 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F426B70D0E0A24AE00348386 /* UnitTests */;
@@ -748,6 +795,27 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		8B67E07611B97A09000DB052 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Create Appcast";
+			};
+			name = Debug;
+		};
+		8B67E07711B97A09000DB052 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "Create Appcast";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -762,6 +830,10 @@
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/external/google-toolbox-for-mac/SnowLeopardGcov\"",
+				);
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
@@ -781,6 +853,10 @@
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/external/google-toolbox-for-mac/SnowLeopardGcov\"",
+				);
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
@@ -794,9 +870,13 @@
 					i386,
 					ppc,
 				);
+				COVERSTORY_RELEASE_NOTE_PATH = SparkleData/releaseNotes.html;
+				COVERSTORY_VERSION = "$(COVERSTORY_VERSION_MAJOR).$(COVERSTORY_VERSION_MINOR).$(COVERSTORY_VERSION_BUGFIX)";
+				COVERSTORY_VERSION_BUGFIX = 0;
+				COVERSTORY_VERSION_MAJOR = 4;
+				COVERSTORY_VERSION_MINOR = 2;
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GTM_HOST_GCC_PREPROCESSOR_DEFINITIONS = "GTM_CODE_COVERAGE_ON=1";
 				OTHER_LDFLAGS = "-lgcov";
 			};
 			name = Debug;
@@ -809,10 +889,16 @@
 					i386,
 					ppc,
 				);
+				COVERSTORY_RELEASE_NOTE_PATH = SparkleData/releaseNotes.html;
+				COVERSTORY_VERSION = "$(COVERSTORY_VERSION_MAJOR).$(COVERSTORY_VERSION_MINOR).$(COVERSTORY_VERSION_BUGFIX)";
+				COVERSTORY_VERSION_BUGFIX = 0;
+				COVERSTORY_VERSION_MAJOR = 4;
+				COVERSTORY_VERSION_MINOR = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					NS_BLOCK_ASSERTIONS,
 				);
+				INFOPLIST_PREPROCESS = YES;
 			};
 			name = Release;
 		};
@@ -853,6 +939,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8B67E07F11B97A36000DB052 /* Build configuration list for PBXAggregateTarget "Create Appcast" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8B67E07611B97A09000DB052 /* Debug */,
+				8B67E07711B97A09000DB052 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "CoverStory" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
