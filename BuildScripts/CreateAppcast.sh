@@ -39,7 +39,7 @@ set -o verbose
 cd "${TARGET_BUILD_DIR}" || exit 1
 
 appcast_cfg="CoverStoryAppcast.xml"
-appcast_cfg_template="${SOURCE_ROOT}/SparkleData/${appcast_cfg}"
+appcast_cfg_template="${SOURCE_ROOT}/SparkleData/CoverStoryAppcastCfg.xml"
 folder_name="CoverStory.${COVERSTORY_VERSION}"
 folder_path="${BUILT_PRODUCTS_DIR}/${folder_name}"
 dmg_name="CoverStory.${COVERSTORY_VERSION}.dmg"
