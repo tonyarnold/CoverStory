@@ -7,9 +7,9 @@
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
-// 
+//
 //  http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 //  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -22,61 +22,62 @@
 #import "CoverStoryPreferenceKeys.h"
 #import "NSUserDefaultsController+KeyValues.h"
 
-static NSString *const kPrefsToWatch[] = { 
+static NSString *const kPrefsToWatch[] = {
   kCoverStorySystemSourcesPatternsKey,
   kCoverStoryUnittestSourcesPatternsKey,
-  kCoverStoryRemoveCommonSourcePrefix,
 };
 
 #define kCoverStoryHideSDKSources @"hideSDKSources"
 #define kCoverStoryHideUnittestSources @"hideUnittestSources"
+#define kCoverStoryRemoveCommonSourcePrefix @"removeCommonSourcePrefix"
 #define kCoverStoryFilterString @"filterString"
 
 static NSString *const kDocumentKeyPathsToWatch[] = {
   kCoverStoryHideSDKSources,
   kCoverStoryHideUnittestSources,
+  kCoverStoryRemoveCommonSourcePrefix,
   kCoverStoryFilterString
 };
 
 @implementation CoverStoryArrayController
 
 - (void)dealloc {
-  for (size_t i = 0; 
-       i < sizeof(kDocumentKeyPathsToWatch) / sizeof(kDocumentKeyPathsToWatch[0]); 
+  for (size_t i = 0;
+       i < sizeof(kDocumentKeyPathsToWatch) / sizeof(kDocumentKeyPathsToWatch[0]);
        ++i) {
     [owningDocument_ removeObserver:self forKeyPath:kDocumentKeyPathsToWatch[i]];
   }
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
   for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
-    [defaults removeObserver:self 
+    [defaults removeObserver:self
                   forKeyPath:[NSUserDefaultsController cs_valuesKey:kPrefsToWatch[i]]];
-  }  
-  
+  }
+
   [super dealloc];
 }
 
 
 - (void)awakeFromNib {
-  for (size_t i = 0; 
-       i < sizeof(kDocumentKeyPathsToWatch) / sizeof(kDocumentKeyPathsToWatch[0]); 
+  for (size_t i = 0;
+       i < sizeof(kDocumentKeyPathsToWatch) / sizeof(kDocumentKeyPathsToWatch[0]);
        ++i) {
-    [owningDocument_ addObserver:self 
+    [owningDocument_ addObserver:self
                       forKeyPath:kDocumentKeyPathsToWatch[i]
                          options:0
                          context:nil];
   }
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
   for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
-    [defaults addObserver:self 
+    [defaults addObserver:self
                forKeyPath:[NSUserDefaultsController cs_valuesKey:kPrefsToWatch[i]]
                   options:0
                   context:nil];
-  }  
+  }
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath 
-                      ofObject:(id)object 
-                        change:(NSDictionary *)change 
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
                        context:(void *)context {
   BOOL handled = NO;
   if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
@@ -94,15 +95,10 @@ static NSString *const kDocumentKeyPathsToWatch[] = {
         [self rearrangeObjects];
         handled = YES;
       }
-    } else if ([keyPath isEqualToString:
-                [NSUserDefaultsController cs_valuesKey:kCoverStoryRemoveCommonSourcePrefix]]) {
-      // we to recalc the common prefix, so trigger a rearrange
-      [self rearrangeObjects];
-      handled = YES;
-    } 
+    }
   } else if ([object isEqualTo:owningDocument_]) {
-    for (size_t i = 0; 
-         i < sizeof(kDocumentKeyPathsToWatch) / sizeof(kDocumentKeyPathsToWatch[0]); 
+    for (size_t i = 0;
+         i < sizeof(kDocumentKeyPathsToWatch) / sizeof(kDocumentKeyPathsToWatch[0]);
          ++i) {
       if ([keyPath isEqualToString:kDocumentKeyPathsToWatch[i]]) {
         // user has changed a setting that requires a rearrange
@@ -113,14 +109,14 @@ static NSString *const kDocumentKeyPathsToWatch[] = {
   }
   if (!handled) {
     _GTMDevLog(@"Unexpected observance of %@ of %@ (%@)", keyPath, object, change);
-  } 
+  }
 }
 
 - (void)updateCommonPathPrefix {
   if (!owningDocument_) return;
-  
+
   NSString *newPrefix = nil;
-  
+
   // now figure out a new prefix
   NSArray *arranged = [self arrangedObjects];
   if ([arranged count] == 0) {
@@ -128,7 +124,7 @@ static NSString *const kDocumentKeyPathsToWatch[] = {
     newPrefix = @"";
   } else {
     // process the list to find the common prefix
-    
+
     // start w/ the first path, and now loop throught them all, but give up
     // the moment he only common prefix is "/"
     NSArray *sourcePaths = [arranged valueForKey:@"sourcePath"];
@@ -168,7 +164,7 @@ static NSString *const kDocumentKeyPathsToWatch[] = {
   [super rearrangeObjects];
   [self updateCommonPathPrefix];
 }
-       
+
 - (void)setContent:(id)content {
   // this fires as results are added during a load
   [super setContent:content];

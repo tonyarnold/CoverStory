@@ -33,6 +33,7 @@
 
 const NSInteger kCoverStorySDKToolbarTag = 1026;
 const NSInteger kCoverStoryUnittestToolbarTag = 1027;
+const NSInteger kCoverStoryCommonPrefixToolbarTag = 1028;
 
 @interface NSWindow (CoverStoryExportToHTML)
 // Script command that we want NSWindow to handle
@@ -85,7 +86,7 @@ typedef enum {
      [NSNumber numberWithInt:kCoverStoryFilterStringTypeWildcardPattern],
      kCoverStoryFilterStringTypeKey,
      [NSNumber numberWithBool:YES],
-     kCoverStoryRemoveCommonSourcePrefix,
+     kCoverStoryRemoveCommonSourcePrefixKey,
      nil];
 
   [defaults registerDefaults:documentDefaults];
@@ -115,6 +116,8 @@ typedef enum {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     hideSDKSources_ = [ud boolForKey:kCoverStoryHideSystemSourcesKey];
     hideUnittestSources_ = [ud boolForKey:kCoverStoryHideUnittestSourcesKey];
+    removeCommonSourcePrefix_ =
+        [ud boolForKey:kCoverStoryRemoveCommonSourcePrefixKey];
   }
   return self;
 }
@@ -745,6 +748,12 @@ typedef enum {
       } else {
         label = NSLocalizedString(@"Hide Unittest Source Files", nil);
       }
+    } else if (tag == kCoverStoryCommonPrefixToolbarTag) {
+      if (removeCommonSourcePrefix_) {
+        label = NSLocalizedString(@"Show Full Paths", nil);
+      } else {
+        label = NSLocalizedString(@"Remove Common Path Prefix", nil);
+      }
     }
     if (label) {
       isGood = YES;
@@ -889,7 +898,7 @@ typedef enum {
 - (void)setCommonPathPrefix:(NSString *)newPrefix {
   [commonPathPrefix_ autorelease];
   // we cheat, and if the pref is set, we just make sure we return no prefix
-  if ([[NSUserDefaults standardUserDefaults] boolForKey:kCoverStoryRemoveCommonSourcePrefix]) {
+  if (removeCommonSourcePrefix_) {
     commonPathPrefix_ = [newPrefix copy];
   } else {
     commonPathPrefix_ = nil;
@@ -1095,12 +1104,21 @@ typedef enum {
   [sourceFilesController_ rearrangeObjects];
 }
 
+- (void)setRemoveCommonSourcePrefix:(BOOL)remove {
+  removeCommonSourcePrefix_ = remove;
+  [sourceFilesController_ rearrangeObjects];
+}
+
 - (BOOL)hideSDKSources {
   return hideSDKSources_;
 }
 
 - (BOOL)hideUnittestSources {
   return hideUnittestSources_;
+}
+
+- (BOOL)removeCommonSourcePrefix {
+  return removeCommonSourcePrefix_;
 }
 
 - (IBAction)toggleSDKSourcesShown:(id)sender {
@@ -1111,6 +1129,10 @@ typedef enum {
   [self setHideUnittestSources:![self hideUnittestSources]];
 }
 
+- (IBAction)toggleRemoveCommonSourcePrefix:(id)sender {
+  [self setRemoveCommonSourcePrefix:![self removeCommonSourcePrefix]];
+}
+
 -(BOOL)validateToolbarItem:(NSToolbarItem *)theItem {
   NSInteger tag = [theItem tag];
   BOOL value = NO;
@@ -1118,28 +1140,37 @@ typedef enum {
   NSString *iconName = nil;
   if (tag == kCoverStorySDKToolbarTag) {
     value = hideSDKSources_;
-    label = NSLocalizedString(@"SDK Files", nil);
     iconName = @"SDK";
+    if (value) {
+      label = NSLocalizedString(@"Show SDK Source Files", nil);
+    } else {
+      label = NSLocalizedString(@"Hide SDK Source Files", nil);
+    }
   } else if (tag == kCoverStoryUnittestToolbarTag) {
     value = hideUnittestSources_;
-    label = NSLocalizedString(@"Unittest Files", nil);
     iconName = @"UnitTests";
+    if (value) {
+      label = NSLocalizedString(@"Show Unittest Source Files", nil);
+    } else {
+      label = NSLocalizedString(@"Hide Unittest Source Files", nil);
+    }
+  } else if (tag == kCoverStoryCommonPrefixToolbarTag) {
+    value = removeCommonSourcePrefix_;
+    iconName = @"CommonPathPrefix";
+    if (value) {
+      label = NSLocalizedString(@"Show Full Paths", nil);
+    } else {
+      label = NSLocalizedString(@"Remove Common Path Prefix", nil);
+    }
   }
   if (label) {
-    NSString *fullLabel = nil;
     NSString *fullIcon = nil;
     if (value) {
-      fullLabel
-        = [NSString stringWithFormat:GTMLocalizedString(@"Show %@", nil),
-           label];
       fullIcon = [NSString stringWithFormat:@"%@", iconName];
     } else {
-      fullLabel
-        = [NSString stringWithFormat:GTMLocalizedString(@"Hide %@", nil),
-           label];
       fullIcon = [NSString stringWithFormat:@"%@Hide", iconName];
     }
-    [theItem setLabel:fullLabel];
+    [theItem setLabel:label];
     NSImage *image = [NSImage imageNamed:fullIcon];
     [theItem setImage:image];
   }

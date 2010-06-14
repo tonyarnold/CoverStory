@@ -43,6 +43,7 @@
   BOOL documentClosed_;
   BOOL hideSDKSources_;
   BOOL hideUnittestSources_;
+  BOOL removeCommonSourcePrefix_;
 
   NSString *filterString_;
   volatile BOOL openingInThread_;  // Are we opening our files in a thread
@@ -72,10 +73,12 @@
 - (IBAction)toggleMessageDrawer:(id)sender;
 - (IBAction)toggleSDKSourcesShown:(id)sender;
 - (IBAction)toggleUnittestSourcesShown:(id)sender;
+- (IBAction)toggleRemoveCommonSourcePrefix:(id)sender;
 - (void)setCommonPathPrefix:(NSString *)newPrefix;
 - (NSString *)commonPathPrefix;
 - (BOOL)hideSDKSources;
 - (BOOL)hideUnittestSources;
+- (BOOL)removeCommonSourcePrefix;
 - (BOOL)completelyOpened;
 - (id)handleExportHTMLScriptCommand:(NSScriptCommand *)command;
 - (CoverStoryCoverageSet *)dataSet;
