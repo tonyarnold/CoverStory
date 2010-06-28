@@ -22,10 +22,6 @@
 #import "GTMDefines.h"
 #import "CoverStoryCoverageData.h"
 
-#ifndef USE_NSOPERATION
-  #define USE_NSOPERATION 1
-#endif
-
 @class CoverStoryArrayController;
 @class CoverStoryCodeViewTableView;
 
@@ -54,9 +50,7 @@
   unsigned int numFileDatas_;
   NSViewAnimation *currentAnimation_;
   NSString *commonPathPrefix_;
-#if USE_NSOPERATION
   NSOperation *doneOperation_;
-#endif  // USE_NSOPERATION
 
 #if DEBUG
   NSDate *startDate_;

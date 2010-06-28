@@ -40,11 +40,9 @@ const NSInteger kCoverStoryCommonPrefixToolbarTag = 1028;
 - (id)cs_handleExportHTMLScriptCommand:(NSScriptCommand *)command;
 @end
 
-#if USE_NSOPERATION
 @interface NSOperationQueue (CoverStorySharedOpQueue)
 + (NSOperationQueue*)cs_sharedOperationQueue;
 @end
-#endif  // USE_NSOPERATION
 
 
 typedef enum {
@@ -59,10 +57,8 @@ typedef enum {
 - (void)backgroundWorkDone:(id)sender;
 - (void)setOpenThreadState:(BOOL)threadRunning;
 - (BOOL)processCoverageForFolder:(NSString *)path;
-#if USE_NSOPERATION
 - (void)cleanupTempDir:(NSString *)tempDir;
 - (void)loadCoveragePath:(NSString *)fullPath;
-#endif  // USE_NSOPERATION
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath;
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData;
@@ -127,9 +123,7 @@ typedef enum {
   [filterString_ release];
   [currentAnimation_ release];
   [commonPathPrefix_ release];
-#if USE_NSOPERATION
   [doneOperation_ release];
-#endif  // USE_NSOPERATION
 #if DEBUG
   [startDate_ release];
 #endif
@@ -256,14 +250,12 @@ typedef enum {
 - (void)openFolderInThread:(NSString*)path {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   [self setOpenThreadState:YES];
-#if USE_NSOPERATION
   // We'll use this to know when we're done.
   [doneOperation_ release];
   doneOperation_ =
     [[NSInvocationOperation alloc] initWithTarget:self
                                          selector:@selector(backgroundWorkDone:)
                                            object:@"ignored"];
-#endif  // USE_NSOPERATION
   @try {
     [self processCoverageForFolder:path];
   }
@@ -274,16 +266,11 @@ typedef enum {
     [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
   }
 
-#if USE_NSOPERATION
   // By now all the cleanup ops that got created are dependents of the done
   // operation, so let it go.
   [[NSOperationQueue cs_sharedOperationQueue] addOperation:doneOperation_];
   [doneOperation_ autorelease];
   doneOperation_ = nil;
-#else  // USE_NSOPERATION
-  // Signal that we're done.
-  [self backgroundWorkDone:nil];
-#endif  // USE_NSOPERATION
 
   // Clean up NSTask Zombies.
   [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
@@ -293,14 +280,12 @@ typedef enum {
 - (void)openFileInThread:(NSString*)path {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   [self setOpenThreadState:YES];
-#if USE_NSOPERATION
   // We'll use this to know when we're done.
   [doneOperation_ release];
   doneOperation_ =
     [[NSInvocationOperation alloc] initWithTarget:self
                                          selector:@selector(backgroundWorkDone:)
                                            object:@"ignored"];
-#endif  // USE_NSOPERATION
   NSString *folderPath = [path stringByDeletingLastPathComponent];
   NSString *filename = [path lastPathComponent];
   @try {
@@ -314,16 +299,11 @@ typedef enum {
     [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
   }
 
-#if USE_NSOPERATION
   // By now all the cleanup ops that got created are dependents of the done
   // operation, so let it go.
   [[NSOperationQueue cs_sharedOperationQueue] addOperation:doneOperation_];
   [doneOperation_ autorelease];
   doneOperation_ = nil;
-#else  // USE_NSOPERATION
-  // Signal that we're done.
-  [self backgroundWorkDone:nil];
-#endif  // USE_NSOPERATION
 
   // Clean up NSTask Zombies.
   [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
@@ -444,7 +424,6 @@ typedef enum {
   return result;
 }
 
-#if USE_NSOPERATION
 - (void)cleanupTempDir:(NSString *)tempDir {
   @try {
     // nuke our temp dir tree
@@ -483,7 +462,6 @@ typedef enum {
     [self addMessageFromThread:msg messageType:kCSMessageTypeError];
   }
 }
-#endif  // USE_NSOPERATION
 
 - (BOOL)processCoverageForFiles:(NSArray *)filenames
                        inFolder:(NSString *)folderPath {
@@ -556,7 +534,6 @@ typedef enum {
     withIntermediateDirectories:YES
                      attributes:nil
                           error:NULL]) {
-#if USE_NSOPERATION
     NSOperationQueue *opQueue = [NSOperationQueue cs_sharedOperationQueue];
     // create our cleanup op since it will use the other ops as dependencies
     NSInvocationOperation *cleanupOp
@@ -566,7 +543,6 @@ typedef enum {
     // The done operation will depend on this cleanup op to know when things
     // finish.
     [doneOperation_ addDependency:cleanupOp];
-#endif  // USE_NSOPERATION
 
     // now write out our file
     NSString *fileListPath = [tempDir stringByAppendingPathComponent:@"filelists.txt"];
@@ -607,7 +583,6 @@ typedef enum {
       NSEnumerator *resultPathsEnum = [resultPaths objectEnumerator];
       NSString *fullPath;
       while ((fullPath = [resultPathsEnum nextObject]) && ![self isClosed]) {
-#if USE_NSOPERATION
         NSInvocationOperation *op
           = [[[NSInvocationOperation alloc] initWithTarget:self
                                                   selector:@selector(loadCoveragePath:)
@@ -618,19 +593,6 @@ typedef enum {
         // queue it up
         [opQueue addOperation:op];
         result = YES;
-#else  // USE_NSOPERATION
-        // load it and add it to our set
-        CoverStoryCoverageFileData *fileData =
-          [CoverStoryCoverageFileData coverageFileDataFromPath:fullPath
-                                                      document:self
-                                               messageReceiver:self];
-        if (fileData) {
-          [self performSelectorOnMainThread:@selector(addFileData:)
-                                 withObject:fileData
-                              waitUntilDone:NO];
-          result = YES;
-        }
-#endif  // USE_NSOPERATION
       }
     } else {
 
@@ -639,21 +601,8 @@ typedef enum {
                      messageType:kCSMessageTypeError];
     }
 
-#if USE_NSOPERATION
     // now put in the cleanup operation
     [opQueue addOperation:cleanupOp];
-#else  // USE_NSOPERATION
-    // nuke our temp dir tree
-    NSError *error = nil;
-    if (![fm removeItemAtPath:tempDir error:&error]) {
-      NSString *message
-        = [NSString stringWithFormat:@"failed to remove our tempdir (%@)",
-           error];
-      [self addMessageFromThread:message
-                            path:tempDir
-                     messageType:kCSMessageTypeError];
-    }
-#endif  // USE_NSOPERATION
   }
 
   [pool release];
@@ -1456,7 +1405,6 @@ typedef enum {
 }
 @end
 
-#if USE_NSOPERATION
 
 @implementation NSOperationQueue (CoverStorySharedOpQueue)
 
@@ -1472,5 +1420,3 @@ typedef enum {
 }
 
 @end
-
-#endif  // USE_NSOPERATION
