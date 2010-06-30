@@ -44,6 +44,9 @@ const NSInteger kCoverStoryCommonPrefixToolbarTag = 1028;
 + (NSOperationQueue*)cs_sharedOperationQueue;
 @end
 
+@interface NSFileManager (CoverStoryThreading)
++ (NSFileManager *)threadSafeManager;
+@end
 
 typedef enum {
   kCSMessageTypeError,
@@ -322,7 +325,7 @@ typedef enum {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   // cycle through the directory...
-  NSFileManager *fm = [NSFileManager defaultManager];
+  NSFileManager *fm = [NSFileManager threadSafeManager];
   NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
   // ...filter to .gcda files...
   NSEnumerator *enumerator2 =
@@ -427,7 +430,7 @@ typedef enum {
 - (void)cleanupTempDir:(NSString *)tempDir {
   @try {
     // nuke our temp dir tree
-    NSFileManager *fm = [NSFileManager defaultManager];
+    NSFileManager *fm = [NSFileManager threadSafeManager];
     if (![fm removeFileAtPath:tempDir handler:nil]) {
       [self addMessageFromThread:@"failed to remove our tempdir"
                             path:tempDir
@@ -529,7 +532,7 @@ typedef enum {
   BOOL result = NO;
 
   // make a scratch directory
-  NSFileManager *fm = [NSFileManager defaultManager];
+  NSFileManager *fm = [NSFileManager threadSafeManager];
   if ([fm createDirectoryAtPath:tempDir
     withIntermediateDirectories:YES
                      attributes:nil
@@ -1417,6 +1420,17 @@ typedef enum {
     s_sharedQueue = [[NSOperationQueue alloc] init];
   }
   return s_sharedQueue;
+}
+
+@end
+
+@implementation NSFileManager (CoverStoryThreading)
+
++ (NSFileManager *)threadSafeManager {
+  // http://developer.apple.com/mac/library/documentation/Cocoa/Reference/Foundation/Classes/NSFileManager_Class/Reference/Reference.html#//apple_ref/occ/clm/NSFileManager/defaultManager
+  // This is run on a thread, so don't use -defaultManager so we get something
+  // thread safe.
+  return [[[NSFileManager alloc] init] autorelease];
 }
 
 @end

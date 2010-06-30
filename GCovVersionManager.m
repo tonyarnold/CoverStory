@@ -100,7 +100,10 @@ GTMOBJECT_SINGLETON_BOILERPLATE(GCovVersionManager, defaultManager);
 
 + (NSMutableDictionary*)collectVersionsInFolder:(NSString *)path {
   NSMutableDictionary *result = [NSMutableDictionary dictionary];
-  NSFileManager *fm = [NSFileManager defaultManager];
+  // http://developer.apple.com/mac/library/documentation/Cocoa/Reference/Foundation/Classes/NSFileManager_Class/Reference/Reference.html#//apple_ref/occ/clm/NSFileManager/defaultManager
+  // This is run on a thread, so don't use -defaultManager so we get something
+  // thread safe.
+  NSFileManager *fm = [[[NSFileManager alloc] init] autorelease];
   NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
   // ...filter to gcov* apps...
   NSEnumerator *enumerator2 =
