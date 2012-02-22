@@ -810,9 +810,6 @@
 		8B67E07611B97A09000DB052 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = "Create Appcast";
 			};
 			name = Debug;
@@ -820,10 +817,7 @@
 		8B67E07711B97A09000DB052 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				PRODUCT_NAME = "Create Appcast";
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -831,20 +825,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/external\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = external;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/SnowLeopardGcov\"",
-				);
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
@@ -854,20 +841,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/external\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = external;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/SnowLeopardGcov\"",
-				);
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
@@ -906,6 +886,7 @@
 				);
 				GCC_VERSION = "";
 				INFOPLIST_PREPROCESS = YES;
+				LIBRARY_SEARCH_PATHS = SnowLeopardGcov;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Release;
@@ -919,7 +900,6 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = UnitTests;
@@ -936,7 +916,6 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = UnitTests;

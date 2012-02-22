@@ -25,6 +25,13 @@ GTMOBJECT_SINGLETON_BOILERPLATE(GCovVersionManager, defaultManager);
     // Override it with what is in the Developer directory's /usr/bin.
     // TODO: Should really use xcode-select -print-path as the starting point.
     [map addEntriesFromDictionary:[[self class] collectVersionsInFolder:@"/Developer/usr/bin"]];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    BOOL isDir = NO;
+    if ([fm fileExistsAtPath:@"/Applications/Xcode.app" isDirectory:&isDir]
+        && isDir) {
+      [map addEntriesFromDictionary:
+       [[self class] collectVersionsInFolder:@"/Applications/Xcode.app/Contents/Developer/usr/bin"]];
+    }
     versionMap_ = [map copy];
   }
   return self;
