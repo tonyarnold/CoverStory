@@ -431,7 +431,7 @@ typedef enum {
   @try {
     // nuke our temp dir tree
     NSFileManager *fm = [NSFileManager threadSafeManager];
-    if (![fm removeFileAtPath:tempDir handler:nil]) {
+    if (![fm removeItemAtPath:tempDir error:nil]) {
       [self addMessageFromThread:@"failed to remove our tempdir"
                             path:tempDir
                      messageType:kCSMessageTypeError];

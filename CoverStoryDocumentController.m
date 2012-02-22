@@ -25,7 +25,8 @@
 - (NSInteger)runModalOpenPanel:(NSOpenPanel *)openPanel 
                       forTypes:(NSArray *)extensions {
   [openPanel setCanChooseDirectories:YES];
-  return [openPanel runModalForTypes:extensions];
+  [openPanel setAllowedFileTypes:extensions];
+  return [openPanel runModal];
 }
 
 @end

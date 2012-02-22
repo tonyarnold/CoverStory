@@ -61,7 +61,7 @@
   // Draw our track
   OSStatus err = HIThemeDrawTrack(&drawInfo, NULL, context, 0);
   if (err) {
-    NSLog(@"Error drawing scroller: %d", err);
+    NSLog(@"Error drawing scroller: %d", (int)err);
   }
   
   // If we have coverage data, draw the lines to denote lines we didn't hit

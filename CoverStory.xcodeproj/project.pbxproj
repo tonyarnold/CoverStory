@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -49,8 +49,6 @@
 		8B4097690F92A37D00DF540E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B4097680F92A37D00DF540E /* Sparkle.framework */; };
 		8B40977F0F92A3C300DF540E /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8B4097680F92A37D00DF540E /* Sparkle.framework */; };
 		8B41D4BE0D85CAB000E60DA4 /* CoverStoryValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */; };
-		8B67DFB811B96599000DB052 /* GTM_fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8B67DFB411B96599000DB052 /* GTM_fdopen2003.c */; };
-		8B67DFBB11B965A5000DB052 /* GTM_fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 8B67DFB411B96599000DB052 /* GTM_fdopen2003.c */; };
 		8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */; };
 		8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA270B70D87C9AE0092884C /* CoverStoryDocumentController.m */; };
 		8BAAA3E60F7D614F00DF4F12 /* SDKHide.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BAAA3E40F7D614F00DF4F12 /* SDKHide.png */; };
@@ -77,6 +75,7 @@
 		8D15AC310486D014006FF6A4 /* CoverStoryDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* CoverStoryDocument.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
+		9DC8D3BD14F490A800CEB21C /* CoverStory_fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DC8D3BA14F490A800CEB21C /* CoverStory_fdopen2003.c */; };
 		F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */; };
 		F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; };
 		F41A325311B6BA1A00176CCC /* GCovVersionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F41A325211B6BA1A00176CCC /* GCovVersionManager.m */; };
@@ -173,7 +172,6 @@
 		8B41D4BD0D85CAB000E60DA4 /* CoverStoryValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryValueTransformers.m; sourceTree = "<group>"; };
 		8B67DEDB11B9626B000DB052 /* releaseNotes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = releaseNotes.html; sourceTree = "<group>"; };
 		8B67DF8311B96380000DB052 /* CreateAppcast.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = CreateAppcast.sh; sourceTree = "<group>"; };
-		8B67DFB411B96599000DB052 /* GTM_fdopen2003.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GTM_fdopen2003.c; sourceTree = "<group>"; };
 		8B726FFF0D92B6EB0090C251 /* CoverStoryFilePredicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryFilePredicate.h; sourceTree = "<group>"; };
 		8B7270000D92B6EB0090C251 /* CoverStoryFilePredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryFilePredicate.m; sourceTree = "<group>"; };
 		8B7271230D92CD920090C251 /* CoverStoryPreferenceKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoverStoryPreferenceKeys.h; sourceTree = "<group>"; };
@@ -208,6 +206,9 @@
 		8BFE723C0B46FE3400A3C7DD /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* CoverStory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoverStory.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DC8D3B714F48EC800CEB21C /* DebugMacOSX.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = DebugMacOSX.xcconfig; path = Project/DebugMacOSX.xcconfig; sourceTree = "<group>"; };
+		9DC8D3B814F48EC800CEB21C /* ReleaseMacOSX.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = ReleaseMacOSX.xcconfig; path = Project/ReleaseMacOSX.xcconfig; sourceTree = "<group>"; };
+		9DC8D3BA14F490A800CEB21C /* CoverStory_fdopen2003.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CoverStory_fdopen2003.c; sourceTree = "<group>"; };
 		F41390DB0D77103C00F72B31 /* GTMNSFileManager+Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSFileManager+Path.h"; sourceTree = "<group>"; };
 		F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSFileManager+Path.m"; sourceTree = "<group>"; };
 		F41390F30D771A5400F72B31 /* GTMNSEnumerator+Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSEnumerator+Filter.h"; sourceTree = "<group>"; };
@@ -227,8 +228,6 @@
 		F426B7F70E0AB75A00348386 /* Foo1b.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo1b.gcov; sourceTree = "<group>"; };
 		F426B7F80E0AB75A00348386 /* Foo2.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo2.gcov; sourceTree = "<group>"; };
 		F426B83B0E0AC13A00348386 /* Foo3.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo3.gcov; sourceTree = "<group>"; };
-		F43708680ED506C6000DBE9F /* DebugLeopardOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DebugLeopardOrLater.xcconfig; path = Project/DebugLeopardOrLater.xcconfig; sourceTree = "<group>"; };
-		F43708690ED506C6000DBE9F /* ReleaseLeopardOrLater.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ReleaseLeopardOrLater.xcconfig; path = Project/ReleaseLeopardOrLater.xcconfig; sourceTree = "<group>"; };
 		F4776BE511C2BF2300B83834 /* CommonPathPrefix.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CommonPathPrefix.png; sourceTree = "<group>"; };
 		F4776BE611C2BF2300B83834 /* CommonPathPrefixHide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CommonPathPrefixHide.png; sourceTree = "<group>"; };
 		F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMScriptRunner.h; sourceTree = "<group>"; };
@@ -353,6 +352,7 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				9DC8D3B914F490A800CEB21C /* SnowLeopardGcov */,
 				2A37F4B0FDCFA73011CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -429,10 +429,10 @@
 			path = BuildScripts;
 			sourceTree = "<group>";
 		};
-		8B67DFB211B96599000DB052 /* SnowLeopardGcov */ = {
+		9DC8D3B914F490A800CEB21C /* SnowLeopardGcov */ = {
 			isa = PBXGroup;
 			children = (
-				8B67DFB411B96599000DB052 /* GTM_fdopen2003.c */,
+				9DC8D3BA14F490A800CEB21C /* CoverStory_fdopen2003.c */,
 			);
 			path = SnowLeopardGcov;
 			sourceTree = "<group>";
@@ -459,8 +459,8 @@
 		F4138F270D75200B00F72B31 /* XcodeConfig */ = {
 			isa = PBXGroup;
 			children = (
-				F43708680ED506C6000DBE9F /* DebugLeopardOrLater.xcconfig */,
-				F43708690ED506C6000DBE9F /* ReleaseLeopardOrLater.xcconfig */,
+				9DC8D3B714F48EC800CEB21C /* DebugMacOSX.xcconfig */,
+				9DC8D3B814F48EC800CEB21C /* ReleaseMacOSX.xcconfig */,
 				F426B7420E0A261000348386 /* DebugUnittest.xcconfig */,
 				F426B7430E0A261000348386 /* ReleaseUnittest.xcconfig */,
 			);
@@ -516,7 +516,6 @@
 			isa = PBXGroup;
 			children = (
 				F4C187F60DB3CEED009BB8C6 /* GTMDefines.h */,
-				8B67DFB211B96599000DB052 /* SnowLeopardGcov */,
 				F4138F240D751FCF00F72B31 /* Foundation */,
 				F4C187F80DB3CF07009BB8C6 /* DebugUtils */,
 				F426B7990E0A2E9F00348386 /* UnitTesting */,
@@ -582,11 +581,16 @@
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "Google Inc.";
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "CoverStory" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Gcover */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -727,7 +731,7 @@
 				F41A325311B6BA1A00176CCC /* GCovVersionManager.m in Sources */,
 				8BB788F811B8467800AB31AF /* CoverStoryArrayController.m in Sources */,
 				8BB7893111B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m in Sources */,
-				8B67DFB811B96599000DB052 /* GTM_fdopen2003.c in Sources */,
+				9DC8D3BD14F490A800CEB21C /* CoverStory_fdopen2003.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -741,7 +745,6 @@
 				F487520811B6CA8800774A63 /* GCovVersionManagerTest.m in Sources */,
 				F487520911B6CA9E00774A63 /* GCovVersionManager.m in Sources */,
 				F487523211B6CEAE00774A63 /* GTMNSEnumerator+Filter.m in Sources */,
-				8B67DFBB11B965A5000DB052 /* GTM_fdopen2003.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -819,7 +822,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = "Create Appcast";
 				ZERO_LINK = NO;
 			};
@@ -834,10 +836,15 @@
 					"\"$(SRCROOT)/external\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/SnowLeopardGcov\"",
+				);
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
@@ -852,10 +859,15 @@
 					"\"$(SRCROOT)/external\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_PREFIX_HEADER = CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/SnowLeopardGcov\"",
+				);
 				PRODUCT_NAME = CoverStory;
 				WRAPPER_EXTENSION = app;
 			};
@@ -863,12 +875,8 @@
 		};
 		C05733CC08A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F43708680ED506C6000DBE9F /* DebugLeopardOrLater.xcconfig */;
+			baseConfigurationReference = 9DC8D3B714F48EC800CEB21C /* DebugMacOSX.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=macosx10.5*]" = (
-					i386,
-					ppc,
-				);
 				COVERSTORY_RELEASE_NOTE_PATH = SparkleData/releaseNotes.html;
 				COVERSTORY_VERSION = "$(COVERSTORY_VERSION_MAJOR).$(COVERSTORY_VERSION_MINOR).$(COVERSTORY_VERSION_BUGFIX)";
 				COVERSTORY_VERSION_BUGFIX = 0;
@@ -877,19 +885,16 @@
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_VERSION = "";
-				LIBRARY_SEARCH_PATHS = "external/google-toolbox-for-mac/SnowLeopardGcov";
+				LIBRARY_SEARCH_PATHS = SnowLeopardGcov;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_LDFLAGS = "-lgcov";
 			};
 			name = Debug;
 		};
 		C05733CD08A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F43708690ED506C6000DBE9F /* ReleaseLeopardOrLater.xcconfig */;
+			baseConfigurationReference = 9DC8D3B814F48EC800CEB21C /* ReleaseMacOSX.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=macosx10.5*]" = (
-					i386,
-					ppc,
-				);
 				COVERSTORY_RELEASE_NOTE_PATH = SparkleData/releaseNotes.html;
 				COVERSTORY_VERSION = "$(COVERSTORY_VERSION_MAJOR).$(COVERSTORY_VERSION_MINOR).$(COVERSTORY_VERSION_BUGFIX)";
 				COVERSTORY_VERSION_BUGFIX = 0;
@@ -901,6 +906,7 @@
 				);
 				GCC_VERSION = "";
 				INFOPLIST_PREPROCESS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Release;
 		};
@@ -913,6 +919,7 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = UnitTests;
@@ -929,6 +936,7 @@
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = UnitTests;
