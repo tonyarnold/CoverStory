@@ -24,7 +24,7 @@
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
+			<string>Editor</string>
 			<key>CFBundleTypeName</key>
 			<string>Folder</string>
 			<key>LSItemContentTypes</key>

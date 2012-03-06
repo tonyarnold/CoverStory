@@ -29,7 +29,6 @@
                                            NSAnimationDelegate> {
  @private
   IBOutlet CoverStoryCodeViewTableView *codeTableView_;  // the code table
-  IBOutlet NSTableView *sourceFilesTableView_;
   IBOutlet CoverStoryArrayController *sourceFilesController_;
   IBOutlet NSProgressIndicator *spinner_;
   IBOutlet NSDrawer *drawer_;

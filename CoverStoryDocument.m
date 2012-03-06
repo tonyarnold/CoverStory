@@ -35,6 +35,10 @@ const NSInteger kCoverStorySDKToolbarTag = 1026;
 const NSInteger kCoverStoryUnittestToolbarTag = 1027;
 const NSInteger kCoverStoryCommonPrefixToolbarTag = 1028;
 
+GTM_INLINE NS_FORMAT_ARGUMENT(1) NSString *MakeFormatString(NSString *format) {
+  return format;
+}
+
 @interface NSWindow (CoverStoryExportToHTML)
 // Script command that we want NSWindow to handle
 - (id)cs_handleExportHTMLScriptCommand:(NSScriptCommand *)command;
@@ -678,7 +682,7 @@ typedef enum {
   type = [[NSUserDefaults standardUserDefaults] integerForKey:kCoverStoryFilterStringTypeKey];
   BOOL isGood = NO;
   SEL action = [menuItem action];
-  for (size_t i = 0; i <= sizeof(map) / sizeof(FilterSelectorMap); ++i) {
+  for (size_t i = 0; i < sizeof(map) / sizeof(FilterSelectorMap); ++i) {
     if (action == map[i].selector) {
       isGood = YES;
       [menuItem setState:map[i].type == type ? NSOnState : NSOffState];
@@ -1292,7 +1296,10 @@ typedef enum {
   NSString *date = [formatter stringFromDate:[NSDate date]];
   date = [date gtm_stringByEscapingForHTML];
   NSString *redirectURL = nil;
+  NSString *htmlExportTemplate = GTMLocalizedStringFromTable(@"HTMLExportTemplate",
+                                                             @"HTMLExport", @"");
   for (CoverStoryCoverageFileData *fileData in fileDatas) {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSString *sourcePath = [fileData sourcePath];
     NSString *fileName = [sourcePath lastPathComponent];
     NSString *htmlFileName = [fileName stringByAppendingPathExtension:@"html"];
@@ -1302,22 +1309,24 @@ typedef enum {
     coverageString = [coverageString gtm_stringByEscapingForHTML];
     NSString *sourceHTML = [self htmlSourceTableData:fileData];
     NSString *htmlString
-      = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLExportTemplate",
-                                                               @"HTMLExport", @""),
+      = [NSString stringWithFormat:MakeFormatString(htmlExportTemplate),
          fileName, fileName, sourcePath, date, summary, fileList,
          coverageString, sourceHTML];
     NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
     [finalWrapper addRegularFileWithContents:data
                            preferredFilename:htmlFileName];
     if (!redirectURL) {
-      redirectURL = [NSString stringWithFormat:@"./%@", htmlFileName];
+      // Not autoreleased because we want it outside of our pool.
+      redirectURL = [[NSString alloc] initWithFormat:@"./%@", htmlFileName];
     }
+    [pool drain];
   }
   if (redirectURL) {
     NSString *indexHTML
       = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLIndexTemplate",
                                                                @"HTMLExport", @""),
          redirectURL];
+    [redirectURL release];
     NSData *indexData = [indexHTML dataUsingEncoding:NSUTF8StringEncoding];
     [finalWrapper addRegularFileWithContents:indexData
                            preferredFilename:@"index.html"];
