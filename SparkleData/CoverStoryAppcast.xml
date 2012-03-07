@@ -6,20 +6,20 @@
       <description>Most recent changes with links to updates.</description>
       <language>en</language>
 		<item>
-			<title>Version 4.2.0</title>
+			<title>Version 4.3.0</title>
               <sparkle:minimumSystemVersion>
 				10.5.0
 			  </sparkle:minimumSystemVersion>			 			     
 			  <sparkle:releaseNotesLink>
 				http://coverstory.googlecode.com/svn/trunk/SparkleData/releaseNotes.html
 			  </sparkle:releaseNotesLink>
-			<pubDate>Fri, 04 Jun 2010 14:11:34 -0700</pubDate>
+			<pubDate>Tue, 06 Mar 2012 15:51:29 -0800</pubDate>
 			<enclosure
-				url="http://coverstory.googlecode.com/files/CoverStory.4.2.0.dmg"
-				sparkle:version="4.2.0"
+				url="http://coverstory.googlecode.com/files/CoverStory.4.3.0.dmg"
+				sparkle:version="4.3.0"
 				type="application/octet-stream"
-				length="509847"
-				sparkle:dsaSignature="MC0CFBU5/zdKg2heVhNLspkXX/wCkBEVAhUApGZfIdQD3FysGi5aiJxTIxk7AMk="
+				length="586573"
+				sparkle:dsaSignature="MC0CFQCGnf5IwyBDwCt1kYhXITJPC2NUNQIUILXByOD2fjn55LKp9+k8T3RnK8k="
 			/>
 		</item>
    </channel>
