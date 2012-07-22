@@ -1026,7 +1026,8 @@ typedef enum {
 
   va_list list;
   va_start(list, format);
-  NSString *message = [[NSString alloc] initWithFormat:format arguments:list];
+  NSString *message =
+    [[[NSString alloc] initWithFormat:format arguments:list] autorelease];
   va_end(list);
   [self addMessageFromThread:message path:path messageType:kCSMessageTypeError];
 }
@@ -1036,7 +1037,8 @@ typedef enum {
 
   va_list list;
   va_start(list, format);
-  NSString *message = [[NSString alloc] initWithFormat:format arguments:list];
+  NSString *message =
+    [[[NSString alloc] initWithFormat:format arguments:list] autorelease];
   va_end(list);
   [self addMessageFromThread:message path:path messageType:kCSMessageTypeWarning];
 }
