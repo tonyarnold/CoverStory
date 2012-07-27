@@ -240,8 +240,8 @@ typedef enum {
       [runner runScript:scriptPath
                withArgs:[NSArray arrayWithObjects:
                          path,
-                         [NSString stringWithFormat:@"%d", [selectedRows firstIndex] + 1],
-                         [NSString stringWithFormat:@"%d", [selectedRows lastIndex] + 1],
+                         [NSString stringWithFormat:@"%lu", (unsigned long)[selectedRows firstIndex] + 1],
+                         [NSString stringWithFormat:@"%lu", (unsigned long)[selectedRows lastIndex] + 1],
                          nil]];
     }
   }
@@ -350,7 +350,8 @@ typedef enum {
                    messageType:kCSMessageTypeInfo];
   } else {
     NSString *message =
-      [NSString stringWithFormat:@"Found %u gcda files to process.", pathCount];
+      [NSString stringWithFormat:@"Found %lu gcda files to process.",
+       (unsigned long)pathCount];
     [self addMessageFromThread:message
                    messageType:kCSMessageTypeInfo];
   }
@@ -961,15 +962,16 @@ typedef enum {
     NSString *summary = nil;
     if (nonfeasible > 0) {
       summary = [NSString stringWithFormat:
-                 @"Full dataset executed %@%% of %d lines (%d executed, "
-                 @"%d executable, %d non-feasible, %d total lines).",
-                 coverage, codeLines, hitLines, codeLines, nonfeasible,
-                 totalLines];
+                 @"Full dataset executed %@%% of %ld lines (%ld executed, "
+                 @"%ld executable, %ld non-feasible, %ld total lines).",
+                 coverage, (long)codeLines, (long)hitLines, (long)codeLines,
+                 (long)nonfeasible, (long)totalLines];
     } else {
       summary = [NSString stringWithFormat:
-                 @"Full dataset executed %@%% of %d lines (%d executed, "
-                 @"%d executable, %d total lines).",
-                 coverage, codeLines, hitLines, codeLines, totalLines];
+                 @"Full dataset executed %@%% of %ld lines (%ld executed, "
+                 @"%ld executable, %ld total lines).",
+                 coverage, (long)codeLines, (long)hitLines, (long)codeLines,
+                 (long)totalLines];
     }
     [self addMessageFromThread:summary
                    messageType:kCSMessageTypeInfo];
@@ -981,8 +983,8 @@ typedef enum {
 #if DEBUG
   if (startDate_) {
     NSTimeInterval elapsed = -[startDate_ timeIntervalSinceNow];
-    UInt32 secs = (UInt32)elapsed % 60;
-    UInt32 mins = ((UInt32)elapsed / 60) % 60;
+    unsigned int secs = (unsigned int)elapsed % 60;
+    unsigned int mins = ((unsigned int)elapsed / 60) % 60;
     NSString *elapsedStr
       = [NSString stringWithFormat:@"It took %u:%02u to process the data.",
          mins, secs];
@@ -1266,7 +1268,7 @@ typedef enum {
       hitStyle = @"sourcelinemissed";
     }
     if (!hitCountString) {
-      hitCountString = [NSString stringWithFormat:@"%d", hitCount];
+      hitCountString = [NSString stringWithFormat:@"%ld", (long)hitCount];
     }
     [sourceHtml appendFormat:
      @"<tr class='sourceline'>\n"

@@ -18,6 +18,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "GTMDefines.h"
 
 @class CoverStoryDocument;
 
@@ -52,8 +53,10 @@ enum {
 
 // methods to get feedback while the data is processed
 @protocol CoverStoryCoverageProcessingProtocol
-- (void)coverageErrorForPath:(NSString*)path message:(NSString *)format, ...;
-- (void)coverageWarningForPath:(NSString*)path message:(NSString *)format, ...;
+- (void)coverageErrorForPath:(NSString*)path
+                     message:(NSString *)format, ... NS_FORMAT_FUNCTION(2, 3);
+- (void)coverageWarningForPath:(NSString*)path
+                       message:(NSString *)format, ... NS_FORMAT_FUNCTION(2, 3);
 @end
 
 // Keeps track of the data for a whole source file.

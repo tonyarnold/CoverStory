@@ -56,7 +56,7 @@
     if (count == kCoverStoryNonFeasibleMarker) {
       displayString = @"--"; // for non-feasible lines
     } else if (count < 999) {
-      displayString = [NSString stringWithFormat:@"%d", count];
+      displayString = [NSString stringWithFormat:@"%ld", (long)count];
     } else {
       displayString = @"99+";
     }
@@ -253,14 +253,15 @@ const float kGoodCoverage = 75.0f;
   NSString *statString = nil;
   if (nonfeasible) {
     statString = [NSString stringWithFormat:
-                  @"Executed %@%% of %d lines (%d executed, %d executable, "
-                  "%d non-feasible, %d total lines)", coverage, codeLines, 
-                  hitLines, codeLines, nonfeasible, totalLines];
+                  @"Executed %@%% of %ld lines (%ld executed, %ld executable, "
+                  "%ld non-feasible, %ld total lines)", coverage,
+                  (long)codeLines, (long)hitLines, (long)codeLines,
+                  (long)nonfeasible, (long)totalLines];
   } else {
     statString = [NSString stringWithFormat:
-                  @"Executed %@%% of %d lines (%d executed, %d executable, "
-                  "%d total lines)", coverage, codeLines, hitLines, 
-                  codeLines, totalLines];
+                  @"Executed %@%% of %ld lines (%ld executed, %ld executable, "
+                  "%ld total lines)", coverage, (long)codeLines, (long)hitLines,
+                  (long)codeLines, (long)totalLines];
   }
   return statString;
 }
@@ -302,15 +303,16 @@ const float kGoodCoverage = 75.0f;
   NSString *statString = nil;
   if (nonfeasible) {
     statString = [NSString stringWithFormat:
-                  @"Executed %@%% of %d lines (%d sources, %d executed, "
-                  "%d executable, %d non-feasible, %d total lines)", coverage,
-                  codeLines, sources, hitLines, codeLines, nonfeasible,
-                  totalLines];
+                  @"Executed %@%% of %ld lines (%ld sources, %ld executed, "
+                  "%ld executable, %ld non-feasible, %ld total lines)",
+                  coverage, (long)codeLines, (long)sources, (long)hitLines,
+                  (long)codeLines, (long)nonfeasible, (long)totalLines];
   } else {
     statString = [NSString stringWithFormat:
-                  @"Executed %@%% of %d lines (%d sources, %d executed, "
-                  "%d executable, %d total lines)", coverage, codeLines,
-                  sources, hitLines, codeLines, totalLines];
+                  @"Executed %@%% of %ld lines (%ld sources, %ld executed, "
+                  "%ld executable, %ld total lines)", coverage, (long)codeLines,
+                  (long)sources, (long)hitLines, (long)codeLines,
+                  (long)totalLines];
   }
   return statString;
 }
@@ -340,7 +342,8 @@ const float kGoodCoverage = 75.0f;
                nonFeasibleLines:NULL
                  coverageString:&coverage
                        coverage:NULL];
-  return [NSString stringWithFormat:@"%@%% of %d lines", coverage, codeLines];
+  return [NSString stringWithFormat:@"%@%% of %ld lines",
+          coverage, (long)codeLines];
 }
 
 @end

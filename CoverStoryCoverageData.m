@@ -394,8 +394,10 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   if ([newLines count] != [lines_ count]) {
     if (receiver) {
       [receiver coverageErrorForPath:sourcePath_
-                             message:@"coverage source (%@) has different line count '%d' vs '%d'",
-       [fileData sourcePath], [newLines count], [lines_ count]];
+                             message:@"coverage source (%@) has different line count '%lu' vs '%lu'",
+                                     [fileData sourcePath],
+                                     (unsigned long)[newLines count],
+                                     (unsigned long)[lines_ count]];
     }
     return NO;
   }
@@ -408,8 +410,8 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
     if (![[lineNew line] isEqual:[lineMe line]]) {
       if (receiver) {
         [receiver coverageErrorForPath:sourcePath_
-                               message:@"coverage source (%@) line %d doesn't match, '%@' vs '%@'",
-         [fileData sourcePath], x, [lineNew line], [lineMe line]];
+                               message:@"coverage source (%@) line %lu doesn't match, '%@' vs '%@'",
+         [fileData sourcePath], (unsigned long)x, [lineNew line], [lineMe line]];
       }
       return NO;
     }
@@ -432,9 +434,10 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 
 - (NSString *)description {
   return [NSString stringWithFormat:
-          @"%@: %d total lines, %d lines non-feasible, "
-          @"%d lines of code, %d lines hit",
-          sourcePath_, [lines_ count], nonfeasible_, codeLines_, hitLines_];
+          @"%@: %lu total lines, %ld lines non-feasible, "
+          @"%ld lines of code, %ld lines hit",
+          sourcePath_, (unsigned long)[lines_ count],
+          (long)nonfeasible_, (long)codeLines_, (long)hitLines_];
 }
 
 
@@ -525,8 +528,8 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 }
 
 - (NSString *)description {
-  return [NSString stringWithFormat:@"%@ <%p>: %u items in set",
-          [self class], self, [fileDatas_ count]];
+  return [NSString stringWithFormat:@"%@ <%p>: %lu items in set",
+          [self class], self, (unsigned long)[fileDatas_ count]];
 }
 
 @end
@@ -571,14 +574,14 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
     self.hitCount = newHits;
   } else if (newHits > 0) {
     NSAssert1(self.hitCount >= 0,
-              @"how was it not feasible in only one version? (hitCount_ = %d)",
-              hitCount_);
+              @"how was it not feasible in only one version? (hitCount_ = %ld)",
+              (long)hitCount_);
     self.hitCount += newHits;
   }
 }
 
 - (NSString*)description {
-  return [NSString stringWithFormat:@"%d %@", self.hitCount, self.line];
+  return [NSString stringWithFormat:@"%ld %@", (long)self.hitCount, self.line];
 }
 
 @end
