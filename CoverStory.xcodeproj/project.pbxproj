@@ -581,7 +581,7 @@
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "Google Inc.";
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "CoverStory" */;
@@ -810,6 +810,7 @@
 		8B67E07611B97A09000DB052 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = "Create Appcast";
 			};
 			name = Debug;
@@ -817,6 +818,7 @@
 		8B67E07711B97A09000DB052 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = "Create Appcast";
 			};
 			name = Release;
@@ -824,6 +826,7 @@
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
 				FRAMEWORK_SEARCH_PATHS = external;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -840,6 +843,7 @@
 		C05733C908A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
 				FRAMEWORK_SEARCH_PATHS = external;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -895,6 +899,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F426B7420E0A261000348386 /* DebugUnittest.xcconfig */;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
@@ -911,6 +916,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F426B7430E0A261000348386 /* ReleaseUnittest.xcconfig */;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",

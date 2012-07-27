@@ -3,7 +3,7 @@
 //  CoverStory
 //
 //  Created by dmaclach on 12/20/06.
-//  Copyright 2006-2007 Google Inc.
+//  Copyright 2006-2012 Google Inc.
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not
 //  use this file except in compliance with the License.  You may obtain a copy
 //  of the License at
@@ -35,9 +35,8 @@ const NSInteger kCoverStorySDKToolbarTag = 1026;
 const NSInteger kCoverStoryUnittestToolbarTag = 1027;
 const NSInteger kCoverStoryCommonPrefixToolbarTag = 1028;
 
-GTM_INLINE NS_FORMAT_ARGUMENT(1) NSString *MakeFormatString(NSString *format) {
-  return format;
-}
+NSString *const kCoverStoryErrorDomain = @"CoverStoryErrorDomain";
+const NSInteger kCoverStoryExportError = 1;
 
 @interface NSWindow (CoverStoryExportToHTML)
 // Script command that we want NSWindow to handle
@@ -1279,6 +1278,29 @@ typedef enum {
   return sourceHtml;
 }
 
+- (BOOL)mutateString:(NSMutableString *)string
+         byReplacing:(NSString *)value
+                with:(NSString *)replacement
+               error:(NSError **)error {
+  NSRange replaceRange = [string rangeOfString:value];
+  if (replaceRange.length == 0) {
+    if (error) {
+      NSString *errString
+        = [NSString stringWithFormat:@"Unable to find %@", value];
+      NSDictionary *dict
+        = [NSDictionary dictionaryWithObject:errString
+                                      forKey:NSLocalizedDescriptionKey];
+
+      *error = [NSError errorWithDomain:kCoverStoryErrorDomain
+                                   code:kCoverStoryExportError
+                               userInfo:dict];
+    }
+    return NO;
+  }
+  [string replaceCharactersInRange:replaceRange withString:replacement];
+  return YES;
+}
+
 - (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName
                                error:(NSError **)outError {
   NSString *fileList = [self htmlFileListTableData];
@@ -1312,10 +1334,29 @@ typedef enum {
     fileName = [fileName gtm_stringByEscapingForHTML];
     coverageString = [coverageString gtm_stringByEscapingForHTML];
     NSString *sourceHTML = [self htmlSourceTableData:fileData];
-    NSString *htmlString
-      = [NSString stringWithFormat:MakeFormatString(htmlExportTemplate),
-         fileName, fileName, sourcePath, date, summary, fileList,
-         coverageString, sourceHTML];
+    NSMutableString *htmlString = [[htmlExportTemplate mutableCopy] autorelease];
+    struct {
+      NSString *a;
+      NSString *b;
+    } replacements[] = {
+     { @"__TITLE__", fileName },
+     { @"__SOURCE_NAME__", fileName },
+     { @"__SOURCE_PATH__", sourcePath },
+     { @"__SOURCE_DATE__", date },
+     { @"__FILE_SUMMARY__", summary },
+     { @"__FILE_DATA__", fileList },
+     { @"__SOURCE_SUMMARY__", coverageString },
+     { @"__SOURCE_DATA__", sourceHTML },
+    };
+    for (size_t i = 0; i < sizeof(replacements) / sizeof(replacements[0]); ++i) {
+      if (![self mutateString:htmlString
+                  byReplacing:replacements[i].a
+                         with:replacements[i].b
+                        error:outError]) {
+        return NO;
+      }
+    }
+    
     NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
     [finalWrapper addRegularFileWithContents:data
                            preferredFilename:htmlFileName];
@@ -1326,10 +1367,16 @@ typedef enum {
     [pool drain];
   }
   if (redirectURL) {
-    NSString *indexHTML
-      = [NSString stringWithFormat:GTMLocalizedStringFromTable(@"HTMLIndexTemplate",
-                                                               @"HTMLExport", @""),
-         redirectURL];
+    NSMutableString *indexHTML
+      = [[NSLocalizedStringFromTable(@"HTMLIndexTemplate",
+                                     @"HTMLExport",
+                                     @"") mutableCopy] autorelease];
+    if (![self mutateString:indexHTML
+                byReplacing:@"__REDIRECT_URL__"
+                       with:redirectURL
+                      error:outError]) {
+      return NO;
+    }
     [redirectURL release];
     NSData *indexData = [indexHTML dataUsingEncoding:NSUTF8StringEncoding];
     [finalWrapper addRegularFileWithContents:indexData
@@ -1342,7 +1389,10 @@ typedef enum {
                                                   encoding:NSUTF8StringEncoding
                                                      error:&error];
   if (error) {
-    [NSApp presentError:error];
+    if (outError) {
+      *outError = error;
+    }
+    return nil;
   }
   if (cssString) {
     NSUserDefaultsController *defaults
