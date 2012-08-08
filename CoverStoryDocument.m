@@ -1212,9 +1212,12 @@ typedef enum {
     { 75., @"filelessthan75percent" },
   };
   for (CoverStoryCoverageFileData *fileData in fileDatas) {
-    NSString *name
-      = [[[fileData sourcePath] lastPathComponent] gtm_stringByEscapingForHTML];
-    NSString *link = [name stringByAppendingPathExtension:@"html"];
+    NSString *name = [[fileData sourcePath] lastPathComponent];
+    NSString *linkName
+      = [name gtm_stringByEscapingForHTML];
+    NSString *link
+      = [[name stringByAppendingPathExtension:@"html"]
+          stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     float percent;
     [fileData coverageTotalLines:NULL
                        codeLines:NULL
@@ -1236,7 +1239,7 @@ typedef enum {
      @"<tr class='fileline'>\n"
      @"<td class='filename'><a href='%@'>%@</a></td>\n"
      @"<td class='filepercent'><span class='%@'>%.2f</span></td>\n"
-     @"</tr>\n", link, name, classString, percent];
+     @"</tr>\n", link, linkName, classString, percent];
   }
   return filesHtml;
 }
@@ -1362,7 +1365,9 @@ typedef enum {
                            preferredFilename:htmlFileName];
     if (!redirectURL) {
       // Not autoreleased because we want it outside of our pool.
-      redirectURL = [[NSString alloc] initWithFormat:@"./%@", htmlFileName];
+      redirectURL
+        = [[NSString alloc] initWithFormat:@"./%@",
+            [htmlFileName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     }
     [pool drain];
   }
