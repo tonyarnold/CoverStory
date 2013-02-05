@@ -89,6 +89,10 @@
 		F426B7FA0E0AB75A00348386 /* Foo1b.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B7F70E0AB75A00348386 /* Foo1b.gcov */; };
 		F426B7FB0E0AB75A00348386 /* Foo2.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B7F80E0AB75A00348386 /* Foo2.gcov */; };
 		F426B83C0E0AC13A00348386 /* Foo3.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F426B83B0E0AC13A00348386 /* Foo3.gcov */; };
+		F461125116C1AAEA0053C6D8 /* test_i386_clang_4_2.gcda in Resources */ = {isa = PBXBuildFile; fileRef = F461124D16C1AAE80053C6D8 /* test_i386_clang_4_2.gcda */; };
+		F461125216C1AAEA0053C6D8 /* test_i386_clang_4_2.gcno in Resources */ = {isa = PBXBuildFile; fileRef = F461124E16C1AAE80053C6D8 /* test_i386_clang_4_2.gcno */; };
+		F461125316C1AAEA0053C6D8 /* test_x86_64_clang_4_2.gcda in Resources */ = {isa = PBXBuildFile; fileRef = F461124F16C1AAE90053C6D8 /* test_x86_64_clang_4_2.gcda */; };
+		F461125416C1AAEA0053C6D8 /* test_x86_64_clang_4_2.gcno in Resources */ = {isa = PBXBuildFile; fileRef = F461125016C1AAE90053C6D8 /* test_x86_64_clang_4_2.gcno */; };
 		F4776BE711C2BF2300B83834 /* CommonPathPrefix.png in Resources */ = {isa = PBXBuildFile; fileRef = F4776BE511C2BF2300B83834 /* CommonPathPrefix.png */; };
 		F4776BE811C2BF2300B83834 /* CommonPathPrefixHide.png in Resources */ = {isa = PBXBuildFile; fileRef = F4776BE611C2BF2300B83834 /* CommonPathPrefixHide.png */; };
 		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; };
@@ -228,6 +232,10 @@
 		F426B7F70E0AB75A00348386 /* Foo1b.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo1b.gcov; sourceTree = "<group>"; };
 		F426B7F80E0AB75A00348386 /* Foo2.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo2.gcov; sourceTree = "<group>"; };
 		F426B83B0E0AC13A00348386 /* Foo3.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo3.gcov; sourceTree = "<group>"; };
+		F461124D16C1AAE80053C6D8 /* test_i386_clang_4_2.gcda */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_i386_clang_4_2.gcda; sourceTree = "<group>"; };
+		F461124E16C1AAE80053C6D8 /* test_i386_clang_4_2.gcno */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_i386_clang_4_2.gcno; sourceTree = "<group>"; };
+		F461124F16C1AAE90053C6D8 /* test_x86_64_clang_4_2.gcda */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_x86_64_clang_4_2.gcda; sourceTree = "<group>"; };
+		F461125016C1AAE90053C6D8 /* test_x86_64_clang_4_2.gcno */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_x86_64_clang_4_2.gcno; sourceTree = "<group>"; };
 		F4776BE511C2BF2300B83834 /* CommonPathPrefix.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CommonPathPrefix.png; sourceTree = "<group>"; };
 		F4776BE611C2BF2300B83834 /* CommonPathPrefixHide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CommonPathPrefixHide.png; sourceTree = "<group>"; };
 		F47A7A3E0D748DEA002302AB /* GTMScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMScriptRunner.h; sourceTree = "<group>"; };
@@ -492,6 +500,8 @@
 				F487527611B6DF2300774A63 /* test_i386_4_0.gcno */,
 				F487527711B6DF2300774A63 /* test_i386_4_2.gcda */,
 				F487527811B6DF2300774A63 /* test_i386_4_2.gcno */,
+				F461124D16C1AAE80053C6D8 /* test_i386_clang_4_2.gcda */,
+				F461124E16C1AAE80053C6D8 /* test_i386_clang_4_2.gcno */,
 				F487527911B6DF2300774A63 /* test_ppc_4_0.gcda */,
 				F487527A11B6DF2300774A63 /* test_ppc_4_0.gcno */,
 				F487527B11B6DF2300774A63 /* test_ppc_4_2.gcda */,
@@ -500,6 +510,8 @@
 				F487527E11B6DF2300774A63 /* test_x86_64_4_0.gcno */,
 				F487527F11B6DF2300774A63 /* test_x86_64_4_2.gcda */,
 				F487528011B6DF2300774A63 /* test_x86_64_4_2.gcno */,
+				F461124F16C1AAE90053C6D8 /* test_x86_64_clang_4_2.gcda */,
+				F461125016C1AAE90053C6D8 /* test_x86_64_clang_4_2.gcno */,
 				F426B7F60E0AB75A00348386 /* Foo1a.gcov */,
 				F426B7F70E0AB75A00348386 /* Foo1b.gcov */,
 				F426B7F80E0AB75A00348386 /* Foo2.gcov */,
@@ -660,6 +672,10 @@
 				F487528A11B6DF2300774A63 /* test_x86_64_4_0.gcno in Resources */,
 				F487528B11B6DF2300774A63 /* test_x86_64_4_2.gcda in Resources */,
 				F487528C11B6DF2300774A63 /* test_x86_64_4_2.gcno in Resources */,
+				F461125116C1AAEA0053C6D8 /* test_i386_clang_4_2.gcda in Resources */,
+				F461125216C1AAEA0053C6D8 /* test_i386_clang_4_2.gcno in Resources */,
+				F461125316C1AAEA0053C6D8 /* test_x86_64_clang_4_2.gcda in Resources */,
+				F461125416C1AAEA0053C6D8 /* test_x86_64_clang_4_2.gcno in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

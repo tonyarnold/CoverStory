@@ -47,6 +47,8 @@
   //  gcc-4.2 -arch ppc -fprofile-arcs -ftest-coverage test.c -o test
   //  gcc-4.2 -arch i386 -fprofile-arcs -ftest-coverage test.c -o test
   //  gcc-4.2 -arch x86_64 -fprofile-arcs -ftest-coverage test.c -o test
+  //  xcrun clang -arch i386 -fprofile-arcs -ftest-coverage test.c -o test
+  //  xcrun clang -arch x86_64 -fprofile-arcs -ftest-coverage test.c -o test
   //    #include <stdio.h>
   //    int main(int ac, char** av) {
   //      int i;
@@ -68,6 +70,8 @@
     { @"test_i386_4_0.gcno", @"4.0" },
     { @"test_i386_4_2.gcda", @"4.2" },
     { @"test_i386_4_2.gcno", @"4.2" },
+    { @"test_i386_clang_4_2.gcda", @"4.2" },
+    { @"test_i386_clang_4_2.gcno", @"4.2" },
     { @"test_ppc_4_0.gcda", @"4.0" },
     { @"test_ppc_4_0.gcno", @"4.0" },
     { @"test_ppc_4_2.gcda", @"4.2" },
@@ -76,6 +80,8 @@
     { @"test_x86_64_4_0.gcno", @"4.0" },
     { @"test_x86_64_4_2.gcda", @"4.2" },
     { @"test_x86_64_4_2.gcno", @"4.2" },
+    { @"test_x86_64_clang_4_2.gcda", @"4.2" },
+    { @"test_x86_64_clang_4_2.gcno", @"4.2" },
   };
 
   for (size_t x = 0; x < sizeof(testData)/sizeof(testData[0]); ++x) {
