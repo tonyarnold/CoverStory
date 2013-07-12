@@ -24,6 +24,7 @@
 @interface CoverStoryArrayController : NSArrayController {
  @private
   IBOutlet CoverStoryDocument *owningDocument_;
+  NSArray *prefsToWatch_;
 }
 @end
 

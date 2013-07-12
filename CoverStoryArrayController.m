@@ -19,57 +19,43 @@
 
 #import "CoverStoryArrayController.h"
 #import "CoverStoryDocument.h"
+#import "CoverStoryFilePredicate.h"
 #import "CoverStoryPreferenceKeys.h"
 #import "NSUserDefaultsController+KeyValues.h"
 
 static NSString *const kPrefsToWatch[] = {
   kCoverStorySystemSourcesPatternsKey,
   kCoverStoryUnittestSourcesPatternsKey,
-};
-
-#define kCoverStoryHideSDKSources @"hideSDKSources"
-#define kCoverStoryHideUnittestSources @"hideUnittestSources"
-#define kCoverStoryRemoveCommonSourcePrefix @"removeCommonSourcePrefix"
-#define kCoverStoryFilterString @"filterString"
-
-static NSString *const kDocumentKeyPathsToWatch[] = {
-  kCoverStoryHideSDKSources,
-  kCoverStoryHideUnittestSources,
-  kCoverStoryRemoveCommonSourcePrefix,
-  kCoverStoryFilterString
+  kCoverStoryHideSystemSourcesKey,
+  kCoverStoryHideUnittestSourcesKey,
+  kCoverStoryRemoveCommonSourcePrefixKey,
+  kCoverStoryFilterStringTypeKey,
+  kCoverStoryFilterStringKey
 };
 
 @implementation CoverStoryArrayController
 
 - (void)dealloc {
-  for (size_t i = 0;
-       i < sizeof(kDocumentKeyPathsToWatch) / sizeof(kDocumentKeyPathsToWatch[0]);
-       ++i) {
-    [owningDocument_ removeObserver:self forKeyPath:kDocumentKeyPathsToWatch[i]];
-  }
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
-  for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
-    [defaults removeObserver:self
-                  forKeyPath:[NSUserDefaultsController cs_valuesKey:kPrefsToWatch[i]]];
+  for (NSString *pref in prefsToWatch_) {
+    [defaults removeObserver:self forKeyPath:pref];
   }
-
+  [prefsToWatch_ release];
   [super dealloc];
 }
 
 
 - (void)awakeFromNib {
-  for (size_t i = 0;
-       i < sizeof(kDocumentKeyPathsToWatch) / sizeof(kDocumentKeyPathsToWatch[0]);
-       ++i) {
-    [owningDocument_ addObserver:self
-                      forKeyPath:kDocumentKeyPathsToWatch[i]
-                         options:0
-                         context:nil];
+  size_t prefsToWatchCount = sizeof(kPrefsToWatch) / sizeof(prefsToWatch_[0]);
+  NSMutableArray *array = [NSMutableArray arrayWithCapacity:prefsToWatchCount];
+  for (size_t i = 0; i < prefsToWatchCount; ++i) {
+    [array addObject:[NSUserDefaultsController cs_valuesKey:kPrefsToWatch[i]]];
   }
+  prefsToWatch_ = [array retain];
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
-  for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(NSString*); ++i) {
+  for (NSString *pref in prefsToWatch_) {
     [defaults addObserver:self
-               forKeyPath:[NSUserDefaultsController cs_valuesKey:kPrefsToWatch[i]]
+               forKeyPath:pref
                   options:0
                   context:nil];
   }
@@ -81,29 +67,15 @@ static NSString *const kDocumentKeyPathsToWatch[] = {
                        context:(void *)context {
   BOOL handled = NO;
   if ([object isEqualTo:[NSUserDefaultsController sharedUserDefaultsController]]) {
-    if ([keyPath isEqualToString:
-         [NSUserDefaultsController cs_valuesKey:kCoverStorySystemSourcesPatternsKey]]) {
-      if ([owningDocument_ hideSDKSources]) {
-        // if we're hiding them then update because the pattern changed
+    for (NSString *pref in prefsToWatch_) {
+      if ([keyPath isEqual:pref]) {
+        CoverStoryFilePredicate *predicate = (CoverStoryFilePredicate*)[self filterPredicate];
+        NSAssert([predicate isKindOfClass:[CoverStoryFilePredicate class]], 
+                  @"Unknown predicate: %@", predicate);
+        [predicate resetCache];
         [self rearrangeObjects];
         handled = YES;
-      }
-    } else if ([keyPath isEqualToString:
-                [NSUserDefaultsController cs_valuesKey:kCoverStoryUnittestSourcesPatternsKey]]) {
-      if ([owningDocument_ hideUnittestSources]) {
-        // if we're hiding them then update because the pattern changed
-        [self rearrangeObjects];
-        handled = YES;
-      }
-    }
-  } else if ([object isEqualTo:owningDocument_]) {
-    for (size_t i = 0;
-         i < sizeof(kDocumentKeyPathsToWatch) / sizeof(kDocumentKeyPathsToWatch[0]);
-         ++i) {
-      if ([keyPath isEqualToString:kDocumentKeyPathsToWatch[i]]) {
-        // user has changed a setting that requires a rearrange
-        [self rearrangeObjects];
-        handled = YES;
+        break;
       }
     }
   }
@@ -126,7 +98,7 @@ static NSString *const kDocumentKeyPathsToWatch[] = {
     // process the list to find the common prefix
 
     // start w/ the first path, and now loop throught them all, but give up
-    // the moment he only common prefix is "/"
+    // the moment the only common prefix is "/"
     NSArray *sourcePaths = [arranged valueForKey:@"sourcePath"];
     NSEnumerator *enumerator = [sourcePaths objectEnumerator];
     newPrefix = [enumerator nextObject];

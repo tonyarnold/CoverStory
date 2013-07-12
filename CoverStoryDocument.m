@@ -89,6 +89,8 @@ typedef enum {
      kCoverStoryFilterStringTypeKey,
      [NSNumber numberWithBool:YES],
      kCoverStoryRemoveCommonSourcePrefixKey,
+     @"",
+     kCoverStoryFilterStringKey,
      nil];
 
   [defaults registerDefaults:documentDefaults];
@@ -153,6 +155,9 @@ typedef enum {
   NSSortDescriptor *ascending = [[[NSSortDescriptor alloc] initWithKey:@"coverage"
                                                              ascending:YES] autorelease];
   [sourceFilesController_ setSortDescriptors:[NSArray arrayWithObject:ascending]];
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSString *searchString = [defaults stringForKey:kCoverStoryFilterStringKey];
+  [searchField_ setStringValue:searchString];
 }
 
 - (NSString *)windowNibName {
@@ -194,7 +199,7 @@ typedef enum {
                              toTarget:self
                            withObject:path];
     isGood = YES;
-  } else if ([typeName isEqualToString:@kGCOVTypeName]) {
+  } else if ([typeName isEqual:@kGCOVTypeName]) {
     NSString *message =
       [NSString stringWithFormat:@"Reading gcov data '%@'",
        path];
@@ -575,9 +580,17 @@ typedef enum {
             path = [message substringToIndex:range.location];
             message = [message substringFromIndex:NSMaxRange(range)];
           }
-          [self addMessageFromThread:message
-                                path:path
-                         messageType:kCSMessageTypeError];
+          // Some common error messages we don't care about.
+          // 404 vs 402 comes from the fact that apple ships an earlier version
+          // of gcov than what clang currently spits out.
+          // no functions found is common in classes that are just @dynamic
+          // properties.
+          if (![message isEqual:@"version '404*', prefer '402*'"] &&
+              ![message isEqual:@"no functions found"]) {
+            [self addMessageFromThread:message
+                                  path:path
+                           messageType:kCSMessageTypeError];
+          }
         }
       }
 
@@ -622,7 +635,7 @@ typedef enum {
                        context:(void *)context {
   BOOL handled = NO;
   if ([object isEqualTo:sourceFilesController_] &&
-      [keyPath isEqualToString:NSSelectionIndexesBinding]) {
+      [keyPath isEqual:NSSelectionIndexesBinding]) {
     NSArray *selectedObjects = [object selectedObjects];
     CoverStoryCoverageFileData *data = nil;
     if ([selectedObjects count]) {
@@ -650,14 +663,15 @@ typedef enum {
   if (filterString_ != string) {
     [filterString_ release];
     filterString_ = [string copy];
-    [sourceFilesController_ rearrangeObjects];
+    NSUserDefaultsController *ud = [NSUserDefaultsController sharedUserDefaultsController];
+    [[ud values] setValue:filterString_ forKey:kCoverStoryFilterStringKey];
   }
 }
 
 - (void)setFilterStringType:(CoverStoryFilterStringType)type {
-  [[NSUserDefaults standardUserDefaults] setInteger:type
-                                             forKey:kCoverStoryFilterStringTypeKey];
-  [sourceFilesController_ rearrangeObjects];
+  NSUserDefaultsController *ud = [NSUserDefaultsController sharedUserDefaultsController];
+  [[ud values] setValue:[NSNumber numberWithInteger:type]
+                 forKey:kCoverStoryFilterStringTypeKey];
 }
 
 - (IBAction)setUseWildcardPattern:(id)sender {
@@ -1055,17 +1069,23 @@ typedef enum {
 
 - (void)setHideSDKSources:(BOOL)hide {
   hideSDKSources_ = hide;
-  [sourceFilesController_ rearrangeObjects];
+  NSUserDefaultsController *ud = [NSUserDefaultsController sharedUserDefaultsController];
+  [[ud values] setValue:[NSNumber numberWithBool:hideSDKSources_]
+                 forKey:kCoverStoryHideSystemSourcesKey];
 }
 
 - (void)setHideUnittestSources:(BOOL)hide {
   hideUnittestSources_ = hide;
-  [sourceFilesController_ rearrangeObjects];
+  NSUserDefaultsController *ud = [NSUserDefaultsController sharedUserDefaultsController];
+  [[ud values] setValue:[NSNumber numberWithBool:hideSDKSources_]
+                 forKey:kCoverStoryHideUnittestSourcesKey];
 }
 
 - (void)setRemoveCommonSourcePrefix:(BOOL)remove {
   removeCommonSourcePrefix_ = remove;
-  [sourceFilesController_ rearrangeObjects];
+  NSUserDefaultsController *ud = [NSUserDefaultsController sharedUserDefaultsController];
+  [[ud values] setValue:[NSNumber numberWithBool:hideSDKSources_]
+                 forKey:kCoverStoryRemoveCommonSourcePrefixKey];
 }
 
 - (BOOL)hideSDKSources {

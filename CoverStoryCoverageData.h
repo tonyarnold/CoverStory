@@ -61,7 +61,8 @@ enum {
 
 // Keeps track of the data for a whole source file.
 
-@interface CoverStoryCoverageFileData : NSObject<CoverStoryLineCoverageProtocol> {
+@interface CoverStoryCoverageFileData : NSObject<CoverStoryLineCoverageProtocol,
+                                                 NSCopying> {
  @private
   NSMutableArray *lines_; // of CoverStoryCoverageLineData
   NSInteger hitLines_;

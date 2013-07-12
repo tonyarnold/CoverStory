@@ -95,10 +95,10 @@
 }
 
 - (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key {
-  return ([key isEqualToString:@"nonFeasibleLineColor"] ||
-          [key isEqualToString:@"unexecutableLineColor"] ||
-          [key isEqualToString:@"missedLineColor"] ||
-          [key isEqualToString:@"executedLineColor"]);
+  return ([key isEqual:@"nonFeasibleLineColor"] ||
+          [key isEqual:@"unexecutableLineColor"] ||
+          [key isEqual:@"missedLineColor"] ||
+          [key isEqual:@"executedLineColor"]);
 }
   
 @end

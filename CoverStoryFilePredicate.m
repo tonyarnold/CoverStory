@@ -45,6 +45,7 @@ static NSString * const kFilter = @"filter";
     [NSDictionary dictionaryWithObject:@"/System/Library/Frameworks/*" forKey:kFilter],
     [NSDictionary dictionaryWithObject:@"*/SDKs/MacOSX10.*" forKey:kFilter],
     [NSDictionary dictionaryWithObject:@"*/SDKs/iPhone*" forKey:kFilter],
+    [NSDictionary dictionaryWithObject:@"*/Contents/Developer/*" forKey:kFilter],
     nil],
    kCoverStorySystemSourcesPatternsKey,
    
@@ -60,7 +61,23 @@ static NSString * const kFilter = @"filter";
   [defaults registerDefaults:predicateDefaults];
 }
 
+- (id)init {
+  if ((self = [super init])) {
+    cachedPredicatedFiles_ = [[NSMutableDictionary alloc] init];
+  }
+  return self;
+}
+
+- (void)dealloc {
+  [cachedPredicatedFiles_ release];
+  [super dealloc];
+}
+
 - (BOOL)evaluateWithObject:(id)object {
+  NSNumber *value = [cachedPredicatedFiles_ objectForKey:object];
+  if (value != NULL) {
+    return [value boolValue];
+  }
   BOOL isGood = YES;
   NSString *path = [object valueForKey:@"sourcePath"];
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -84,7 +101,7 @@ static NSString * const kFilter = @"filter";
     }
   }
   if (isGood) {
-    NSString *text = [searchField_ stringValue];
+    NSString *text = [defaults stringForKey:kCoverStoryFilterStringKey];
     if ([text length] == 0) {
       isGood = YES;
     } else {
@@ -102,7 +119,13 @@ static NSString * const kFilter = @"filter";
       }
     }
   }
+  [cachedPredicatedFiles_ setObject:[NSNumber numberWithBool:isGood]
+                             forKey:object];
   return isGood;
+}
+
+- (void)resetCache {
+  [cachedPredicatedFiles_ removeAllObjects];
 }
 
 @end

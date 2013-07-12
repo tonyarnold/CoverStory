@@ -23,9 +23,10 @@
 
 @interface CoverStoryFilePredicate : NSPredicate {
  @private
-  IBOutlet NSSearchField *searchField_;
   IBOutlet CoverStoryDocument *document_;
+  NSMutableDictionary *cachedPredicatedFiles_;
 }
 
 + (void)registerDefaults;
+- (void)resetCache;
 @end

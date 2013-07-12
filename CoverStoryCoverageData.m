@@ -295,6 +295,10 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   [super dealloc];
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+  return [self retain];
+}
+
 - (BOOL)isEqual:(id)object {
   BOOL equal = NO;
   if ([object isKindOfClass:[self class]]) {

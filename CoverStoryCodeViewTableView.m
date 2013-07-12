@@ -67,7 +67,7 @@ static NSString *const kPrefsToWatch[] = {
     kCoverStoryExecutedLineColorKey
   };
   for (size_t i = 0; i < sizeof(kPrefsToWatch) / sizeof(kPrefsToWatch[0]); ++i) {
-    if ([keyPath isEqualToString:[NSUserDefaultsController cs_valuesKey:kColorsToWatch[i]]]) {
+    if ([keyPath isEqual:[NSUserDefaultsController cs_valuesKey:kColorsToWatch[i]]]) {
       [self reloadData];
       handled = YES;
     }

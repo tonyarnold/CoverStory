@@ -7,7 +7,6 @@
 //
 
 #import "GCovVersionManager.h"
-#import "GTMObjectSingleton.h"
 #import "GTMNSEnumerator+Filter.h"
 
 @interface GCovVersionManager (PrivateMethods)
@@ -16,7 +15,14 @@
 
 @implementation GCovVersionManager
 
-GTMOBJECT_SINGLETON_BOILERPLATE(GCovVersionManager, defaultManager);
++ (GCovVersionManager *)defaultManager { 
+  static GCovVersionManager *obj;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    obj = [[self alloc] init];
+  });
+  return obj;
+}
 
 - (id)init {
   if ((self = [super init])) {

@@ -34,6 +34,7 @@
 #define kCoverStoryNonFeasibleLineColorKey @"nonFeasibleLineColor"  // NSColor
 #define kCoverStoryExecutedLineColorKey @"executedLineColor"  // NSColor
 
+#define kCoverStoryFilterStringKey @"filterString" // NSString
 #define kCoverStoryFilterStringTypeKey @"filterStringType" // CoverStoryFilterStringType
 
 enum {
