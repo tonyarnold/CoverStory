@@ -32,18 +32,21 @@
   NSDocumentController *docController 
     = [NSDocumentController sharedDocumentController];
   NSMutableArray *documents = [NSMutableArray arrayWithCapacity:[files count]];
-  NSError *error = nil;
-  for(NSURL *fileURL in files){
-    CoverStoryDocument *doc 
-      = [docController openDocumentWithContentsOfURL:fileURL
-                                             display:YES 
-                                               error:&error];
-    if (error) {
-      [command setScriptErrorNumber:(int)[error code]];
-      [command setScriptErrorString:[error localizedDescription]];
-      break;
-    }
-    [documents addObject:doc];
+
+    for(NSURL *fileURL in files){
+    [docController openDocumentWithContentsOfURL:fileURL display:YES completionHandler:^(NSDocument *document, BOOL documentWasAlreadyOpen, NSError *error) {
+        if (error) {
+            [command setScriptErrorNumber:(int)[error code]];
+            [command setScriptErrorString:[error localizedDescription]];
+            return;
+        }
+
+        if (documentWasAlreadyOpen == NO)
+        {
+            [documents addObject:document];
+        }
+
+      }];
   }
   
   // If we are opened via a script we want to wait until we are fully

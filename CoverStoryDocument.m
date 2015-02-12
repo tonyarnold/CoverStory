@@ -101,20 +101,20 @@ typedef enum {
 
     dataSet_ = [[CoverStoryCoverageSet alloc] init];
 
-    NSString *path;
+    NSURL *resourceURL;
     NSFileWrapper *wrapper;
     NSBundle *mainBundle = [NSBundle mainBundle];
 
-    path        = [mainBundle pathForResource:@"error" ofType:@"png"];
-    wrapper     = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+      resourceURL        = [mainBundle URLForResource:@"error" withExtension:@"png"];
+      wrapper     = [[NSFileWrapper alloc] initWithURL:resourceURL options:0 error:nil];
     errorIcon_  = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
 
-    path         = [mainBundle pathForResource:@"warning" ofType:@"png"];
-    wrapper      = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+      resourceURL        = [mainBundle URLForResource:@"warning" withExtension:@"png"];
+      wrapper     = [[NSFileWrapper alloc] initWithURL:resourceURL options:0 error:nil];
     warningIcon_ = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
 
-    path         = [mainBundle pathForResource:@"info" ofType:@"png"];
-    wrapper      = [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+      resourceURL        = [mainBundle URLForResource:@"info" withExtension:@"png"];
+      wrapper     = [[NSFileWrapper alloc] initWithURL:resourceURL options:0 error:nil];
     infoIcon_    = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
 
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -126,17 +126,6 @@ typedef enum {
   return self;
 }
 
-- (void)dealloc {
-  [dataSet_ release];
-  [filterString_ release];
-  [currentAnimation_ release];
-  [commonPathPrefix_ release];
-  [doneOperation_ release];
-#if DEBUG
-  [startDate_ release];
-#endif
-  [super dealloc];
-}
 
 
 - (void)awakeFromNib {
@@ -152,8 +141,8 @@ typedef enum {
                            forKeyPath:NSSelectionIndexesBinding
                               options:0
                               context:nil];
-  NSSortDescriptor *ascending = [[[NSSortDescriptor alloc] initWithKey:@"coverage"
-                                                             ascending:YES] autorelease];
+  NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:@"coverage"
+                                                             ascending:YES];
   [sourceFilesController_ setSortDescriptors:[NSArray arrayWithObject:ascending]];
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   NSString *searchString = [defaults stringForKey:kCoverStoryFilterStringKey];
@@ -183,8 +172,7 @@ typedef enum {
   BOOL isGood = NO;
   numFileDatas_ = 0;
 #if DEBUG
-  [startDate_ release];
-  startDate_ = [[NSDate date] retain];
+  startDate_ = [NSDate date];
 #endif
 
   // the wrapper doesn't have the full path, but it's already set on us, so
@@ -259,66 +247,62 @@ typedef enum {
 }
 
 - (void)openFolderInThread:(NSString*)path {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  [self setOpenThreadState:YES];
-  // We'll use this to know when we're done.
-  [doneOperation_ release];
-  doneOperation_ =
-    [[NSInvocationOperation alloc] initWithTarget:self
-                                         selector:@selector(backgroundWorkDone:)
-                                           object:@"ignored"];
-  @try {
-    [self processCoverageForFolder:path];
-  }
-  @catch (NSException *e) {
-    NSString *msg =
-      [NSString stringWithFormat:@"Internal error while processing directory (%@ - %@).",
-                                 [e name], [e reason]];
-    [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
-  }
+  @autoreleasepool {
+    [self setOpenThreadState:YES];
+    // We'll use this to know when we're done.
+    doneOperation_ =
+      [[NSInvocationOperation alloc] initWithTarget:self
+                                           selector:@selector(backgroundWorkDone:)
+                                             object:@"ignored"];
+    @try {
+      [self processCoverageForFolder:path];
+    }
+    @catch (NSException *e) {
+      NSString *msg =
+        [NSString stringWithFormat:@"Internal error while processing directory (%@ - %@).",
+                                   [e name], [e reason]];
+      [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
+    }
 
-  // By now all the cleanup ops that got created are dependents of the done
-  // operation, so let it go.
-  [[NSOperationQueue cs_sharedOperationQueue] addOperation:doneOperation_];
-  [doneOperation_ autorelease];
-  doneOperation_ = nil;
+    // By now all the cleanup ops that got created are dependents of the done
+    // operation, so let it go.
+    [[NSOperationQueue cs_sharedOperationQueue] addOperation:doneOperation_];
+    doneOperation_ = nil;
 
-  // Clean up NSTask Zombies.
-  [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-  [pool release];
+    // Clean up NSTask Zombies.
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+  }
 }
 
 - (void)openFileInThread:(NSString*)path {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  [self setOpenThreadState:YES];
-  // We'll use this to know when we're done.
-  [doneOperation_ release];
-  doneOperation_ =
-    [[NSInvocationOperation alloc] initWithTarget:self
-                                         selector:@selector(backgroundWorkDone:)
-                                           object:@"ignored"];
-  NSString *folderPath = [path stringByDeletingLastPathComponent];
-  NSString *filename = [path lastPathComponent];
-  @try {
-    [self processCoverageForFiles:[NSArray arrayWithObject:filename]
-                         inFolder:folderPath];
-  }
-  @catch (NSException *e) {
-    NSString *msg =
-    [NSString stringWithFormat:@"Internal error while processing file (%@ - %@).",
-     [e name], [e reason]];
-    [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
-  }
+  @autoreleasepool {
+    [self setOpenThreadState:YES];
+    // We'll use this to know when we're done.
+    doneOperation_ =
+      [[NSInvocationOperation alloc] initWithTarget:self
+                                           selector:@selector(backgroundWorkDone:)
+                                             object:@"ignored"];
+    NSString *folderPath = [path stringByDeletingLastPathComponent];
+    NSString *filename = [path lastPathComponent];
+    @try {
+      [self processCoverageForFiles:[NSArray arrayWithObject:filename]
+                           inFolder:folderPath];
+    }
+    @catch (NSException *e) {
+      NSString *msg =
+      [NSString stringWithFormat:@"Internal error while processing file (%@ - %@).",
+       [e name], [e reason]];
+      [self addMessageFromThread:msg path:path messageType:kCSMessageTypeError];
+    }
 
-  // By now all the cleanup ops that got created are dependents of the done
-  // operation, so let it go.
-  [[NSOperationQueue cs_sharedOperationQueue] addOperation:doneOperation_];
-  [doneOperation_ autorelease];
-  doneOperation_ = nil;
+    // By now all the cleanup ops that got created are dependents of the done
+    // operation, so let it go.
+    [[NSOperationQueue cs_sharedOperationQueue] addOperation:doneOperation_];
+    doneOperation_ = nil;
 
-  // Clean up NSTask Zombies.
-  [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-  [pool release];
+    // Clean up NSTask Zombies.
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+  }
 }
 
 - (void)backgroundWorkDone:(id)sender {
@@ -330,88 +314,87 @@ typedef enum {
 }
 
 - (BOOL)processCoverageForFolder:(NSString *)path {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  @autoreleasepool {
 
   // cycle through the directory...
-  NSFileManager *fm = [NSFileManager threadSafeManager];
-  NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
-  // ...filter to .gcda files...
-  NSEnumerator *enumerator2 =
-    [enumerator gtm_filteredEnumeratorByMakingEachObjectPerformSelector:@selector(hasSuffix:)
-                                                             withObject:@".gcda"];
-  // ...turn them all into full paths...
-  NSEnumerator *enumerator3 =
-    [enumerator2 gtm_enumeratorByTarget:path
-                  performOnEachSelector:@selector(stringByAppendingPathComponent:)];
-  // .. and collect them all.
-  NSArray *allFilePaths = [enumerator3 allObjects];
-  NSUInteger pathCount = [allFilePaths count];
-  if (pathCount == 0) {
-    [self addMessageFromThread:@"Found no gcda files to process."
-                   messageType:kCSMessageTypeWarning];
-  } else if (pathCount == 1) {
-    [self addMessageFromThread:@"Found 1 gcda file to process."
-                   messageType:kCSMessageTypeInfo];
-  } else {
-    NSString *message =
-      [NSString stringWithFormat:@"Found %lu gcda files to process.",
-       (unsigned long)pathCount];
-    [self addMessageFromThread:message
-                   messageType:kCSMessageTypeInfo];
-  }
-
-  // we want to batch process them by chunks w/in a given directory.  so sort
-  // and then break them off into chunks.
-  allFilePaths = [allFilePaths sortedArrayUsingSelector:@selector(compare:)];
-  NSEnumerator *pathEnum = [allFilePaths objectEnumerator];
-  NSString *filename;
-  if ((filename = [pathEnum nextObject])) {
-    // seed our collecting w/ the first item
-    NSString *currentFolder = [filename stringByDeletingLastPathComponent];
-    NSMutableArray *currentFileList =
-      [NSMutableArray arrayWithObject:[filename lastPathComponent]];
-
-    // now spin the loop
-    while ((filename = [pathEnum nextObject])) {
-      // see if it has the same parent folder
-      if ([[filename stringByDeletingLastPathComponent] isEqualTo:currentFolder]) {
-        // add it
-        NSAssert([currentFileList count] > 0, @"file list should NOT be empty");
-        [currentFileList addObject:[filename lastPathComponent]];
-      } else {
-        // process what's in the list
-        if (![self processCoverageForFiles:currentFileList
-                                  inFolder:currentFolder]) {
-          NSString *message =
-            [NSString stringWithFormat:@"failed to process files: %@",
-             currentFileList];
-          [self addMessageFromThread:message path:currentFolder
-                         messageType:kCSMessageTypeError];
-        }
-        // restart the collecting w/ this filename
-        currentFolder = [filename stringByDeletingLastPathComponent];
-        [currentFileList removeAllObjects];
-        [currentFileList addObject:[filename lastPathComponent]];
-      }
-
-      // Bail if we get closed
-      if ([self isClosed]) {
-        [pool release];
-        return YES;
-      }
-    }
-    // process whatever what we were collecting when we hit the end
-    if (![self processCoverageForFiles:currentFileList
-                              inFolder:currentFolder]) {
+    NSFileManager *fm = [NSFileManager threadSafeManager];
+    NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
+    // ...filter to .gcda files...
+    NSEnumerator *enumerator2 =
+      [enumerator gtm_filteredEnumeratorByMakingEachObjectPerformSelector:@selector(hasSuffix:)
+                                                               withObject:@".gcda"];
+    // ...turn them all into full paths...
+    NSEnumerator *enumerator3 =
+      [enumerator2 gtm_enumeratorByTarget:path
+                    performOnEachSelector:@selector(stringByAppendingPathComponent:)];
+    // .. and collect them all.
+    NSArray *allFilePaths = [enumerator3 allObjects];
+    NSUInteger pathCount = [allFilePaths count];
+    if (pathCount == 0) {
+      [self addMessageFromThread:@"Found no gcda files to process."
+                     messageType:kCSMessageTypeWarning];
+    } else if (pathCount == 1) {
+      [self addMessageFromThread:@"Found 1 gcda file to process."
+                     messageType:kCSMessageTypeInfo];
+    } else {
       NSString *message =
-        [NSString stringWithFormat:@"failed to process files: %@",
-         currentFileList];
+        [NSString stringWithFormat:@"Found %lu gcda files to process.",
+         (unsigned long)pathCount];
       [self addMessageFromThread:message
-                            path:currentFolder
-                     messageType:kCSMessageTypeError];
+                     messageType:kCSMessageTypeInfo];
+    }
+
+    // we want to batch process them by chunks w/in a given directory.  so sort
+    // and then break them off into chunks.
+    allFilePaths = [allFilePaths sortedArrayUsingSelector:@selector(compare:)];
+    NSEnumerator *pathEnum = [allFilePaths objectEnumerator];
+    NSString *filename;
+    if ((filename = [pathEnum nextObject])) {
+      // seed our collecting w/ the first item
+      NSString *currentFolder = [filename stringByDeletingLastPathComponent];
+      NSMutableArray *currentFileList =
+        [NSMutableArray arrayWithObject:[filename lastPathComponent]];
+
+      // now spin the loop
+      while ((filename = [pathEnum nextObject])) {
+        // see if it has the same parent folder
+        if ([[filename stringByDeletingLastPathComponent] isEqualTo:currentFolder]) {
+          // add it
+          NSAssert([currentFileList count] > 0, @"file list should NOT be empty");
+          [currentFileList addObject:[filename lastPathComponent]];
+        } else {
+          // process what's in the list
+          if (![self processCoverageForFiles:currentFileList
+                                    inFolder:currentFolder]) {
+            NSString *message =
+              [NSString stringWithFormat:@"failed to process files: %@",
+               currentFileList];
+            [self addMessageFromThread:message path:currentFolder
+                           messageType:kCSMessageTypeError];
+          }
+          // restart the collecting w/ this filename
+          currentFolder = [filename stringByDeletingLastPathComponent];
+          [currentFileList removeAllObjects];
+          [currentFileList addObject:[filename lastPathComponent]];
+        }
+
+        // Bail if we get closed
+        if ([self isClosed]) {
+          return YES;
+        }
+      }
+      // process whatever what we were collecting when we hit the end
+      if (![self processCoverageForFiles:currentFileList
+                                inFolder:currentFolder]) {
+        NSString *message =
+          [NSString stringWithFormat:@"failed to process files: %@",
+           currentFileList];
+        [self addMessageFromThread:message
+                              path:currentFolder
+                       messageType:kCSMessageTypeError];
+      }
     }
   }
-  [pool release];
   return YES;
 }
 
@@ -424,7 +407,7 @@ typedef enum {
   if (uuidRef) {
     CFStringRef uuidStr = CFUUIDCreateString(NULL, uuidRef);
     if (uuidStr) {
-      result = [result stringByAppendingPathComponent:(NSString*)uuidStr];
+      result = [result stringByAppendingPathComponent:(__bridge NSString*)uuidStr];
       CFRelease(uuidStr);
     } else {
       NSLog(@"failed to convert our CFUUIDRef into a CFString");
@@ -482,7 +465,7 @@ typedef enum {
     return NO;
   }
 
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  @autoreleasepool {
 
   NSString *tempDir = [self tempDirName];
   // make sure all the filenames are just leaves
@@ -492,7 +475,6 @@ typedef enum {
       [self addMessageFromThread:@"skipped because filename had a slash"
                             path:[folderPath stringByAppendingPathComponent:filename]
                      messageType:kCSMessageTypeError];
-      [pool release];
       return NO;
     }
   }
@@ -517,14 +499,12 @@ typedef enum {
   NSMutableData *fileList = [NSMutableData data];
   NSData *folderPathUTF8 = [folderPath dataUsingEncoding:NSUTF8StringEncoding];
   if (!folderPathUTF8 || !fileList) {
-    [pool release];
     return NO;
   }
   char nullByte = 0;
   for (NSString *filename in filenames) {
     NSData *filenameUTF8 = [filename dataUsingEncoding:NSUTF8StringEncoding];
     if (!filenameUTF8) {
-      [pool release];
       return NO;
     }
     [fileList appendData:folderPathUTF8];
@@ -534,7 +514,6 @@ typedef enum {
 
   GTMScriptRunner *runner = [GTMScriptRunner runnerWithBash];
   if (!runner) {
-    [pool release];
     return NO;
   }
 
@@ -549,9 +528,9 @@ typedef enum {
     NSOperationQueue *opQueue = [NSOperationQueue cs_sharedOperationQueue];
     // create our cleanup op since it will use the other ops as dependencies
     NSInvocationOperation *cleanupOp
-      = [[[NSInvocationOperation alloc] initWithTarget:self
+      = [[NSInvocationOperation alloc] initWithTarget:self
                                               selector:@selector(cleanupTempDir:)
-                                                object:tempDir] autorelease];
+                                                object:tempDir];
     // The done operation will depend on this cleanup op to know when things
     // finish.
     [doneOperation_ addDependency:cleanupOp];
@@ -604,9 +583,9 @@ typedef enum {
       NSString *fullPath;
       while ((fullPath = [resultPathsEnum nextObject]) && ![self isClosed]) {
         NSInvocationOperation *op
-          = [[[NSInvocationOperation alloc] initWithTarget:self
+          = [[NSInvocationOperation alloc] initWithTarget:self
                                                   selector:@selector(loadCoveragePath:)
-                                                    object:fullPath] autorelease];
+                                                    object:fullPath];
         // cleanup can't be done until all our other ops are done
         [cleanupOp addDependency:op];
 
@@ -625,8 +604,8 @@ typedef enum {
     [opQueue addOperation:cleanupOp];
   }
 
-  [pool release];
   return result;
+  }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -661,7 +640,6 @@ typedef enum {
 
 - (void)setFilterString:(NSString *)string {
   if (filterString_ != string) {
-    [filterString_ release];
     filterString_ = [string copy];
     NSUserDefaultsController *ud = [NSUserDefaultsController sharedUserDefaultsController];
     [[ud values] setValue:filterString_ forKey:kCoverStoryFilterStringKey];
@@ -831,8 +809,8 @@ typedef enum {
   NSTableColumn *column = [tableView tableColumnWithIdentifier:columnName];
   NSSortDescriptor *oldDesc = [column sortDescriptorPrototype];
   NSSortDescriptor *descriptor
-    = [[[NSSortDescriptor alloc] initWithKey:sortKeyName
-                                   ascending:[oldDesc ascending]] autorelease];
+    = [[NSSortDescriptor alloc] initWithKey:sortKeyName
+                                   ascending:[oldDesc ascending]];
   [column setSortDescriptorPrototype:descriptor];
 }
 
@@ -866,7 +844,6 @@ typedef enum {
 }
 
 - (void)setCommonPathPrefix:(NSString *)newPrefix {
-  [commonPathPrefix_ autorelease];
   // we cheat, and if the pref is set, we just make sure we return no prefix
   if (removeCommonSourcePrefix_) {
     commonPathPrefix_ = [newPrefix copy];
@@ -888,7 +865,6 @@ typedef enum {
     // force any running animation to end
     if (currentAnimation_) {
       [currentAnimation_ stopAnimation];
-      [currentAnimation_ release];
       currentAnimation_ = nil;
     }
     BOOL starting = [start boolValue];
@@ -941,7 +917,6 @@ typedef enum {
 - (void)animationDidEnd:(NSAnimation *)animation {
   if (animation == currentAnimation_) {
     // clear out our reference
-    [currentAnimation_ release];
     currentAnimation_ = nil;
   }
 }
@@ -1042,7 +1017,7 @@ typedef enum {
   va_list list;
   va_start(list, format);
   NSString *message =
-    [[[NSString alloc] initWithFormat:format arguments:list] autorelease];
+    [[NSString alloc] initWithFormat:format arguments:list];
   va_end(list);
   [self addMessageFromThread:message path:path messageType:kCSMessageTypeError];
 }
@@ -1053,7 +1028,7 @@ typedef enum {
   va_list list;
   va_start(list, format);
   NSString *message =
-    [[[NSString alloc] initWithFormat:format arguments:list] autorelease];
+    [[NSString alloc] initWithFormat:format arguments:list];
   va_end(list);
   [self addMessageFromThread:message path:path messageType:kCSMessageTypeWarning];
 }
@@ -1194,11 +1169,11 @@ typedef enum {
         break;
     }
     NSMutableAttributedString *attrIconAndMessage
-      = [[[NSAttributedString attributedStringWithAttachment:icon] mutableCopy] autorelease];
-    NSAttributedString *attrMessage = [[[NSAttributedString alloc] initWithString:message] autorelease];
+      = [[NSAttributedString attributedStringWithAttachment:icon] mutableCopy];
+    NSAttributedString *attrMessage = [[NSAttributedString alloc] initWithString:message];
     [attrIconAndMessage appendAttributedString:attrMessage];
 
-    NSMutableParagraphStyle *paraStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
+    NSMutableParagraphStyle *paraStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [paraStyle setFirstLineHeadIndent:0];
     [paraStyle setHeadIndent:12];
     NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -1220,17 +1195,19 @@ typedef enum {
 - (NSString *)htmlFileListTableData {
   NSArray *fileDatas = [sourceFilesController_ arrangedObjects];
   NSMutableString *filesHtml = [NSMutableString string];
+
   struct {
     CGFloat value;
-    NSString *classString;
+    PercentClassCovered percentCovered;
   } percentClassMap[] = {
-    { 25., @"filelessthan25percent" },
-    { 35., @"filelessthan35percent" },
-    { 45., @"filelessthan45percent" },
-    { 55., @"filelessthan55percent" },
-    { 65., @"filelessthan65percent" },
-    { 75., @"filelessthan75percent" },
+      { 25., PercentClassCoveredLessThan25Percent }, // @"filelessthan25percent" },
+      { 35., PercentClassCoveredLessThan35Percent }, // @"filelessthan35percent" },
+      { 45., PercentClassCoveredLessThan45Percent }, // @"filelessthan45percent" },
+      { 55., PercentClassCoveredLessThan55Percent }, // @"filelessthan55percent" },
+      { 65., PercentClassCoveredLessThan65Percent }, // @"filelessthan65percent" },
+      { 75., PercentClassCoveredLessThan75Percent } // @"filelessthan75percent" },
   };
+
   for (CoverStoryCoverageFileData *fileData in fileDatas) {
     NSString *name = [[fileData sourcePath] lastPathComponent];
     NSString *linkName
@@ -1247,11 +1224,13 @@ typedef enum {
                         coverage:&percent];
 
     NSString *classString = @"filegoodcoveragepercent";
+
+      
     for (size_t i = 0;
          i < sizeof(percentClassMap) / sizeof(percentClassMap[0]);
          ++i) {
       if (percent < percentClassMap[i].value) {
-        classString = percentClassMap[i].classString;
+        classString = [self CSSClassFromPercententClassCoveredValue:percentClassMap[i].percentCovered];
         break;
       }
     }
@@ -1262,6 +1241,46 @@ typedef enum {
      @"</tr>\n", link, linkName, classString, percent];
   }
   return filesHtml;
+}
+
+typedef enum : NSUInteger {
+    PercentClassCoveredLessThan25Percent,
+    PercentClassCoveredLessThan35Percent,
+    PercentClassCoveredLessThan45Percent,
+    PercentClassCoveredLessThan55Percent,
+    PercentClassCoveredLessThan65Percent,
+    PercentClassCoveredLessThan75Percent
+} PercentClassCovered;
+
+- (NSString *)CSSClassFromPercententClassCoveredValue:(PercentClassCovered)covered
+{
+    NSString *value = nil;
+
+    switch (covered) {
+        case PercentClassCoveredLessThan25Percent:
+            value = @"filelessthan25percent";
+            break;
+        case PercentClassCoveredLessThan35Percent:
+            value = @"filelessthan45percent";
+            break;
+        case PercentClassCoveredLessThan45Percent:
+            value = @"filelessthan45percent";
+            break;
+        case PercentClassCoveredLessThan55Percent:
+            value = @"filelessthan55percent";
+            break;
+        case PercentClassCoveredLessThan65Percent:
+            value = @"filelessthan65percent";
+            break;
+        case PercentClassCoveredLessThan75Percent:
+            value = @"filelessthan75percent";
+            break;
+
+        default:
+            break;
+    }
+
+    return value;
 }
 
 - (NSString *)htmlSourceTableData:(CoverStoryCoverageFileData*)fileData {
@@ -1338,8 +1357,8 @@ typedef enum {
   transformer = [NSValueTransformer valueTransformerForName:name];
 
   NSFileWrapper *finalWrapper
-    = [[[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil] autorelease];
-  NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+    = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
+  NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
   [formatter setDateStyle:kCFDateFormatterShortStyle];
   [formatter setTimeStyle:kCFDateFormatterShortStyle];
   NSString *date = [formatter stringFromDate:[NSDate date]];
@@ -1348,61 +1367,58 @@ typedef enum {
   NSString *htmlExportTemplate = GTMLocalizedStringFromTable(@"HTMLExportTemplate",
                                                              @"HTMLExport", @"");
   for (CoverStoryCoverageFileData *fileData in fileDatas) {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSString *sourcePath = [fileData sourcePath];
-    NSString *fileName = [sourcePath lastPathComponent];
-    NSString *htmlFileName = [fileName stringByAppendingPathExtension:@"html"];
-    NSString *coverageString = [transformer transformedValue:fileData];
-    sourcePath = [sourcePath gtm_stringByEscapingForHTML];
-    fileName = [fileName gtm_stringByEscapingForHTML];
-    coverageString = [coverageString gtm_stringByEscapingForHTML];
-    NSString *sourceHTML = [self htmlSourceTableData:fileData];
-    NSMutableString *htmlString = [[htmlExportTemplate mutableCopy] autorelease];
-    struct {
-      NSString *a;
-      NSString *b;
-    } replacements[] = {
-     { @"__TITLE__", fileName },
-     { @"__SOURCE_NAME__", fileName },
-     { @"__SOURCE_PATH__", sourcePath },
-     { @"__SOURCE_DATE__", date },
-     { @"__FILE_SUMMARY__", summary },
-     { @"__FILE_DATA__", fileList },
-     { @"__SOURCE_SUMMARY__", coverageString },
-     { @"__SOURCE_DATA__", sourceHTML },
-    };
-    for (size_t i = 0; i < sizeof(replacements) / sizeof(replacements[0]); ++i) {
-      if (![self mutateString:htmlString
-                  byReplacing:replacements[i].a
-                         with:replacements[i].b
-                        error:outError]) {
-        return NO;
+    @autoreleasepool {
+      NSString *sourcePath = [fileData sourcePath];
+      NSString *fileName = [sourcePath lastPathComponent];
+      NSString *htmlFileName = [fileName stringByAppendingPathExtension:@"html"];
+      NSString *coverageString = [transformer transformedValue:fileData];
+      sourcePath = [sourcePath gtm_stringByEscapingForHTML];
+      fileName = [fileName gtm_stringByEscapingForHTML];
+      coverageString = [coverageString gtm_stringByEscapingForHTML];
+      NSString *sourceHTML = [self htmlSourceTableData:fileData];
+      NSMutableString *htmlString = [htmlExportTemplate mutableCopy];
+
+        NSDictionary *replacements = @{@"__TITLE__": fileName,
+                                       @"__SOURCE_NAME__": fileName,
+                                       @"__SOURCE_PATH__": sourcePath,
+                                       @"__SOURCE_DATE__": date,
+                                       @"__FILE_SUMMARY_": summary,
+                                       @"__FILE_DATA__": fileList,
+                                       @"__SOURCE_SUMMARY__": coverageString,
+                                       @"__SOURCE_DATA__": sourceHTML};
+
+        __block BOOL returnValue = YES;
+        [replacements enumerateKeysAndObjectsUsingBlock:^(NSString *a, NSString *b, BOOL *stop) {
+            returnValue = [self mutateString:htmlString
+                                 byReplacing:a
+                                        with:b
+                                       error:outError];
+
+            *stop = (returnValue == NO);
+        }];
+
+      NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
+      [finalWrapper addRegularFileWithContents:data
+                             preferredFilename:htmlFileName];
+      if (!redirectURL) {
+        // Not autoreleased because we want it outside of our pool.
+        redirectURL
+          = [[NSString alloc] initWithFormat:@"./%@",
+              [htmlFileName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
       }
     }
-    
-    NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
-    [finalWrapper addRegularFileWithContents:data
-                           preferredFilename:htmlFileName];
-    if (!redirectURL) {
-      // Not autoreleased because we want it outside of our pool.
-      redirectURL
-        = [[NSString alloc] initWithFormat:@"./%@",
-            [htmlFileName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    }
-    [pool drain];
   }
   if (redirectURL) {
     NSMutableString *indexHTML
-      = [[NSLocalizedStringFromTable(@"HTMLIndexTemplate",
+      = [NSLocalizedStringFromTable(@"HTMLIndexTemplate",
                                      @"HTMLExport",
-                                     @"") mutableCopy] autorelease];
+                                     @"") mutableCopy];
     if (![self mutateString:indexHTML
                 byReplacing:@"__REDIRECT_URL__"
                        with:redirectURL
                       error:outError]) {
       return NO;
     }
-    [redirectURL release];
     NSData *indexData = [indexHTML dataUsingEncoding:NSUTF8StringEncoding];
     [finalWrapper addRegularFileWithContents:indexData
                            preferredFilename:@"index.html"];
@@ -1410,7 +1426,7 @@ typedef enum {
   NSString *cssPath = [[NSBundle mainBundle] pathForResource:@"coverstory"
                                                       ofType:@"css"];
   NSError *error = nil;
-  NSString *cssString = [NSString stringWithContentsOfFile:cssPath
+  __block NSString *cssString = [NSString stringWithContentsOfFile:cssPath
                                                   encoding:NSUTF8StringEncoding
                                                      error:&error];
   if (error) {
@@ -1423,40 +1439,33 @@ typedef enum {
     NSUserDefaultsController *defaults
       = [NSUserDefaultsController sharedUserDefaultsController];
     id values = [defaults values];
-    struct {
-      NSString *defaultName;
-      NSString *replacee;
-    } sourceLineColorMap[] = {
-      { kCoverStoryMissedLineColorKey, @"$$SOURCE_LINE_MISSED_COLOR$$" },
-      { kCoverStoryUnexecutableLineColorKey, @"$$SOURCE_LINE_SKIPPED_COLOR$$" },
-      { kCoverStoryNonFeasibleLineColorKey, @"$$SOURCE_LINE_NONFEASIBLE_COLOR$$" },
-      { kCoverStoryExecutedLineColorKey, @"$$SOURCE_LINE_HIT_COLOR$$" }
-    };
 
-    for (size_t i = 0;
-         i < sizeof(sourceLineColorMap) / sizeof(sourceLineColorMap[0]);
-         ++i) {
-      NSData *colorData
-        = [values valueForKey:sourceLineColorMap[i].defaultName];
-      NSColor *color = nil;
-      if (colorData) {
-        color = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
-      }
-      if (!color) {
-        color = [NSColor blackColor];
-      }
-      color = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
-      CGFloat components[4];
-      [color getComponents:components];
-      int redInt = (int)(components[0] * 255);
-      int greenInt = (int)(components[1] * 255);
-      int blueInt = (int)(components[2] * 255);
-      NSString *newColor
-        = [NSString stringWithFormat:@"#%02X%02X%02X", redInt, greenInt, blueInt];
-      NSString *replacee = sourceLineColorMap[i].replacee;
-      cssString = [cssString stringByReplacingOccurrencesOfString:replacee
-                                                       withString:newColor];
-    }
+      NSDictionary *sourceLineColorMap = @{kCoverStoryMissedLineColorKey: @"$$SOURCE_LINE_MISSED_COLOR$$",
+                                           kCoverStoryUnexecutableLineColorKey: @"$$SOURCE_LINE_SKIPPED_COLOR$$",
+                                           kCoverStoryNonFeasibleLineColorKey: @"$$SOURCE_LINE_NONFEASIBLE_COLOR$$",
+                                           kCoverStoryExecutedLineColorKey: @"$$SOURCE_LINE_HIT_COLOR$$"};
+
+      [sourceLineColorMap enumerateKeysAndObjectsUsingBlock:^(NSString *defaultName, NSString *replacee, BOOL *stop) {
+          NSData *colorData = [values valueForKey:defaultName];
+          NSColor *color = nil;
+          if (colorData) {
+              color = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
+          }
+          if (!color) {
+              color = [NSColor blackColor];
+          }
+          color = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
+          CGFloat components[4];
+          [color getComponents:components];
+          int redInt = (int)(components[0] * 255);
+          int greenInt = (int)(components[1] * 255);
+          int blueInt = (int)(components[2] * 255);
+          NSString *newColor
+          = [NSString stringWithFormat:@"#%02X%02X%02X", redInt, greenInt, blueInt];
+          cssString = [cssString stringByReplacingOccurrencesOfString:replacee
+                                                           withString:newColor];
+      }];
+
     NSData *cssData = [cssString dataUsingEncoding:NSUTF8StringEncoding];
     [finalWrapper addRegularFileWithContents:cssData
                            preferredFilename:@"coverstory.css"];
@@ -1518,7 +1527,7 @@ typedef enum {
   // http://developer.apple.com/mac/library/documentation/Cocoa/Reference/Foundation/Classes/NSFileManager_Class/Reference/Reference.html#//apple_ref/occ/clm/NSFileManager/defaultManager
   // This is run on a thread, so don't use -defaultManager so we get something
   // thread safe.
-  return [[[NSFileManager alloc] init] autorelease];
+  return [[NSFileManager alloc] init];
 }
 
 @end

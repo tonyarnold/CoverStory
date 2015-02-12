@@ -37,7 +37,7 @@
   NSString *displayString = @"";
   NSDictionary *attributes = nil;
   if (count != kCoverStoryNotExecutedMarker) {
-    NSMutableParagraphStyle *pStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
+    NSMutableParagraphStyle *pStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [pStyle setAlignment:NSRightTextAlignment];
     [pStyle setMinimumLineHeight:13];
     NSColor *color = nil;
@@ -61,8 +61,8 @@
       displayString = @"99+";
     }
   }
-  return [[[NSAttributedString alloc] initWithString:displayString
-                                          attributes:attributes] autorelease];
+  return [[NSAttributedString alloc] initWithString:displayString
+                                          attributes:attributes];
 }
 
 @end
@@ -129,8 +129,8 @@
   NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
                               textColor, NSForegroundColorAttributeName, 
                               nil];
-  return [[[NSAttributedString alloc] initWithString:line
-                                          attributes:attributes] autorelease];
+  return [[NSAttributedString alloc] initWithString:line
+                                          attributes:attributes];
 }
 
 @end
@@ -218,8 +218,8 @@ const float kGoodCoverage = 75.0f;
   NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
                               textColor, NSForegroundColorAttributeName, 
                               nil];
-  return [[[NSAttributedString alloc] initWithString:coverageString
-                                          attributes:attributes] autorelease];
+  return [[NSAttributedString alloc] initWithString:coverageString
+                                          attributes:attributes];
 }
 
 @end

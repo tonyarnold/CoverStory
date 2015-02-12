@@ -70,14 +70,14 @@ enum {
   NSInteger nonfeasible_;
   NSString *sourcePath_;
   NSMutableArray *warnings_;
-  __weak CoverStoryDocument *document_;
+  __unsafe_unretained CoverStoryDocument *document_;
 }
 
 @property (readonly, nonatomic, assign) CoverStoryDocument *document;
 @property (readonly, nonatomic, copy) NSString *sourcePath;
-@property (readonly, nonatomic, retain) NSArray *lines;
+@property (readonly, nonatomic, strong) NSArray *lines;
 // this is only vended for the table to sort with
-@property (readonly, nonatomic, retain) NSNumber *coverage;
+@property (readonly, nonatomic, strong) NSNumber *coverage;
 
 + (id)coverageFileDataFromPath:(NSString *)path
                       document:(CoverStoryDocument *)document
@@ -108,7 +108,7 @@ enum {
  @private
   NSInteger hitCount_;  // how many times this line has been hit
   NSString *line_;  //  the line
-  __weak CoverStoryCoverageFileData *coverageFile_;
+  __unsafe_unretained CoverStoryCoverageFileData *coverageFile_;
 }
 
 @property (readonly, nonatomic, assign) NSInteger hitCount;

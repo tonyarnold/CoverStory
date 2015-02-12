@@ -18,6 +18,7 @@
 //
 
 #import "CoverStoryCoverageData.h"
+#import "CoverStoryDocument.h"
 #import "GTMRegex.h"
 
 // helper for building the string to make sure rounding doesn't get us
@@ -102,7 +103,13 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 @end
 
 @interface CoverStoryCoverageSet ()
-@property (readonly, nonatomic, retain) NSMutableArray *fileDatas;
+@property (readonly, nonatomic, strong) NSMutableArray *fileDatas;
+@end
+
+@interface CoverStoryCoverageFileData ()
+@property (readwrite, nonatomic, assign) CoverStoryDocument *document;
+@property (readwrite, nonatomic, copy) NSString *sourcePath;
+@property (readwrite, nonatomic, strong) NSArray *lines;
 @end
 
 @interface CoverStoryCoverageFileData (ScriptingMethods)
@@ -130,9 +137,9 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 + (id)coverageFileDataFromPath:(NSString *)path
                       document:(CoverStoryDocument *)document
                messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
-  return [[[self alloc] initWithPath:path
+  return [[self alloc] initWithPath:path
                             document:document
-                     messageReceiver:receiver] autorelease];
+                     messageReceiver:receiver];
 }
 
 - (id)initWithPath:(NSString *)path
@@ -171,7 +178,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
     }
     if (!string) {
       [receiver coverageErrorForPath:path message:@"failed to open file %@", error];
-      [self release];
       self = nil;
     } else {
       NSCharacterSet *linefeeds = [NSCharacterSet characterSetWithCharactersInString:@"\n\r"];
@@ -260,9 +266,9 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
             inNonFeasibleRange = YES;
           }
         }
-        [lines_ addObject:[CoverStoryCoverageLineData coverageLineDataWithLine:segment
-                                                                      hitCount:hitCount
-                                                                  coverageFile:self]];
+          self.lines = [self.lines arrayByAddingObject:[CoverStoryCoverageLineData coverageLineDataWithLine:segment
+                                                                                                  hitCount:hitCount
+                                                                                               coverageFile:self]];
       }
 
       // The first five lines are not data we want to show to the user
@@ -271,7 +277,7 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
         // paths relative to the project, so just incase they walk into a
         // neighbor directory, resolve them.
         NSString *srcPath = [[[lines_ objectAtIndex:0] line] substringFromIndex:7];
-        sourcePath_ = [[srcPath stringByStandardizingPath] retain];
+        sourcePath_ = [srcPath stringByStandardizingPath];
         [lines_ removeObjectsInRange:NSMakeRange(0,5)];
         // get out counts
         [self updateCounts];
@@ -279,7 +285,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
         [receiver coverageErrorForPath:path message:@"illegal file format"];
 
         // something bad
-        [self release];
         self = nil;
       }
     }
@@ -288,15 +293,9 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   return self;
 }
 
-- (void)dealloc {
-  [lines_ release];
-  [sourcePath_ release];
-  [warnings_ release];
-  [super dealloc];
-}
 
 - (id)copyWithZone:(NSZone *)zone {
-  return [self retain];
+  return self;
 }
 
 - (BOOL)isEqual:(id)object {
@@ -458,10 +457,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   return self;
 }
 
-- (void)dealloc {
-  [fileDatas_ release];
-  [super dealloc];
-}
 
 - (BOOL)addFileData:(CoverStoryCoverageFileData *)fileData
     messageReceiver:(id<CoverStoryCoverageProcessingProtocol>)receiver {
@@ -548,9 +543,9 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
 + (id)coverageLineDataWithLine:(NSString*)line
                       hitCount:(NSInteger)hitCount
                   coverageFile:(CoverStoryCoverageFileData *)coverageFile {
-  return [[[self alloc] initWithLine:line
+  return [[self alloc] initWithLine:line
                             hitCount:hitCount
-                        coverageFile:coverageFile] autorelease];
+                        coverageFile:coverageFile];
 }
 
 - (id)initWithLine:(NSString*)line
@@ -564,10 +559,6 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   return self;
 }
 
-- (void)dealloc {
-  [line_ release];
-  [super dealloc];
-}
 
 - (void)addHits:(NSInteger)newHits {
   // we could be processing big and little endian runs, and w/ ifdefs one set of
@@ -596,11 +587,10 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   NSScriptClassDescription *containterClassDesc
     = [containerSpec keyClassDescription];
   NSString *name = [self sourcePath];
-  return [[[NSNameSpecifier alloc] initWithContainerClassDescription:containterClassDesc
+  return [[NSNameSpecifier alloc] initWithContainerClassDescription:containterClassDesc
                                                   containerSpecifier:containerSpec
                                                                  key:@"fileDatas"
-                                                                name:name]
-          autorelease];
+                                                                name:name];
 }
 
 - (NSScriptObjectSpecifier *)objectSpecifierForLineData:(CoverStoryCoverageLineData*)data {
@@ -608,11 +598,10 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
   NSScriptClassDescription *containterClassDesc
     = [containerSpec keyClassDescription];
   NSInteger index = [[self lines] indexOfObject:data];
-  return [[[NSIndexSpecifier alloc] initWithContainerClassDescription:containterClassDesc
+  return [[NSIndexSpecifier alloc] initWithContainerClassDescription:containterClassDesc
                                                    containerSpecifier:containerSpec
                                                                   key:@"lines"
-                                                                index:index]
-          autorelease];
+                                                                index:index];
 }
 @end
 

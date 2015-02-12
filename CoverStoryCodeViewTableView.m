@@ -38,12 +38,11 @@ static NSString *const kPrefsToWatch[] = {
     [defaults removeObserver:self
                   forKeyPath:[NSUserDefaultsController cs_valuesKey:kPrefsToWatch[i]]];
   }
-  [super dealloc];
 }
 
 - (void)awakeFromNib {
   [self setIntercellSpacing:NSMakeSize(0.0f, 0.0f)];
-  CoverStoryScroller *scroller = [[[CoverStoryScroller alloc] init] autorelease];
+  CoverStoryScroller *scroller = [[CoverStoryScroller alloc] init];
   NSScrollView *scrollView = [self enclosingScrollView];
   [scrollView setVerticalScroller:scroller];
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];

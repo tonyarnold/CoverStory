@@ -23,10 +23,6 @@
 
 @implementation CoverStoryScroller
 
-- (void)dealloc {
-  [coverageData_ release];
-  [super dealloc];
-}
 
 - (void)drawRect:(NSRect)rect {
   NSRect bounds = [self bounds];
@@ -94,8 +90,7 @@
 
 - (void)setCoverageData:(NSArray*)coverageData {
   if (coverageData != coverageData_) {
-    [coverageData_ release];
-    coverageData_ = [coverageData retain];
+    coverageData_ = coverageData;
     [self setNeedsDisplay:YES];
   }
 }

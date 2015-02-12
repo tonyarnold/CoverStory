@@ -68,10 +68,6 @@ static NSString * const kFilter = @"filter";
   return self;
 }
 
-- (void)dealloc {
-  [cachedPredicatedFiles_ release];
-  [super dealloc];
-}
 
 - (BOOL)evaluateWithObject:(id)object {
   NSNumber *value = [cachedPredicatedFiles_ objectForKey:object];

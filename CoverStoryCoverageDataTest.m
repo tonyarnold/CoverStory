@@ -17,6 +17,8 @@
 #pragma mark CoverStoryCoverageLineData
 
 - (void)test1LineDataBasics {
+
+
   struct TestDataRecord {
     NSString *line;
     NSInteger hitCount;

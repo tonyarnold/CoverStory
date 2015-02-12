@@ -40,8 +40,6 @@ static NSString *const kPrefsToWatch[] = {
   for (NSString *pref in prefsToWatch_) {
     [defaults removeObserver:self forKeyPath:pref];
   }
-  [prefsToWatch_ release];
-  [super dealloc];
 }
 
 
@@ -51,7 +49,7 @@ static NSString *const kPrefsToWatch[] = {
   for (size_t i = 0; i < prefsToWatchCount; ++i) {
     [array addObject:[NSUserDefaultsController cs_valuesKey:kPrefsToWatch[i]]];
   }
-  prefsToWatch_ = [array retain];
+  prefsToWatch_ = array;
   NSUserDefaultsController *defaults = [NSUserDefaultsController sharedUserDefaultsController];
   for (NSString *pref in prefsToWatch_) {
     [defaults addObserver:self

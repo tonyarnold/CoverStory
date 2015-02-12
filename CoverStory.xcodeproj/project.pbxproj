@@ -40,7 +40,7 @@
 		8B2A9C6E0D84F84600599386 /* gcno.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6B0D84F84600599386 /* gcno.icns */; };
 		8B2A9C6F0D84F84600599386 /* gcda.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8B2A9C6C0D84F84600599386 /* gcda.icns */; };
 		8B408E5D0F8DBB2E00DF540E /* coverstory.js in Resources */ = {isa = PBXBuildFile; fileRef = 8B408E360F8DB8CF00DF540E /* coverstory.js */; };
-		8B408E810F8E347200DF540E /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B408E7F0F8E347200DF540E /* GTMNSString+HTML.m */; };
+		8B408E810F8E347200DF540E /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B408E7F0F8E347200DF540E /* GTMNSString+HTML.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8B408E830F8E37BE00DF540E /* HTMLExport.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8B408E820F8E37BE00DF540E /* HTMLExport.strings */; };
 		8B4091020F8E6B4900DF540E /* CoverStory.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 8B4091010F8E6B4900DF540E /* CoverStory.sdef */; };
 		8B4091140F8E733D00DF540E /* CoverStoryApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4091130F8E733D00DF540E /* CoverStoryApplication.m */; };
@@ -76,8 +76,8 @@
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		9DC8D3BD14F490A800CEB21C /* CoverStory_fdopen2003.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DC8D3BA14F490A800CEB21C /* CoverStory_fdopen2003.c */; };
-		F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */; };
-		F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; };
+		F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F41A325311B6BA1A00176CCC /* GCovVersionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F41A325211B6BA1A00176CCC /* GCovVersionManager.m */; };
 		F426B6EB0E0A1D7E00348386 /* CoverStory Help in Resources */ = {isa = PBXBuildFile; fileRef = F426B6DA0E0A1D7E00348386 /* CoverStory Help */; };
 		F426B7170E0A252900348386 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
@@ -94,7 +94,7 @@
 		F461125416C1AAEA0053C6D8 /* test_x86_64_clang_4_2.gcno in Resources */ = {isa = PBXBuildFile; fileRef = F461125016C1AAE90053C6D8 /* test_x86_64_clang_4_2.gcno */; };
 		F4776BE711C2BF2300B83834 /* CommonPathPrefix.png in Resources */ = {isa = PBXBuildFile; fileRef = F4776BE511C2BF2300B83834 /* CommonPathPrefix.png */; };
 		F4776BE811C2BF2300B83834 /* CommonPathPrefixHide.png in Resources */ = {isa = PBXBuildFile; fileRef = F4776BE611C2BF2300B83834 /* CommonPathPrefixHide.png */; };
-		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; };
+		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F485B3230E4C831200899594 /* NoEndingNewline.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F485B3220E4C831200899594 /* NoEndingNewline.gcov */; };
 		F487520811B6CA8800774A63 /* GCovVersionManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F487520711B6CA8800774A63 /* GCovVersionManagerTest.m */; };
 		F487520911B6CA9E00774A63 /* GCovVersionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F41A325211B6BA1A00176CCC /* GCovVersionManager.m */; };
@@ -116,7 +116,7 @@
 		F487DCC50E52137C005B47E6 /* testLF.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F487DCC20E52137C005B47E6 /* testLF.gcov */; };
 		F4CA81F20DAAC44F00B4AB10 /* CoverStoryDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4CA81EE0DAAC44F00B4AB10 /* CoverStoryDocument.xib */; };
 		F4CA81F30DAAC44F00B4AB10 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4CA81F00DAAC44F00B4AB10 /* MainMenu.xib */; };
-		F4E280D40D81F38700DD304F /* GTMRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E280D30D81F38700DD304F /* GTMRegex.m */; };
+		F4E280D40D81F38700DD304F /* GTMRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E280D30D81F38700DD304F /* GTMRegex.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -714,26 +714,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D15AC310486D014006FF6A4 /* CoverStoryDocument.m in Sources */,
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
-				8BFD54F60B3F009300AFCDA2 /* CoverStoryCoverageData.m in Sources */,
-				8BFD5B040B3F126D00AFCDA2 /* CoverStoryScroller.m in Sources */,
-				8BFD61400B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.m in Sources */,
+				9DC8D3BD14F490A800CEB21C /* CoverStory_fdopen2003.c in Sources */,
 				F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */,
 				F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */,
 				F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */,
 				F4E280D40D81F38700DD304F /* GTMRegex.m in Sources */,
+				8B408E810F8E347200DF540E /* GTMNSString+HTML.m in Sources */,
+				8D15AC310486D014006FF6A4 /* CoverStoryDocument.m in Sources */,
+				8BFD54F60B3F009300AFCDA2 /* CoverStoryCoverageData.m in Sources */,
+				8BFD5B040B3F126D00AFCDA2 /* CoverStoryScroller.m in Sources */,
+				8BFD61400B3F9DE500AFCDA2 /* CoverStoryApplicationDelegate.m in Sources */,
 				8B41D4BE0D85CAB000E60DA4 /* CoverStoryValueTransformers.m in Sources */,
 				8BA270B80D87C9AE0092884C /* CoverStoryDocumentController.m in Sources */,
 				8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */,
 				8BC4AAB80D94D06100437182 /* CoverStoryCodeViewTableView.m in Sources */,
-				8B408E810F8E347200DF540E /* GTMNSString+HTML.m in Sources */,
 				8B4091140F8E733D00DF540E /* CoverStoryApplication.m in Sources */,
-				8B4094C00F8EC70300DF540E /* NSColor+Scripting.m in Sources */,
 				F41A325311B6BA1A00176CCC /* GCovVersionManager.m in Sources */,
 				8BB788F811B8467800AB31AF /* CoverStoryArrayController.m in Sources */,
+				8B4094C00F8EC70300DF540E /* NSColor+Scripting.m in Sources */,
 				8BB7893111B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m in Sources */,
-				9DC8D3BD14F490A800CEB21C /* CoverStory_fdopen2003.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -828,6 +828,8 @@
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
 				FRAMEWORK_SEARCH_PATHS = external;
@@ -845,6 +847,8 @@
 		C05733C908A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
 				FRAMEWORK_SEARCH_PATHS = external;
@@ -871,9 +875,7 @@
 				COVERSTORY_VERSION_MINOR = 4;
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GCC_VERSION = "";
 				LIBRARY_SEARCH_PATHS = SnowLeopardGcov;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"$(GTM_GENERAL_OTHER_CFLAGS)",
@@ -902,10 +904,8 @@
 					"$(inherited)",
 					NS_BLOCK_ASSERTIONS,
 				);
-				GCC_VERSION = "";
 				INFOPLIST_PREPROCESS = YES;
 				LIBRARY_SEARCH_PATHS = SnowLeopardGcov;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Release;
 		};
@@ -913,6 +913,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F426B7420E0A261000348386 /* DebugUnittest.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -929,6 +930,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F426B7430E0A261000348386 /* ReleaseUnittest.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

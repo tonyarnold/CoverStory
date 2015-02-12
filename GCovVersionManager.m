@@ -43,10 +43,6 @@
   return self;
 }
 
-- (void) dealloc {
-  [versionMap_ release];
-  [super dealloc];
-}
 
 - (NSString*)defaultGCovPath {
   return [versionMap_ objectForKey:@""];
@@ -116,7 +112,7 @@
   // http://developer.apple.com/mac/library/documentation/Cocoa/Reference/Foundation/Classes/NSFileManager_Class/Reference/Reference.html#//apple_ref/occ/clm/NSFileManager/defaultManager
   // This is run on a thread, so don't use -defaultManager so we get something
   // thread safe.
-  NSFileManager *fm = [[[NSFileManager alloc] init] autorelease];
+  NSFileManager *fm = [[NSFileManager alloc] init];
   NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
   // ...filter to gcov* apps...
   NSEnumerator *enumerator2 =
