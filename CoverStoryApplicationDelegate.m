@@ -31,10 +31,6 @@
   [CoverStoryFilePredicate registerDefaults];
   [CoverStoryDocument registerDefaults];
   [CoverageLineDataToSourceLineTransformer registerDefaults];
-  
-  // Set our document controller up as the shared document controller
-  // so we don't get NSDocumentController instead.
-  [[[CoverStoryDocumentController alloc] init] autorelease];
 }
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)theApplication {
