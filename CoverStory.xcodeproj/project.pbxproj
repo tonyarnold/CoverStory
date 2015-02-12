@@ -887,6 +887,14 @@
 				GCC_VERSION = "";
 				LIBRARY_SEARCH_PATHS = SnowLeopardGcov;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"$(GTM_GENERAL_OTHER_CFLAGS)",
+					"$(GTM_PLATFORM_OTHER_CFLAGS)",
+					"$(GTM_CONFIGURATION_OTHER_CFLAGS)",
+					"$(GTM_HOST_OTHER_CFLAGS)",
+					"-DSENTEST_IGNORE_DEPRECATION_WARNING=1",
+				);
 				OTHER_LDFLAGS = "-lgcov";
 			};
 			name = Debug;
