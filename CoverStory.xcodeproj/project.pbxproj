@@ -585,7 +585,7 @@
 			name = UnitTests;
 			productName = UnitTests;
 			productReference = F426B70E0E0A24AE00348386 /* UnitTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 /* End PBXNativeTarget section */
 
