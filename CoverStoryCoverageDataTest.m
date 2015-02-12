@@ -6,10 +6,10 @@
 //  Copyright 2008 Google Inc. All rights reserved.
 //
 
-#import "GTMSenTestCase.h"
+@import XCTest;
 #import "CoverStoryCoverageData.h"
 
-@interface CoverStoryCoverageDataTest : SenTestCase 
+@interface CoverStoryCoverageDataTest : XCTestCase 
 @end
 
 @implementation CoverStoryCoverageDataTest
@@ -33,12 +33,11 @@
       [CoverStoryCoverageLineData coverageLineDataWithLine:testData[x].line
                                                   hitCount:testData[x].hitCount
                                               coverageFile:nil];
-    STAssertNotNil(data, nil);
-    STAssertEqualObjects([data line], testData[x].line, @"index %u", x);
-    STAssertEquals([data hitCount], testData[x].hitCount, @"index %u", x);
-    
-    STAssertGreaterThan([[data description] length], (NSUInteger)5, @"index %u", x);
-    
+    XCTAssertNotNil(data);
+    XCTAssertEqualObjects([data line], testData[x].line, @"index %zu", x);
+    XCTAssertEqual([data hitCount], testData[x].hitCount, @"index %zu", x);
+
+    XCTAssertGreaterThan([[data description] length], 5);
   }
 }
 
@@ -66,9 +65,9 @@
       [CoverStoryCoverageLineData coverageLineDataWithLine:@"line"
                                                   hitCount:testData[x].hitCount1
                                               coverageFile:nil];
-    STAssertNotNil(data, nil);
+    XCTAssertNotNil(data);
     [data addHits:testData[x].hitCount2];
-    STAssertEquals([data hitCount], testData[x].hitCountSum, @"index %u", x);
+    XCTAssertEqual([data hitCount], testData[x].hitCountSum, @"index %zu", x);
   }
 }
 
@@ -76,7 +75,7 @@
 
 - (void)test3FileDataBasics {
   NSBundle *testBundle = [NSBundle bundleForClass:[self class]];
-  STAssertNotNil(testBundle, nil);
+  XCTAssertNotNil(testBundle);
   
   struct TestDataRecord {
     NSString *name;
@@ -96,18 +95,18 @@
   for (size_t x = 0; x < sizeof(testData)/sizeof(struct TestDataRecord); ++x) {
     NSString *path = [testBundle pathForResource:testData[x].name
                                           ofType:@"gcov"];
-    STAssertNotNil(path, @"index %u", x);
+    XCTAssertNotNil(path, @"index %zu", x);
     CoverStoryCoverageFileData *data =
       [CoverStoryCoverageFileData coverageFileDataFromPath:path
                                                   document:nil
                                            messageReceiver:nil];
-    STAssertNotNil(data, @"index %u", x);
-    STAssertEquals([[data lines] count],
+    XCTAssertNotNil(data, @"index %zu", x);
+    XCTAssertEqual([[data lines] count],
                    (NSUInteger)testData[x].numberTotalLines,
-                   @"index %u", x);
-    STAssertEqualObjects([data sourcePath],
+                   @"index %zu", x);
+    XCTAssertEqualObjects([data sourcePath],
                    testData[x].sourcePath,
-                   @"index %u", x);
+                   @"index %zu", x);
     NSInteger totalLines = 0;
     NSInteger codeLines = 0;
     NSInteger hitCodeLines = 0;
@@ -120,20 +119,20 @@
             nonFeasibleLines:&nonFeasible
               coverageString:&coverageString
                     coverage:&coverage];
-    STAssertEquals(totalLines, testData[x].numberTotalLines, @"index %u", x);
-    STAssertEquals(codeLines, testData[x].numberCodeLines, @"index %u", x);
-    STAssertEquals(hitCodeLines, testData[x].numberHitCodeLines, @"index %u", x);
-    STAssertEquals(nonFeasible, testData[x].numberNonFeasibleLines, @"index %u", x);
-    STAssertEqualsWithAccuracy(coverage, testData[x].coverage, 0x001f, @"index %u", x);
-    STAssertNotNil(coverageString, @"index %u", x);
+    XCTAssertEqual(totalLines, testData[x].numberTotalLines, @"index %zu", x);
+    XCTAssertEqual(codeLines, testData[x].numberCodeLines, @"index %zu", x);
+    XCTAssertEqual(hitCodeLines, testData[x].numberHitCodeLines, @"index %zu", x);
+    XCTAssertEqual(nonFeasible, testData[x].numberNonFeasibleLines, @"index %zu", x);
+    XCTAssertEqualWithAccuracy(coverage, testData[x].coverage, 0x001f, @"index %zu", x);
+    XCTAssertNotNil(coverageString, @"index %zu", x);
     
-    STAssertGreaterThan([[data description] length], (NSUInteger)5, @"index %u", x);
+    XCTAssertGreaterThan([[data description] length], 5);
   }
 }
 
 - (void)test4FileDataLineEndings {
   NSBundle *testBundle = [NSBundle bundleForClass:[self class]];
-  STAssertNotNil(testBundle, nil);
+  XCTAssertNotNil(testBundle);
   
   struct TestDataRecord {
     NSString *name;
@@ -149,31 +148,31 @@
     { @"testCRLF", @"Foo.m", 11, 8, 6, 0, 75.0f },
   };
   NSMutableSet *fileContentsSet = [NSMutableSet set];
-  STAssertNotNil(fileContentsSet, nil);
+  XCTAssertNotNil(fileContentsSet);
   CoverStoryCoverageFileData *prevData = nil;
   for (size_t x = 0; x < sizeof(testData)/sizeof(struct TestDataRecord); ++x) {
     NSString *path = [testBundle pathForResource:testData[x].name
                                           ofType:@"gcov"];
     // load the file blob and store in a set to ensure they each have different
     // byte sequences (due to the end of line markers they are using)
-    STAssertNotNil(path, @"index %u", x);
+    XCTAssertNotNil(path, @"index %zu", x);
     NSData *fileContents = [NSData dataWithContentsOfFile:path];
-    STAssertNotNil(fileContents, @"index %u", x);
+    XCTAssertNotNil(fileContents, @"index %zu", x);
     [fileContentsSet addObject:fileContents];
-    STAssertEquals([fileContentsSet count], (NSUInteger)(x + 1),
-                   @"failed to get a uniq file contents at index %u", x);
+    XCTAssertEqual([fileContentsSet count], (NSUInteger)(x + 1),
+                   @"failed to get a uniq file contents at index %zu", x);
     // now process the file
     CoverStoryCoverageFileData *data =
       [CoverStoryCoverageFileData coverageFileDataFromPath:path
                                                   document:nil
                                            messageReceiver:nil];
-    STAssertNotNil(data, @"index %u", x);
-    STAssertEquals([[data lines] count],
+    XCTAssertNotNil(data, @"index %zu", x);
+    XCTAssertEqual([[data lines] count],
                    (NSUInteger)testData[x].numberTotalLines,
-                   @"index %u", x);
-    STAssertEqualObjects([data sourcePath],
+                   @"index %zu", x);
+    XCTAssertEqualObjects([data sourcePath],
                          testData[x].sourcePath,
-                         @"index %u", x);
+                         @"index %zu", x);
     NSInteger totalLines = 0;
     NSInteger codeLines = 0;
     NSInteger hitCodeLines = 0;
@@ -186,30 +185,30 @@
             nonFeasibleLines:&nonFeasible
               coverageString:&coverageString
                     coverage:&coverage];
-    STAssertEquals(totalLines, testData[x].numberTotalLines, @"index %u", x);
-    STAssertEquals(codeLines, testData[x].numberCodeLines, @"index %u", x);
-    STAssertEquals(hitCodeLines, testData[x].numberHitCodeLines, @"index %u", x);
-    STAssertEquals(nonFeasible, testData[x].numberNonFeasibleLines, @"index %u", x);
-    STAssertEqualsWithAccuracy(coverage, testData[x].coverage, 0x001f, @"index %u", x);
-    STAssertNotNil(coverageString, @"index %u", x);
+    XCTAssertEqual(totalLines, testData[x].numberTotalLines, @"index %zu", x);
+    XCTAssertEqual(codeLines, testData[x].numberCodeLines, @"index %zu", x);
+    XCTAssertEqual(hitCodeLines, testData[x].numberHitCodeLines, @"index %zu", x);
+    XCTAssertEqual(nonFeasible, testData[x].numberNonFeasibleLines, @"index %zu", x);
+    XCTAssertEqualWithAccuracy(coverage, testData[x].coverage, 0x001f, @"index %zu", x);
+    XCTAssertNotNil(coverageString, @"index %zu", x);
     
     // compare this to the previous to make sure we got the same thing (the
     // file all match except for newlines).
     if (prevData) {
       NSArray *prevDataLines = [prevData lines];
       NSArray *dataLines = [data lines];
-      STAssertNotNil(prevDataLines, @"index %u", x);
-      STAssertNotNil(dataLines, @"index %u", x);
-      STAssertEquals([prevDataLines count], [dataLines count], @"index %u", x);
+      XCTAssertNotNil(prevDataLines, @"index %zu", x);
+      XCTAssertNotNil(dataLines, @"index %zu", x);
+      XCTAssertEqual([prevDataLines count], [dataLines count], @"index %zu", x);
       for (unsigned int y = 0 ; y < [dataLines count] ; ++y) {
         CoverStoryCoverageLineData *prevDataLine = [prevDataLines objectAtIndex:y];
         CoverStoryCoverageLineData *dataLine = [prevDataLines objectAtIndex:y];
-        STAssertNotNil(prevDataLine, @"index %u - %u", y, x);
-        STAssertNotNil(dataLine, @"index %u - %u", y, x);
-        STAssertEqualObjects([prevDataLine line], [dataLine line],
-                             @"line contents didn't match at index %u - %u", y, x);
-        STAssertEquals([prevDataLine hitCount], [dataLine hitCount],
-                       @"line hits didn't match at index %u - %u", y, x);
+        XCTAssertNotNil(prevDataLine, @"index %u - %zu", y, x);
+        XCTAssertNotNil(dataLine, @"index %u - %zu", y, x);
+        XCTAssertEqualObjects([prevDataLine line], [dataLine line],
+                             @"line contents didn't match at index %u - %zu", y, x);
+        XCTAssertEqual([prevDataLine hitCount], [dataLine hitCount],
+                       @"line hits didn't match at index %u - %zu", y, x);
       }
     }
     prevData = data;

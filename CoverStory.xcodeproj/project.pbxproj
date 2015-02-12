@@ -80,7 +80,6 @@
 		F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; };
 		F41A325311B6BA1A00176CCC /* GCovVersionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F41A325211B6BA1A00176CCC /* GCovVersionManager.m */; };
 		F426B6EB0E0A1D7E00348386 /* CoverStory Help in Resources */ = {isa = PBXBuildFile; fileRef = F426B6DA0E0A1D7E00348386 /* CoverStory Help */; };
-		F426B7140E0A251300348386 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F426B7130E0A251300348386 /* SenTestingKit.framework */; };
 		F426B7170E0A252900348386 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		F426B71A0E0A254100348386 /* CoverStoryCoverageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BFD54F50B3F009300AFCDA2 /* CoverStoryCoverageData.m */; };
 		F426B7210E0A25AE00348386 /* GTMRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E280D30D81F38700DD304F /* GTMRegex.m */; };
@@ -223,11 +222,9 @@
 		F426B6DB0E0A1D7E00348386 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/CoverStory Help"; sourceTree = "<group>"; };
 		F426B70E0E0A24AE00348386 /* UnitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F426B70F0E0A24AE00348386 /* UnitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UnitTests-Info.plist"; sourceTree = "<group>"; };
-		F426B7130E0A251300348386 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		F426B7420E0A261000348386 /* DebugUnittest.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DebugUnittest.xcconfig; path = Target/DebugUnittest.xcconfig; sourceTree = "<group>"; };
 		F426B7430E0A261000348386 /* ReleaseUnittest.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = ReleaseUnittest.xcconfig; path = Target/ReleaseUnittest.xcconfig; sourceTree = "<group>"; };
 		F426B7500E0A275300348386 /* CoverStoryCoverageDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoverStoryCoverageDataTest.m; sourceTree = "<group>"; };
-		F426B79A0E0A2ECD00348386 /* GTMSenTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMSenTestCase.h; sourceTree = "<group>"; };
 		F426B7F60E0AB75A00348386 /* Foo1a.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo1a.gcov; sourceTree = "<group>"; };
 		F426B7F70E0AB75A00348386 /* Foo1b.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo1b.gcov; sourceTree = "<group>"; };
 		F426B7F80E0AB75A00348386 /* Foo2.gcov */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Foo2.gcov; sourceTree = "<group>"; };
@@ -280,7 +277,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F426B7140E0A251300348386 /* SenTestingKit.framework in Frameworks */,
 				F426B7170E0A252900348386 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,7 +400,6 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F426B7130E0A251300348386 /* SenTestingKit.framework */,
 				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
 			);
 			name = Frameworks;
@@ -475,14 +470,6 @@
 			path = XcodeConfig;
 			sourceTree = "<group>";
 		};
-		F426B7990E0A2E9F00348386 /* UnitTesting */ = {
-			isa = PBXGroup;
-			children = (
-				F426B79A0E0A2ECD00348386 /* GTMSenTestCase.h */,
-			);
-			path = UnitTesting;
-			sourceTree = "<group>";
-		};
 		F426B7F30E0AB70200348386 /* UnitTesting */ = {
 			isa = PBXGroup;
 			children = (
@@ -530,7 +517,6 @@
 				F4C187F60DB3CEED009BB8C6 /* GTMDefines.h */,
 				F4138F240D751FCF00F72B31 /* Foundation */,
 				F4C187F80DB3CF07009BB8C6 /* DebugUtils */,
-				F426B7990E0A2E9F00348386 /* UnitTesting */,
 				F4138F270D75200B00F72B31 /* XcodeConfig */,
 			);
 			path = "google-toolbox-for-mac";
@@ -569,9 +555,9 @@
 			productReference = 8D15AC370486D014006FF6A4 /* CoverStory.app */;
 			productType = "com.apple.product-type.application";
 		};
-		F426B70D0E0A24AE00348386 /* UnitTests */ = {
+		F426B70D0E0A24AE00348386 /* CoverStoryTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F426B7120E0A24AF00348386 /* Build configuration list for PBXNativeTarget "UnitTests" */;
+			buildConfigurationList = F426B7120E0A24AF00348386 /* Build configuration list for PBXNativeTarget "CoverStoryTests" */;
 			buildPhases = (
 				F426B7090E0A24AE00348386 /* Resources */,
 				F426B70A0E0A24AE00348386 /* Sources */,
@@ -582,10 +568,10 @@
 			);
 			dependencies = (
 			);
-			name = UnitTests;
+			name = CoverStoryTests;
 			productName = UnitTests;
 			productReference = F426B70E0E0A24AE00348386 /* UnitTests.octest */;
-			productType = "com.apple.product-type.bundle.ocunit-test";
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -608,7 +594,7 @@
 			projectRoot = "";
 			targets = (
 				8D15AC270486D014006FF6A4 /* CoverStory */,
-				F426B70D0E0A24AE00348386 /* UnitTests */,
+				F426B70D0E0A24AE00348386 /* CoverStoryTests */,
 				8B67E07511B97A09000DB052 /* Create Appcast */,
 			);
 		};
@@ -774,7 +760,7 @@
 		};
 		F426B7190E0A252E00348386 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F426B70D0E0A24AE00348386 /* UnitTests */;
+			target = F426B70D0E0A24AE00348386 /* CoverStoryTests */;
 			targetProxy = F426B7180E0A252E00348386 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -877,6 +863,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9DC8D3B714F48EC800CEB21C /* DebugMacOSX.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COVERSTORY_RELEASE_NOTE_PATH = SparkleData/releaseNotes.html;
 				COVERSTORY_VERSION = "$(COVERSTORY_VERSION_MAJOR).$(COVERSTORY_VERSION_MINOR).$(COVERSTORY_VERSION_BUGFIX)";
 				COVERSTORY_VERSION_BUGFIX = 1;
@@ -903,6 +890,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9DC8D3B814F48EC800CEB21C /* ReleaseMacOSX.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COVERSTORY_RELEASE_NOTE_PATH = SparkleData/releaseNotes.html;
 				COVERSTORY_VERSION = "$(COVERSTORY_VERSION_MAJOR).$(COVERSTORY_VERSION_MINOR).$(COVERSTORY_VERSION_BUGFIX)";
 				COVERSTORY_VERSION_BUGFIX = 1;
@@ -934,7 +922,6 @@
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = UnitTests;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -951,7 +938,6 @@
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = UnitTests;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -985,7 +971,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F426B7120E0A24AF00348386 /* Build configuration list for PBXNativeTarget "UnitTests" */ = {
+		F426B7120E0A24AF00348386 /* Build configuration list for PBXNativeTarget "CoverStoryTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F426B7100E0A24AF00348386 /* Debug */,

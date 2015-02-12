@@ -17,10 +17,10 @@
 //  the License.
 //
 
-#import "GTMSenTestCase.h"
+@import XCTest;
 #import "GCovVersionManager.h"
 
-@interface GCovVersionManagerTest : SenTestCase
+@interface GCovVersionManagerTest : XCTestCase
 @end
 
 
@@ -28,15 +28,15 @@
 
 - (void)testCollectionOfInstalled {
   GCovVersionManager *mgr = [GCovVersionManager defaultManager];
-  STAssertNotNil(mgr, nil);
+  XCTAssertNotNil(mgr);
 
   // default should not be an empty string
-  STAssertNotNil([mgr defaultGCovPath], nil);
-  STAssertGreaterThan([[mgr defaultGCovPath] length], (NSUInteger)0, nil);
+  XCTAssertNotNil([mgr defaultGCovPath]);
+  XCTAssertGreaterThan([[mgr defaultGCovPath] length], 0);
 
   // Should be atleast the default in the list.
-  STAssertNotNil([mgr installedVersions], nil);
-  STAssertGreaterThanOrEqual([[mgr installedVersions] count], (NSUInteger)1, nil);
+  XCTAssertNotNil([mgr installedVersions]);
+  XCTAssertGreaterThanOrEqual([[mgr installedVersions] count], 1);
 }
 
 - (void)testVersionCheck {
@@ -58,9 +58,9 @@
   //    }
 
   GCovVersionManager *mgr = [GCovVersionManager defaultManager];
-  STAssertNotNil(mgr, nil);
+  XCTAssertNotNil(mgr);
   NSBundle *testBundle = [NSBundle bundleForClass:[self class]];
-  STAssertNotNil(testBundle, nil);
+  XCTAssertNotNil(testBundle);
 
   struct TestDataRecord {
     NSString *name;
@@ -87,16 +87,16 @@
   for (size_t x = 0; x < sizeof(testData)/sizeof(testData[0]); ++x) {
     NSString *path = [testBundle pathForResource:testData[x].name
                                           ofType:nil];
-    STAssertEqualObjects([mgr versionFromGCovFile:path],
+    XCTAssertEqualObjects([mgr versionFromGCovFile:path],
                          testData[x].version,
                          @"index %zu - path: %@", x, path);
   }
 
   // Feed it something that doesn't have magic on the front and doesn't exist
-  STAssertNil([mgr versionFromGCovFile:@"/etc/passwd"], nil);
-  STAssertNil([mgr versionFromGCovFile:@"/does/not/exist"], nil);
-  STAssertNil([mgr versionFromGCovFile:@""], nil);
-  STAssertNil([mgr versionFromGCovFile:nil], nil);
+  XCTAssertNil([mgr versionFromGCovFile:@"/etc/passwd"]);
+  XCTAssertNil([mgr versionFromGCovFile:@"/does/not/exist"]);
+  XCTAssertNil([mgr versionFromGCovFile:@""]);
+  XCTAssertNil([mgr versionFromGCovFile:nil]);
 }
 
 @end
