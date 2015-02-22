@@ -266,9 +266,7 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
             inNonFeasibleRange = YES;
           }
         }
-          self.lines = [self.lines arrayByAddingObject:[CoverStoryCoverageLineData coverageLineDataWithLine:segment
-                                                                                                  hitCount:hitCount
-                                                                                               coverageFile:self]];
+        [lines_ addObject:[CoverStoryCoverageLineData coverageLineDataWithLine:segment hitCount:hitCount coverageFile:self]];
       }
 
       // The first five lines are not data we want to show to the user
