@@ -766,7 +766,7 @@
 				FRAMEWORK_SEARCH_PATHS = external;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = "Supporting Files/$(TARGET_NAME)-Info.plist";
-				INFOPLIST_PREFIX_HEADER = Classes/CoverStoryDocumentTypes.h;
+				INFOPLIST_PREFIX_HEADER = Source/CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = CoverStory;
@@ -783,7 +783,7 @@
 				FRAMEWORK_SEARCH_PATHS = external;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = "Supporting Files/$(TARGET_NAME)-Info.plist";
-				INFOPLIST_PREFIX_HEADER = Classes/CoverStoryDocumentTypes.h;
+				INFOPLIST_PREFIX_HEADER = Source/CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = CoverStory;
