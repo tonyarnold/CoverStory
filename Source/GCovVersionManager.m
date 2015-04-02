@@ -8,10 +8,7 @@
 
 #import "GCovVersionManager.h"
 #import "GTMNSEnumerator+Filter.h"
-
-@interface GCovVersionManager (PrivateMethods)
-+ (NSMutableDictionary*)collectVersionsInFolder:(NSString *)path;
-@end
+#import "CoverStory-Swift.h"
 
 @implementation GCovVersionManager
 
@@ -104,51 +101,6 @@
   if (!result) {
     result = [self defaultGCovPath];
   }
-  return result;
-}
-
-+ (NSMutableDictionary*)collectVersionsInFolder:(NSString *)path {
-  NSMutableDictionary *result = [NSMutableDictionary dictionary];
-  // http://developer.apple.com/mac/library/documentation/Cocoa/Reference/Foundation/Classes/NSFileManager_Class/Reference/Reference.html#//apple_ref/occ/clm/NSFileManager/defaultManager
-  // This is run on a thread, so don't use -defaultManager so we get something
-  // thread safe.
-  NSFileManager *fm = [NSFileManager defaultManager];
-  NSDirectoryEnumerator *enumerator = [fm enumeratorAtPath:path];
-  // ...filter to gcov* apps...
-  NSEnumerator *enumerator2 =
-    [enumerator gtm_filteredEnumeratorByMakingEachObjectPerformSelector:@selector(hasPrefix:)
-                                                             withObject:@"gcov"];
-  // ...turn them all into full paths...
-  NSEnumerator *enumerator3 =
-    [enumerator2 gtm_enumeratorByTarget:path
-                  performOnEachSelector:@selector(stringByAppendingPathComponent:)];
-  // ...walk over them validating they are good to use.
-  for (NSString *gcovPath in enumerator3) {
-    // Must be executable.
-    if (![fm isExecutableFileAtPath:gcovPath]) {
-      continue;
-    }
-
-    // Extract the version.
-    NSString *name = [gcovPath lastPathComponent];
-    NSString *version = nil;
-    if ([name isEqual:@"gcov"]) {
-      // It's the default
-      version = @"";
-    } else {
-      NSString *remainder = [name substringFromIndex:4];
-      if ([remainder characterAtIndex:0] != '-') {
-        NSLog(@"gcov binary name in odd format: %@", gcovPath);
-      } else {
-        version = [remainder substringFromIndex:1];
-      }
-    }
-
-    if (version) {
-      [result setObject:gcovPath forKey:version];
-    }
-  }
-
   return result;
 }
 

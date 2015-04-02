@@ -63,6 +63,7 @@
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		8D15AC310486D014006FF6A4 /* CoverStoryDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* CoverStoryDocument.m */; settings = {ATTRIBUTES = (); }; };
 		90A476301A9A069700981742 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 90A4762F1A9A069700981742 /* main.m */; };
+		90B0FA1E1A9A0E5C00BC145B /* GCovVersionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B0FA1D1A9A0E5C00BC145B /* GCovVersionManager.swift */; };
 		90F5F7DF1A9A07D2008F1A36 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90F5F7DE1A9A07D2008F1A36 /* Media.xcassets */; };
 		F41390DD0D77103C00F72B31 /* GTMNSFileManager+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390DC0D77103C00F72B31 /* GTMNSFileManager+Path.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F41390F50D771A5400F72B31 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -82,7 +83,6 @@
 		F47A7A400D748DEA002302AB /* GTMScriptRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = F47A7A3F0D748DEA002302AB /* GTMScriptRunner.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F485B3230E4C831200899594 /* NoEndingNewline.gcov in Resources */ = {isa = PBXBuildFile; fileRef = F485B3220E4C831200899594 /* NoEndingNewline.gcov */; };
 		F487520811B6CA8800774A63 /* GCovVersionManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F487520711B6CA8800774A63 /* GCovVersionManagerTest.m */; };
-		F487520911B6CA9E00774A63 /* GCovVersionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F41A325211B6BA1A00176CCC /* GCovVersionManager.m */; };
 		F487523211B6CEAE00774A63 /* GTMNSEnumerator+Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F41390F40D771A5400F72B31 /* GTMNSEnumerator+Filter.m */; };
 		F487528111B6DF2300774A63 /* test_i386_4_0.gcda in Resources */ = {isa = PBXBuildFile; fileRef = F487527511B6DF2300774A63 /* test_i386_4_0.gcda */; };
 		F487528211B6DF2300774A63 /* test_i386_4_0.gcno in Resources */ = {isa = PBXBuildFile; fileRef = F487527611B6DF2300774A63 /* test_i386_4_0.gcno */; };
@@ -185,6 +185,8 @@
 		90A476351A9A06ED00981742 /* releaseNotes.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = releaseNotes.html; sourceTree = "<group>"; };
 		90A476371A9A06ED00981742 /* generate_keys.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = generate_keys.rb; sourceTree = "<group>"; };
 		90A476381A9A06ED00981742 /* sign_update.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = sign_update.rb; sourceTree = "<group>"; };
+		90B0FA1C1A9A0E5B00BC145B /* CoverStory-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CoverStory-Bridging-Header.h"; sourceTree = "<group>"; };
+		90B0FA1D1A9A0E5C00BC145B /* GCovVersionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCovVersionManager.swift; sourceTree = "<group>"; };
 		90F5F7DD1A9A07A7008F1A36 /* CreateAppcast.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CreateAppcast.sh; sourceTree = "<group>"; };
 		90F5F7DE1A9A07D2008F1A36 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		9DC8D3B714F48EC800CEB21C /* DebugMacOSX.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = DebugMacOSX.xcconfig; path = Project/DebugMacOSX.xcconfig; sourceTree = "<group>"; };
@@ -307,6 +309,8 @@
 				8B4094BF0F8EC70300DF540E /* NSColor+Scripting.m */,
 				8BB7892F11B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.h */,
 				8BB7893011B84F1F00AB31AF /* NSUserDefaultsController+KeyValues.m */,
+				90B0FA1D1A9A0E5C00BC145B /* GCovVersionManager.swift */,
+				90B0FA1C1A9A0E5B00BC145B /* CoverStory-Bridging-Header.h */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -662,6 +666,7 @@
 				8B7270010D92B6EB0090C251 /* CoverStoryFilePredicate.m in Sources */,
 				8BC4AAB80D94D06100437182 /* CoverStoryCodeViewTableView.m in Sources */,
 				8B4091140F8E733D00DF540E /* CoverStoryApplication.m in Sources */,
+				90B0FA1E1A9A0E5C00BC145B /* GCovVersionManager.swift in Sources */,
 				F41A325311B6BA1A00176CCC /* GCovVersionManager.m in Sources */,
 				8BB788F811B8467800AB31AF /* CoverStoryArrayController.m in Sources */,
 				8B4094C00F8EC70300DF540E /* NSColor+Scripting.m in Sources */,
@@ -677,7 +682,6 @@
 				F426B7210E0A25AE00348386 /* GTMRegex.m in Sources */,
 				F426B7510E0A275300348386 /* CoverStoryCoverageDataTest.m in Sources */,
 				F487520811B6CA8800774A63 /* GCovVersionManagerTest.m in Sources */,
-				F487520911B6CA9E00774A63 /* GCovVersionManager.m in Sources */,
 				F487523211B6CEAE00774A63 /* GTMNSEnumerator+Filter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -764,12 +768,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
 				FRAMEWORK_SEARCH_PATHS = external;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = "Supporting Files/$(TARGET_NAME)-Info.plist";
 				INFOPLIST_PREFIX_HEADER = Source/CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = CoverStory;
+				SWIFT_OBJC_BRIDGING_HEADER = "Source/CoverStory-Bridging-Header.h";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -781,12 +787,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
 				FRAMEWORK_SEARCH_PATHS = external;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = "Supporting Files/$(TARGET_NAME)-Info.plist";
 				INFOPLIST_PREFIX_HEADER = Source/CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = CoverStory;
+				SWIFT_OBJC_BRIDGING_HEADER = "Source/CoverStory-Bridging-Header.h";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
