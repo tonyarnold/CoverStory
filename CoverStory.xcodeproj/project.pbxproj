@@ -112,13 +112,6 @@
 			remoteGlobalIDString = 8D15AC270486D014006FF6A4;
 			remoteInfo = CoverStory;
 		};
-		F426B7180E0A252E00348386 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F426B70D0E0A24AE00348386;
-			remoteInfo = UnitTests;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -495,7 +488,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				F426B7190E0A252E00348386 /* PBXTargetDependency */,
 			);
 			name = CoverStory;
 			productInstallPath = "$(HOME)/Applications";
@@ -694,11 +686,6 @@
 			target = 8D15AC270486D014006FF6A4 /* CoverStory */;
 			targetProxy = 8B67E07811B97A0E000DB052 /* PBXContainerItemProxy */;
 		};
-		F426B7190E0A252E00348386 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F426B70D0E0A24AE00348386 /* CoverStoryTests */;
-			targetProxy = F426B7180E0A252E00348386 /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -767,12 +754,14 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
-				FRAMEWORK_SEARCH_PATHS = external;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/external";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Supporting Files/$(TARGET_NAME)-Info.plist";
 				INFOPLIST_PREFIX_HEADER = Source/CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = CoverStory;
 				SWIFT_OBJC_BRIDGING_HEADER = "Source/CoverStory-Bridging-Header.h";
@@ -786,12 +775,14 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COVERSTORY_SUFEEDURL = "http://coverstory.googlecode.com/svn/trunk/SparkleData/CoverStoryAppcast.xml";
-				FRAMEWORK_SEARCH_PATHS = external;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/external";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Supporting Files/$(TARGET_NAME)-Info.plist";
 				INFOPLIST_PREFIX_HEADER = Source/CoverStoryDocumentTypes.h;
 				INFOPLIST_PREPROCESS = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = CoverStory;
 				SWIFT_OBJC_BRIDGING_HEADER = "Source/CoverStory-Bridging-Header.h";
@@ -811,6 +802,11 @@
 				COVERSTORY_VERSION_MINOR = 4;
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
+				);
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"$(GTM_GENERAL_OTHER_CFLAGS)",
@@ -837,36 +833,54 @@
 					"$(inherited)",
 					NS_BLOCK_ASSERTIONS,
 				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
+				);
 			};
 			name = Release;
 		};
 		F426B7100E0A24AF00348386 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CoverStory.app/Contents/MacOS/CoverStory";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				INFOPLIST_FILE = "Supporting Files/$(TARGET_NAME)-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Debug;
 		};
 		F426B7110E0A24AF00348386 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CoverStory.app/Contents/MacOS/CoverStory";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				INFOPLIST_FILE = "Supporting Files/$(TARGET_NAME)-Info.plist";
 				LEXFLAGS = "$(inherited) --noyy_top_state";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Release;
 		};
