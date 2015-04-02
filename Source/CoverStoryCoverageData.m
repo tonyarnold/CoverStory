@@ -19,7 +19,6 @@
 
 #import "CoverStoryCoverageData.h"
 #import "CoverStoryDocument.h"
-#import "GTMRegex.h"
 
 // helper for building the string to make sure rounding doesn't get us
 static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
@@ -181,9 +180,9 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
       self = nil;
     } else {
       NSCharacterSet *linefeeds = [NSCharacterSet characterSetWithCharactersInString:@"\n\r"];
-      GTMRegex *nfLineRegex = [GTMRegex regexWithPattern:@"//[[:blank:]]*COV_NF_LINE"];
-      GTMRegex *nfRangeStartRegex = [GTMRegex regexWithPattern:@"//[[:blank:]]*COV_NF_START"];
-      GTMRegex *nfRangeEndRegex  = [GTMRegex regexWithPattern:@"//[[:blank:]]*COV_NF_END"];
+        NSRegularExpression *nfLineRegex = [NSRegularExpression regularExpressionWithPattern:@"//[[:blank:]]*COV_NF_LINE" options:0 error:nil];
+        NSRegularExpression *nfRangeStartRegex = [NSRegularExpression regularExpressionWithPattern:@"//[[:blank:]]*COV_NF_START" options:0 error:nil];
+        NSRegularExpression *nfRangeEndRegex = [NSRegularExpression regularExpressionWithPattern:@"//[[:blank:]]*COV_NF_END" options:0 error:nil];
       BOOL inNonFeasibleRange = NO;
       NSScanner *scanner = [NSScanner scannerWithString:string];
       [scanner setCharactersToBeSkipped:nil];
@@ -232,12 +231,12 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
             hitCount = kCoverStoryNonFeasibleMarker;
           }
           // if it has the end marker, clear our state
-          if ([nfRangeEndRegex matchesSubStringInString:segment]) {
+          if ([nfRangeEndRegex numberOfMatchesInString:segment options:0 range:NSMakeRange(0, segment.length)] > 0) {
             inNonFeasibleRange = NO;
           }
         } else {
           // if it matches the line marker, don't count it
-          if ([nfLineRegex matchesSubStringInString:segment]) {
+          if ([nfLineRegex numberOfMatchesInString:segment options:0 range:NSMakeRange(0, segment.length)] > 0) {
             if (hitCount > 0) {
               NSString *warning =
                 [NSString stringWithFormat:@"Line %lu is marked as a Non"
@@ -248,7 +247,7 @@ static float codeCoverage(NSInteger codeLines, NSInteger hitCodeLines,
             hitCount = kCoverStoryNonFeasibleMarker;
           }
           // if it matches the start marker, don't count it and set state
-          else if ([nfRangeStartRegex matchesSubStringInString:segment]) {
+          else if ([nfRangeStartRegex numberOfMatchesInString:segment options:0 range:NSMakeRange(0, segment.length)] > 0) {
             if (hitCount > 0) {
               NSString *warning =
                 [NSString stringWithFormat:@"Line %lu is in a Non Feasible"
