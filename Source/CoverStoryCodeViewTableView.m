@@ -19,7 +19,6 @@
 #import "CoverStoryCodeViewTableView.h"
 #import "CoverStoryScroller.h"
 #import "CoverStoryPreferenceKeys.h"
-#import "GTMDefines.h"
 #import "NSUserDefaultsController+KeyValues.h"
 #import "CoverStoryDocument.h"
 
